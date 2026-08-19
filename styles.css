@@ -441,3 +441,13 @@ header.site.scrolled{box-shadow:0 6px 20px rgba(0,0,0,.22)}
 /* Service card photos (real hauls) */
 .card-photo{display:block;width:calc(100% + 48px);margin:-28px -24px 18px;height:180px;object-fit:cover;background:var(--mist)}
 @media(max-width:600px){.card-photo{height:200px}}
+
+/* Logo sits toward the middle of the header instead of hard left */
+.brand{margin-left:auto;margin-right:auto}
+
+/* Recent jobs photo grid */
+#recent-jobs .jobs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:1.6rem}
+#recent-jobs figure{margin:0}
+#recent-jobs img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+#recent-jobs figcaption{margin-top:.5rem;font-size:.92rem;color:var(--muted,#667)}
+@media(max-width:760px){#recent-jobs .jobs-grid{grid-template-columns:1fr}}
