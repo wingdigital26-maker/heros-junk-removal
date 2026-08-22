@@ -1,0 +1,8 @@
+# Permanent redirects. Old cost-guide slugs retired 2026-08-22 when pricing
+# content was removed sitewide. Keep these indefinitely so existing links,
+# bookmarks, and any indexed results keep landing on the right page.
+
+/blog/junk-removal-cost-dfw.html      /blog/how-junk-removal-jobs-are-sized   301
+/blog/junk-removal-cost-dfw           /blog/how-junk-removal-jobs-are-sized   301
+/blog/hot-tub-shed-removal-cost.html  /blog/hot-tub-shed-playset-removal      301
+/blog/hot-tub-shed-removal-cost       /blog/hot-tub-shed-playset-removal      301
