@@ -2,7 +2,12 @@
 # content was removed sitewide. Keep these indefinitely so existing links,
 # bookmarks, and any indexed results keep landing on the right page.
 
-/blog/junk-removal-cost-dfw.html      /blog/how-junk-removal-jobs-are-sized   301
-/blog/junk-removal-cost-dfw           /blog/how-junk-removal-jobs-are-sized   301
+/blog/junk-removal-cost-dfw.html      /blog/how-junk-removal-works   301
+/blog/junk-removal-cost-dfw           /blog/how-junk-removal-works   301
+
+# Sizing explainer retired 2026-08-22 when trailer/capacity language was removed
+# sitewide. The post was rewritten as a plain "how the service works" guide.
+/blog/how-junk-removal-jobs-are-sized.html  /blog/how-junk-removal-works  301
+/blog/how-junk-removal-jobs-are-sized       /blog/how-junk-removal-works  301
 /blog/hot-tub-shed-removal-cost.html  /blog/hot-tub-shed-playset-removal      301
 /blog/hot-tub-shed-removal-cost       /blog/hot-tub-shed-playset-removal      301
