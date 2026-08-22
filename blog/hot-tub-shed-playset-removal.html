@@ -178,6 +178,5 @@
 (function(){var h=document.querySelector('header.site');if(h){var on=function(){h.classList.toggle('scrolled',(window.scrollY||0)>40)};window.addEventListener('scroll',on,{passive:true});on()}
 var stats=document.querySelectorAll('[data-count]');if(stats.length){var run=function(el){var t=+el.getAttribute('data-count'),suf=el.getAttribute('data-suffix')||'',s=0,d=1100,st=null;function f(ts){st=st||ts;var p=Math.min((ts-st)/d,1);el.textContent=Math.floor(p*t).toLocaleString()+suf;if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)};if('IntersectionObserver'in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run(e.target);io.unobserve(e.target)}})},{threshold:.5});stats.forEach(function(s){io.observe(s)})}else stats.forEach(run)}})();
 </script>
-<script src="../js/chrome.js" defer></script>
 </body>
 </html>

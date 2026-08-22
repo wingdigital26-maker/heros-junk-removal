@@ -453,15 +453,16 @@ header.site.scrolled{box-shadow:0 6px 20px rgba(0,0,0,.22)}
 @media(max-width:760px){#recent-jobs .jobs-grid{grid-template-columns:1fr}}
 
 /* ============================================================
-   MOBILE CHROME - header and call bar get out of the way
-   Before: a sticky header pinned at the top AND a fixed estimate
-   bar pinned at the bottom, both eating the screen the whole time
-   you scrolled. The header now scrolls away with the page on
-   phones (CSS only, always works). The estimate bar stays, slimmer,
-   and slides out of the way on scroll down if the script runs.
+   MOBILE CHROME
+   Phones used to carry a sticky header AND a fixed estimate bar at
+   once, covering 111px of an 812px screen the whole time you
+   scrolled. Both are now unpinned. The header scrolls away with the
+   page, and the floating bar is gone because every page already ends
+   with a full "Get a Free Estimate" band, so the button is right
+   there when you reach the bottom. Pure CSS, no script involved.
    ============================================================ */
 @media(max-width:768px){
-  /* Header is no longer pinned on phones. Scroll up to reach the nav. */
+  /* Header is no longer pinned. Scroll up to reach the nav. */
   header.site{position:static;top:auto}
   body.home header.site{position:absolute}
 
@@ -469,15 +470,25 @@ header.site.scrolled{box-shadow:0 6px 20px rgba(0,0,0,.22)}
   header.site .nav{padding:9px 0}
   .brand img.logo{height:38px}
 
-  /* Slimmer estimate bar */
-  .call-bar{height:54px}
-  body{padding-bottom:54px}
-  .call-bar a{font-size:.95rem}
+  /* No floating estimate bar. The bottom cta-band does this job. */
+  .call-bar{display:none}
+  body{padding-bottom:0}
 
-  /* Progressive enhancement: slide the bar away while scrolling down */
-  .call-bar{transition:transform .26s ease}
-  .call-bar.chrome-away{transform:translateY(102%)}
+  /* Give the closing CTA more presence now that it is the only one */
+  .cta-band{padding-top:44px;padding-bottom:44px}
 }
-@media(max-width:768px) and (prefers-reduced-motion:reduce){
-  .call-bar{transition:none}
+
+/* Mobile footer was 1047px tall, over a screen and a quarter of dead
+   space between the closing estimate band and the end of the page.
+   Two columns and tighter padding pull the CTA close to the bottom. */
+@media(max-width:768px){
+  footer.site{padding:26px 0 14px;font-size:.88rem}
+  .foot-grid{gap:16px 18px;margin-bottom:1.1rem}
+  footer.site h3{margin-bottom:.45rem;font-size:.9rem}
+  footer.site li{margin-bottom:.28rem}
+  .foot-bottom{padding-top:14px;font-size:.76rem}
+  .cta-band{padding-top:38px;padding-bottom:38px}
+}
+@media(max-width:560px){
+  .foot-grid{grid-template-columns:1fr 1fr}
 }
