@@ -451,3 +451,33 @@ header.site.scrolled{box-shadow:0 6px 20px rgba(0,0,0,.22)}
 #recent-jobs img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
 #recent-jobs figcaption{margin-top:.5rem;font-size:.92rem;color:var(--muted,#667)}
 @media(max-width:760px){#recent-jobs .jobs-grid{grid-template-columns:1fr}}
+
+/* ============================================================
+   MOBILE CHROME - header and call bar get out of the way
+   Before: a sticky header pinned at the top AND a fixed estimate
+   bar pinned at the bottom, both eating the screen the whole time
+   you scrolled. The header now scrolls away with the page on
+   phones (CSS only, always works). The estimate bar stays, slimmer,
+   and slides out of the way on scroll down if the script runs.
+   ============================================================ */
+@media(max-width:768px){
+  /* Header is no longer pinned on phones. Scroll up to reach the nav. */
+  header.site{position:static;top:auto}
+  body.home header.site{position:absolute}
+
+  /* Reclaim height on the bar itself */
+  header.site .nav{padding:9px 0}
+  .brand img.logo{height:38px}
+
+  /* Slimmer estimate bar */
+  .call-bar{height:54px}
+  body{padding-bottom:54px}
+  .call-bar a{font-size:.95rem}
+
+  /* Progressive enhancement: slide the bar away while scrolling down */
+  .call-bar{transition:transform .26s ease}
+  .call-bar.chrome-away{transform:translateY(102%)}
+}
+@media(max-width:768px) and (prefers-reduced-motion:reduce){
+  .call-bar{transition:none}
+}
