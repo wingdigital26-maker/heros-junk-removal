@@ -3,8 +3,7 @@
    real pointer, no reduced-motion preference and no data-saver, then crossfades the canvas over the poster
    from the exact same camera, so nothing jumps. Phones keep the poster: the gesture reads at a glance there,
    and a megabyte of WebGL for a slow drift is not a fair trade on a phone.
-   Animates ONLY lift0..lift3: blocks travel out through the door on a fixed arc, shrinking as they go,
-   then the next one follows. The shell (base, walls, piers, lintel, reveal, windows, roof, inside) never moves. */
+   The scene itself (house-scene.js) is one instanced mesh of fragments driven by scroll and the pointer. */
 
 const piece = document.getElementById('piece');
 if (piece) boot();
@@ -24,7 +23,7 @@ function ok() {
 function boot() {
   if (!ok()) return;
   // never race the poster: wait for the page to be quiet, then load three
-  const start = () => import('./house-scene.js?v=5').then((m) => m.init(piece)).catch((e) => console.warn('house: live scene skipped', e));
+  const start = () => import('./house-scene.js?v=6').then((m) => m.init(piece)).then((h) => { window.__houseScene = h; }).catch((e) => console.warn('house: live scene skipped', e));
   if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 });
   else setTimeout(start, 600);
 }
