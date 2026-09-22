@@ -1,31 +1,55 @@
-"""Hero's Junk Removal - THE HOUSE. The interactive hero piece and the logo, one idea.
+"""Hero's Junk Removal - THE HOUSE, built from fragments that re-form.
 
-A small house that empties itself: blocks lift out through the open door and rise away.
-That gesture is the service, so the mark and the animation are the same thing.
+One fixed set of fragments. "house" is formation zero: a small house that empties itself (four blocks
+lift out through the door). Every other formation is the SAME fragments in other places: a couch, a
+fridge, a map board, a message bubble, a loaded truck. Nothing is added or removed between forms, they
+only move, so on the site it reads as one object transforming, driven by scroll.
 
-v2 (2026-09-22), six renders judged one by one (a chimney was tried in v5 and reverted: noise at 32px):
-  - a CLOSED house: four walls, so it reads as a solid object, not a cut-open dollhouse
-  - the door is on the right face, the blocks leave to the right and up: the same layout as the
-    flat mark (door bottom right, block to the right), so poster, live scene and logo agree
-  - the blocks leave THROUGH the doorway and clear the silhouette instead of hovering over the facade
-  - a deeper doorway: the door wall is thicker, with a stone threshold in front of it
-  - a wider roof overhang with a fascia board, a chamfered plinth, one window on the front
-  - matte slate walls that stay dark under the stage light; a deeper, less pink accent red
-  - lower world light and exposure so the walls read as a solid, not pale grey
+Same architecture as the Wing sculpture and heros-v2/brand/v3/morph.py (fixed N, per-target transform
+sets, lerp on the web), extended with a rotation and a colour per fragment per target, and with
+fragments matched to target cells by SHAPE (six axis permutations tried per pair) so the real bevelled
+house geometry is reused with small scale ratios instead of stretched.
 
-  blender --background --python house.py -- <outdir> [glb] [hero]
+v7 to v11 (2026-09-22), judged render by render:
+  - studio environment: a procedural HDRI (gradient dome + softboxes) written as an EXR, so metal faces
+    carry a gradient and the bevels catch a travelling highlight; the three area lamps stay for diffuse
+  - slate walls are brushed metal now, with per-fragment micro tilt, lightness and roughness jitter
+  - roof is two thick slabs over stepped gables; the walls are panels with hairline seams
+  - the four leaving blocks have their own proportions (crate, tall, flat, small)
+  - roof 2 x 2 panels per slope (3 x 2 read as solar panels), four gable steps (three read as a staircase)
+  - bevel segments 2 (3 pushed the GLB to 134KB)
+
+  blender --background --python house.py -- <outdir> [form=house|couch|fridge|map|message|truck|all]
+                                                     [glb] [hero] [fast] [json]
+    (default form=house; "hero" = transparent 1500x1150 poster frame; "fast" = quick judging render)
 """
-import bpy, sys, math, os
+import bpy, sys, math, os, json
+import numpy as np
+from mathutils import Matrix, Quaternion, Euler, Vector
 
 argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 OUT = argv[0] if argv else os.path.dirname(os.path.abspath(__file__))
-WANT_GLB = "glb" in argv
-WANT_HERO = "hero" in argv
+FLAGS = set(a for a in argv[1:] if "=" not in a)
+KV = dict(a.split("=", 1) for a in argv[1:] if "=" in a)
+FORM = KV.get("form", "house")
+WANT_GLB = "glb" in FLAGS
+WANT_HERO = "hero" in FLAGS
+FAST = "fast" in FLAGS
+WANT_JSON = "json" in FLAGS or WANT_GLB
+NORENDER = "norender" in FLAGS
+QUANT = int(KV.get("quant", "12"))
 
-INK = (0.018, 0.026, 0.045, 1.0)      # near-black navy, the blocks
-WALL = (0.055, 0.066, 0.086, 1.0)     # matte slate, the house
-ROOF = (0.024, 0.030, 0.042, 1.0)     # darker, so the roof reads separately
-RED = (0.34, 0.022, 0.030, 1.0)       # the single accent, deep not pink
+# ---------------------------------------------------------------- palette (linear)
+LIFT = float(KV.get("lift", "1.0"))    # wall lightness multiplier (lift= override for variants)
+# slate house, darker slate roof and plinth, near-black navy blocks, ONE red accent
+COLORS = {
+    0: (0.062 * LIFT, 0.074 * LIFT, 0.094 * LIFT, 1.0),   # slate walls
+    1: (0.030, 0.037, 0.050, 1.0),   # roof / plinth, darker slate
+    2: (0.014, 0.020, 0.036, 1.0),   # ink, the blocks
+    3: (0.36, 0.024, 0.030, 1.0),    # the accent red
+}
+# metal / roughness per colour: walls brushed, blocks a touch glossier, red a lacquer
+SURF = {0: (0.78, 0.34), 1: (0.80, 0.36), 2: (0.85, 0.28), 3: (0.40, 0.30)}
 
 W, D, H = 2.30, 1.80, 1.45            # house body
 T = 0.14                              # wall thickness
@@ -33,114 +57,357 @@ TD = 0.24                             # the door wall is thicker: the doorway ge
 DOOR_W, DOOR_H = 0.70, 1.02
 BASE_H = 0.11
 OVER = 0.32                           # roof overhang
+ROOF_T = 0.16                         # roof slab thickness
+ROOF_H = 0.84                         # ridge above the eave line
+ROOF_NX, ROOF_NK = 2, 2               # roof panels along the ridge, down the slope
+GAP = float(KV.get("gap", "0.006"))   # hairline seam between panels (gap= override for variants)
+
+FORM_OFFSET = (0.75, -0.35, 0.0)      # where the non-house formations stand (house is at the origin)
 
 
+def frag(p, s, c, rot=(0, 0, 0), bw=0.024, role="wall", name=None):
+    q = Euler(rot, "XYZ").to_quaternion()
+    return {"p": [round(v, 4) for v in p], "s": [round(v, 4) for v in s],
+            "r": [round(q.x, 5), round(q.y, 5), round(q.z, 5), round(q.w, 5)],
+            "c": c, "b": bw, "role": role, "name": name}
+
+
+def grid(cx, cy, cz, sx, sy, sz, nx, ny, nz, c, bw, role, rot=(0, 0, 0), name=None, skip=()):
+    out = []
+    for ix in range(nx):
+        for iy in range(ny):
+            for iz in range(nz):
+                if (ix, iy, iz) in skip:
+                    continue
+                out.append(frag((cx + (ix + 0.5) / nx * sx - sx / 2, cy + (iy + 0.5) / ny * sy - sy / 2,
+                                 cz + (iz + 0.5) / nz * sz - sz / 2),
+                                (sx / nx - GAP, sy / ny - GAP, sz / nz - GAP), c, rot, bw, role, name))
+    return out
+
+
+# ---------------------------------------------------------------- the house, as fragments
+def house_fragments():
+    z0 = BASE_H
+    F = []
+    # chamfered plinth, runs out past the door as the threshold: 3 x 2 slabs
+    F += grid(0.09, 0, BASE_H / 2, W + 0.38, D + 0.20, BASE_H, 3, 2, 1, 1, 0.030, "base")
+    # front wall: 4 x 3 panels, one panel is the window (ink, set in a little)
+    F += grid(0, -D / 2 + T / 2, z0 + H / 2, W - 2 * T, T, H, 4, 1, 3, 0, 0.020, "wall", skip=((1, 0, 1),))
+    win = frag((-1.01 + 0.505 * 1.5, -D / 2 + T / 2 + 0.035, z0 + H / 2), (0.505 - GAP, T - 0.07 - GAP, H / 3 - GAP), 2, bw=0.010, role="wall", name="window")
+    F.append(win)
+    # back wall 4 x 3, left wall 3 x 3
+    F += grid(0, D / 2 - T / 2, z0 + H / 2, W - 2 * T, T, H, 4, 1, 3, 0, 0.020, "wall")
+    F += grid(-W / 2 + T / 2, 0, z0 + H / 2, T, D, H, 1, 3, 3, 0, 0.020, "wall")
+    # door wall (+X): two piers of two panels each, a lintel, a dark reveal set back in the opening
+    pier = (D - DOOR_W) / 2
+    xr = W / 2 - TD / 2
+    for yy in (-(DOOR_W / 2 + pier / 2), DOOR_W / 2 + pier / 2):
+        F += grid(xr, yy, z0 + DOOR_H / 2, TD, pier, DOOR_H, 1, 1, 2, 0, 0.020, "wall")
+    F.append(frag((xr, 0, z0 + DOOR_H + (H - DOOR_H) / 2), (TD - GAP, D - GAP, H - DOOR_H - GAP), 0, bw=0.020, role="wall", name="lintel"))
+    F.append(frag((W / 2 - TD - 0.03, 0, z0 + DOOR_H / 2), (0.06, DOOR_W - 0.05, DOOR_H - 0.02), 2, bw=0.010, role="wall", name="reveal"))
+
+    # roof: two thick slabs at the pitch, 3 x 2 panels each, meeting at the ridge
+    ze = z0 + H - 0.02                            # eave line
+    half = D / 2 + OVER                           # eave reach from the ridge, in Y
+    pitch = math.atan2(ROOF_H, half)
+    slope_len = math.hypot(half, ROOF_H) + 0.10   # a little past the ridge so the two slabs close it
+    for s in (-1, 1):                             # s=-1 front slope (-Y)
+        n = Vector((0, s * math.sin(pitch), math.cos(pitch)))          # outward normal of the slope
+        along = Vector((0, s * math.cos(pitch), -math.sin(pitch)))      # down the slope, from the ridge
+        ridge = Vector((0, 0, ze + ROOF_H))
+        for ix in range(ROOF_NX):
+            for k in range(ROOF_NK):
+                d = (k + 0.5) / ROOF_NK * slope_len - 0.05
+                cpos = ridge + along * d + n * (ROOF_T / 2)
+                cpos.x = (ix + 0.5) / ROOF_NX * (W + 2 * OVER) - (W + 2 * OVER) / 2
+                F.append(frag(tuple(cpos), ((W + 2 * OVER) / ROOF_NX - GAP, slope_len / ROOF_NK - GAP, ROOF_T - GAP), 1,
+                              rot=(-s * pitch, 0, 0), bw=0.016, role="roof"))
+    # stepped gables under the slabs, at both ends, inside the wall line
+    rows = ((z0 + H, z0 + H + 0.20), (z0 + H + 0.20, z0 + H + 0.40), (z0 + H + 0.40, z0 + H + 0.58), (z0 + H + 0.58, z0 + H + 0.74))
+    for sx_ in (-1, 1):
+        for (za, zb) in rows:
+            wid = min(D, 2 * half * (1 - (zb - ze) / ROOF_H) - 0.06)
+            F.append(frag((sx_ * (W / 2 - T / 2), 0, (za + zb) / 2), (T - GAP, wid, zb - za - GAP), 0, bw=0.018, role="gable"))
+
+    # one block still inside, seen through the door
+    F.append(frag((0.72, -0.02, z0 + 0.26), (0.46, 0.46, 0.52), 2, rot=(0, 0, 0.35), bw=0.028, role="inside", name="inside"))
+    # THE GESTURE: blocks leaving through the door to the right and up, each its own object
+    arc = [
+        ((2.42, -0.58, 0.80), (0.52, 0.46, 0.40), 2),    # a crate, low and wide
+        ((2.92, -0.78, 1.62), (0.40, 0.38, 0.46), 3),    # the accent block, a touch tall
+        ((3.28, -0.92, 2.44), (0.34, 0.36, 0.26), 2),    # flat
+        ((3.52, -1.00, 3.16), (0.24, 0.22, 0.26), 2),    # small
+    ]
+    for i, (p, s, c) in enumerate(arc):
+        F.append(frag(p, s, c, rot=(0.30 - i * 0.14, 0.20 - i * 0.16, -0.40 + i * 0.22), bw=0.026, role="lift", name=f"lift{i}"))
+
+    # deterministic per-fragment jitter: micro tilt (rad), lightness, roughness. The web reads the same numbers.
+    rng = np.random.default_rng(7)
+    for i, f in enumerate(F):
+        f["name"] = f["name"] or f"frag{i}"
+        if f["role"] in ("wall", "roof", "gable", "base"):
+            t = rng.uniform(-1, 1, 3) * math.radians(0.45)
+            q = Quaternion((f["r"][3], f["r"][0], f["r"][1], f["r"][2]))
+            q = q @ Euler(tuple(t), "XYZ").to_quaternion()
+            f["r"] = [round(q.x, 5), round(q.y, 5), round(q.z, 5), round(q.w, 5)]
+        f["v"] = [round(float(rng.uniform(-0.035, 0.035)), 4), round(float(rng.uniform(-0.06, 0.06)), 4)]
+    return F
+
+
+# ---------------------------------------------------------------- other formations (boxes, sitting on z=0)
+# (cx, cy, cz, sx, sy, sz, colour, yaw_deg, cells) cells=None -> proportional to volume
+def shape_couch():
+    return [
+        (-0.80, 0.00, 0.66, 0.92, 1.12, 0.34, 0, 0, None),   # three seat cushions
+        (0.00, 0.00, 0.66, 0.92, 1.12, 0.34, 0, 0, None),
+        (0.80, 0.00, 0.66, 0.92, 1.12, 0.34, 0, 0, None),
+        (0.00, 0.50, 1.22, 2.80, 0.26, 0.86, 1, 0, None),    # back
+        (-1.55, 0.00, 0.84, 0.30, 1.12, 0.74, 1, 0, 2),      # arms, two tall panels each
+        (1.55, 0.00, 0.84, 0.30, 1.12, 0.74, 1, 0, 2),
+        (0.00, 0.00, 0.30, 2.75, 1.05, 0.36, 2, 0, None),    # base, ink
+        (0.85, 0.22, 1.06, 0.46, 0.14, 0.46, 3, 12, 1),      # ONE red throw pillow, leaning on the back
+    ]
+
+
+def shape_fridge():
+    return [
+        (0.00, 0.00, 1.32, 1.36, 1.10, 2.50, 0, 0, None),    # body
+        (0.00, -0.62, 1.86, 1.28, 0.12, 1.32, 1, 0, None),   # upper door
+        (0.00, -0.62, 0.66, 1.28, 0.12, 0.96, 1, 0, None),   # lower door
+        (0.00, 0.00, 0.06, 1.20, 1.00, 0.12, 2, 0, None),    # plinth
+        (-0.48, -0.72, 1.86, 0.08, 0.08, 0.90, 3, 0, 2),     # the red handle
+    ]
+
+
+def shape_map():
+    tiles = []
+    hs = [0.30, 0.30, 0.62, 0.30, 0.30, 0.30, 0.30, 0.96, 0.30, 0.30, 0.30, 0.30]
+    k = 0
+    for iy in range(3):
+        for ix in range(4):
+            h = hs[k]; k += 1
+            tiles.append((-1.35 + ix * 0.90, -0.90 + iy * 0.90, h / 2, 0.80, 0.80, h, 1 if h > 0.3 else 0, 0, None))
+    tiles.append((-1.35 + 3 * 0.90, -0.90 + 1 * 0.90, 0.96 + 0.50, 0.12, 0.12, 0.95, 2, 0, 1))   # pin post
+    tiles.append((-1.35 + 3 * 0.90, -0.90 + 1 * 0.90, 0.96 + 1.22, 0.52, 0.52, 0.52, 3, 45, 1))  # the red pin head, a diamond
+    return tiles
+
+
+def shape_message():
+    return [
+        (0.00, 0.00, 1.30, 3.10, 0.50, 1.90, 0, 0, None),       # the bubble, standing up
+        (-1.05, 0.00, 0.30, 0.55, 0.50, 0.55, 0, 45, 4),        # the tail, a diamond at the bottom left
+        (-0.65, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),        # three red dots: "typing"
+        (0.00, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),
+        (0.65, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),
+    ]
+
+
+def shape_truck():
+    return [
+        (0.00, 0.00, 0.58, 3.60, 1.20, 0.32, 2, 0, None),      # chassis, ink
+        (-1.25, 0.00, 1.18, 1.10, 1.10, 0.86, 0, 0, None),     # cab
+        (0.80, 0.00, 0.98, 2.20, 1.16, 0.28, 1, 0, None),      # bed floor
+        (0.80, 0.00, 1.18, 2.15, 1.20, 0.12, 3, 0, None),      # the red stripe
+        (0.80, 0.00, 1.62, 1.90, 1.00, 0.76, 2, 0, None),      # the load
+        (-1.25, 0.00, 0.20, 0.80, 1.30, 0.40, 2, 0, None),     # wheels, front axle
+        (1.10, 0.00, 0.20, 0.80, 1.30, 0.40, 2, 0, None),      # wheels, rear axle
+    ]
+
+
+SHAPES = {"couch": shape_couch, "fridge": shape_fridge, "map": shape_map, "message": shape_message, "truck": shape_truck}
+ORDER = ["house", "couch", "fridge", "map", "message", "truck"]
+
+
+def layout(boxes, n):
+    """Split n cells across the boxes (fixed counts honoured, the rest by volume), on a near-cubic grid per box."""
+    fixed = sum(b[8] for b in boxes if b[8])
+    free = [b for b in boxes if not b[8]]
+    vols = [b[3] * b[4] * b[5] for b in free]
+    total = sum(vols)
+    counts = {id(b): max(1, round((n - fixed) * v / total)) for b, v in zip(free, vols)}
+    while sum(counts.values()) > n - fixed:
+        k = max(counts, key=counts.get); counts[k] -= 1
+    while sum(counts.values()) < n - fixed:
+        k = max(counts, key=counts.get); counts[k] += 1
+    cells = []
+    for b in boxes:
+        cx, cy, cz, sx, sy, sz, col, yaw, fixedn = b
+        c = fixedn or counts[id(b)]
+        best, bestscore = (1, 1, 1), 1e9
+        for gx in range(1, c + 1):
+            for gy in range(1, c // gx + 1):
+                gz = max(1, round(c / (gx * gy)))
+                if gx * gy * gz < c:
+                    continue
+                cell = (sx / gx, sy / gy, sz / gz)
+                score = max(cell) / max(1e-6, min(cell)) + 2.0 * abs(gx * gy * gz - c)
+                if score < bestscore:
+                    best, bestscore = (gx, gy, gz), score
+        gx, gy, gz = best
+        made = 0
+        rot = Matrix.Rotation(math.radians(yaw), 3, "Z")
+        for ix in range(gx):
+            for iy in range(gy):
+                for iz in range(gz):
+                    if made >= c:
+                        break
+                    local = Vector(((ix + 0.5) / gx * sx - sx / 2, (iy + 0.5) / gy * sy - sy / 2, (iz + 0.5) / gz * sz - sz / 2))
+                    p = Vector((cx, cy, cz)) + rot @ local
+                    cells.append({"p": [p.x, p.y, p.z], "s": [sx / gx - GAP, sy / gy - GAP, sz / gz - GAP], "c": col, "yaw": yaw})
+                    made += 1
+    assert len(cells) == n, (len(cells), n)
+    return cells
+
+
+PERMS = [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
+
+
+def perm_quat(perm):
+    """Rotation that sends fragment local axis perm[i] onto world axis i (a box is symmetric, so a sign flip fixes parity)."""
+    M = Matrix.Identity(3)
+    for i in range(3):
+        for j in range(3):
+            M[i][j] = 1.0 if perm[i] == j else 0.0
+    if M.determinant() < 0:
+        for i in range(3):
+            M[i][perm[0]] *= -1
+    return M.to_quaternion()
+
+
+def assign(frags, cells):
+    """Give every house fragment a cell: biggest cells first, each takes the free fragment whose shape (in the best of
+    six axis orders) needs the least stretching. Returns a per-fragment target list in fragment order."""
+    order = sorted(range(len(cells)), key=lambda i: -np.prod(cells[i]["s"]))
+    free = set(range(len(frags)))
+    out = [None] * len(frags)
+    for ci in order:
+        cell = cells[ci]
+        best = None
+        for fi in free:
+            fs = frags[fi]["s"]
+            for perm in PERMS:
+                cost = sum(abs(math.log(cell["s"][i] / fs[perm[i]])) for i in range(3))
+                if best is None or cost < best[0]:
+                    best = (cost, fi, perm)
+        _, fi, perm = best
+        free.discard(fi)
+        fs = frags[fi]["s"]
+        scale = [0, 0, 0]
+        for i in range(3):
+            scale[perm[i]] = cell["s"][i] / fs[perm[i]]
+        q = Matrix.Rotation(math.radians(cell["yaw"]), 3, "Z").to_quaternion() @ perm_quat(perm)
+        out[fi] = {"p": [round(v, 4) for v in cell["p"]], "k": [round(v, 4) for v in scale],
+                   "r": [round(q.x, 5), round(q.y, 5), round(q.z, 5), round(q.w, 5)], "c": cell["c"]}
+    return out
+
+
+def formations(frags):
+    """Every target as per-fragment records. The house target is the fragments themselves (scale 1)."""
+    data = {"n": len(frags),
+            "frags": [{"name": f["name"], "s": f["s"], "b": f["b"], "role": f["role"], "v": f["v"]} for f in frags],
+            "targets": {"house": [{"p": f["p"], "k": [1, 1, 1], "r": f["r"], "c": f["c"]} for f in frags]}}
+    ox, oy, oz = FORM_OFFSET
+    for k in ORDER[1:]:
+        cells = layout(SHAPES[k](), len(frags))
+        for c in cells:
+            c["p"] = [c["p"][0] + ox, c["p"][1] + oy, c["p"][2] + oz]
+        data["targets"][k] = assign(frags, cells)
+    return data
+
+
+# ---------------------------------------------------------------- blender
 def reset():
     bpy.ops.wm.read_factory_settings(use_empty=True)
 
 
-def mat(name, rgba, metallic=0.85, rough=0.28):
+def make_material(name, rgba, metallic, rough, light=0.0, rough_off=0.0):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
     b = m.node_tree.nodes["Principled BSDF"]
-    b.inputs["Base Color"].default_value = rgba
+    r, g, bb, a = rgba
+    f = 1 + light * 2.2
+    b.inputs["Base Color"].default_value = (r * f, g * f, bb * f, a)
     b.inputs["Metallic"].default_value = metallic
-    b.inputs["Roughness"].default_value = rough
+    b.inputs["Roughness"].default_value = max(0.06, rough + rough_off)
+    if metallic > 0.3:
+        b.inputs["Coat Weight"].default_value = 0.35 if metallic < 0.6 else 0.18
+        b.inputs["Coat Roughness"].default_value = 0.12
     return m
 
 
-def bevel(ob, width=0.030, segs=3):
-    m = ob.modifiers.new("bev", "BEVEL")
-    m.width = width
-    m.segments = segs
-    m.limit_method = "ANGLE"
-    m.angle_limit = math.radians(38)
-    m.harden_normals = True
-    for p in ob.data.polygons:
-        p.use_smooth = True
-    return ob
+def build(frags, targets, form):
+    """Each fragment: a cube at its HOUSE size with a real bevel, then posed by the target's transform (position,
+    rotation, scale ratio). That is exactly what the web does, so the renders and the live scene agree."""
+    for i, f in enumerate(frags):
+        t = targets[i]
+        bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, 0))
+        o = bpy.context.object
+        o.name = f["name"]
+        o.scale = f["s"]
+        bpy.ops.object.transform_apply(scale=True)
+        m = o.modifiers.new("bev", "BEVEL")
+        m.width = min(f["b"], min(f["s"]) * 0.42)
+        m.segments = 2
+        m.limit_method = "ANGLE"
+        m.angle_limit = math.radians(38)
+        m.harden_normals = True
+        for p in o.data.polygons:
+            p.use_smooth = True
+        col = t["c"]
+        met, rough = SURF[col]
+        o.data.materials.append(make_material(f"m{i}", COLORS[col], met, rough, f["v"][0], f["v"][1]))
+        o.location = t["p"]
+        o.rotation_mode = "QUATERNION"
+        o.rotation_quaternion = (t["r"][3], t["r"][0], t["r"][1], t["r"][2])
+        o.scale = t["k"]
 
 
-def box(name, loc, scale, material, rot=(0, 0, 0), bw=0.030, segs=3):
-    bpy.ops.mesh.primitive_cube_add(size=1, location=loc, rotation=rot)
-    o = bpy.context.object
-    o.name = name
-    o.scale = scale
-    bpy.ops.object.transform_apply(scale=True)
-    o.data.materials.append(material)
-    bevel(o, bw, segs)
-    return o
+# softboxes for the procedural HDRI: (direction xyz in Blender world, half-width deg, half-height deg, intensity, tint)
+SOFTBOXES = [
+    ((4.6, -5.6, 6.2), 30, 20, 7.0, (1.00, 1.00, 1.00)),    # key, front-right-high, over the door side
+    ((7.0, -3.0, 1.2), 5, 42, 9.0, (0.98, 0.99, 1.00)),     # tall strip right-front: the long travelling highlight
+    ((-5.2, 4.8, 3.8), 5, 34, 6.5, (0.92, 0.95, 1.00)),     # rim strip back-left: the edge catch on ridge and eaves
+    ((0.0, 0.0, 1.0), 48, 7, 3.2, (1.00, 1.00, 1.00)),      # overhead strip: top-edge catch along the ridge
+    ((3.5, -6.5, -0.7), 46, 6, 2.4, (0.96, 0.97, 1.00)),    # low front band: camera-facing faces reflect below the camera
+    ((-5.0, -5.0, 1.6), 24, 16, 1.8, (0.95, 0.96, 1.00)),   # soft fill front-left, dim
+]
 
 
-def prism(name, loc, w, d, h, material, bw=0.030):
-    """A closed triangular prism for the roof, ridge running along X."""
-    import bmesh
-    me = bpy.data.meshes.new(name)
-    ob = bpy.data.objects.new(name, me)
-    bpy.context.collection.objects.link(ob)
-    bm = bmesh.new()
-    hw, hd = w / 2, d / 2
-    pts = [(-hw, -hd, 0), (hw, -hd, 0), (hw, 0, h),
-           (-hw, hd, 0), (hw, hd, 0), (-hw, 0, h)]
-    v = [bm.verts.new(p) for p in pts]
-    bm.faces.new((v[0], v[1], v[2], v[5]))     # front slope
-    bm.faces.new((v[4], v[3], v[5], v[2]))     # back slope
-    bm.faces.new((v[0], v[3], v[4], v[1]))     # underside
-    bm.faces.new((v[0], v[5], v[3]))           # left gable
-    bm.faces.new((v[1], v[4], v[2]))           # right gable
-    bm.normal_update()
-    bm.to_mesh(me)
-    bm.free()
-    ob.location = loc
-    ob.data.materials.append(material)
-    bevel(ob, bw)
-    return ob
-
-
-def build(wall, roof, ink, red):
-    z0 = BASE_H
-    # chamfered plinth the house sits on
-    box("base", (0.09, 0, BASE_H / 2), (W + 0.38, D + 0.20, BASE_H), roof, bw=0.034, segs=2)   # runs out past the door: the threshold
-
-    # three solid walls: front (-Y), back (+Y), left (-X)
-    box("wallF", (0, -D / 2 + T / 2, z0 + H / 2), (W - 2 * T, T, H), wall, bw=0.024)
-    box("wallB", (0, D / 2 - T / 2, z0 + H / 2), (W - 2 * T, T, H), wall, bw=0.024)
-    box("wallL", (-W / 2 + T / 2, 0, z0 + H / 2), (T, D, H), wall, bw=0.024)
-
-    # RIGHT wall carries the door: two piers and a lintel, thicker than the others so the opening has depth
-    pier = (D - DOOR_W) / 2
-    xr = W / 2 - TD / 2
-    for i, yy in enumerate((-(DOOR_W / 2 + pier / 2), DOOR_W / 2 + pier / 2)):
-        box(f"pier{i}", (xr, yy, z0 + H / 2), (TD, pier, H), wall, bw=0.024)
-    box("lintel", (xr, 0, z0 + DOOR_H + (H - DOOR_H) / 2), (TD, DOOR_W, H - DOOR_H), wall, bw=0.024)
-    # dark reveal set back in the opening, and a threshold stone in front of it
-    box("reveal", (W / 2 - TD - 0.03, 0, z0 + DOOR_H / 2), (0.06, DOOR_W - 0.05, DOOR_H), roof, bw=0.012, segs=2)
-
-    # one window on the front wall, and a small one beside the door
-    box("winF", (-0.40, -D / 2 - 0.012, z0 + H * 0.58), (0.50, 0.03, 0.44), ink, bw=0.008, segs=2)
-
-    # pitched roof with a real overhang, and a fascia board along the eaves so the edge catches light
-    roof_h = 0.86
-    prism("roof", (0, 0, z0 + H - 0.02), W + 2 * OVER, D + 2 * OVER, roof_h, roof, bw=0.028)
-    for s in (-1, 1):
-        box(f"fascia{'F' if s < 0 else 'B'}", (0, s * (D / 2 + OVER - 0.03), z0 + H - 0.06),
-            (W + 2 * OVER - 0.02, 0.06, 0.12), wall, bw=0.012, segs=2)
-
-    # one block still inside, seen through the door
-    box("inside", (0.72, -0.02, z0 + 0.26), (0.46, 0.46, 0.52), ink, rot=(0, 0, 0.35), bw=0.028)
-
-    # THE GESTURE: blocks leaving through the door to the right and up, shrinking as they go.
-    # Named lift0..lift3 so the web piece animates exactly these.
-    arc = [
-        (2.42, -0.58, 0.80, 0.50, False),
-        (2.92, -0.78, 1.62, 0.42, True),      # the accent block
-        (3.28, -0.92, 2.44, 0.33, False),
-        (3.52, -1.00, 3.16, 0.25, False),
-    ]
-    for i, (x, y, z, sc, accent) in enumerate(arc):
-        box(f"lift{i}", (x, y, z), (sc, sc * 0.92, sc * 0.88),
-            red if accent else ink,
-            rot=(0.30 - i * 0.14, 0.20 - i * 0.16, -0.40 + i * 0.22), bw=0.026)
+def write_studio(path, wpx=768, hpx=384):
+    """A hand-built HDRI: gradient dome (pale floor, mid horizon, dusk-grey sky) plus soft rectangles for the softboxes."""
+    v, u = np.mgrid[0:hpx, 0:wpx]
+    u = (u + 0.5) / wpx
+    v = (v + 0.5) / hpx
+    el = (v - 0.5) * math.pi
+    az = (u - 0.5) * 2 * math.pi
+    dx, dy, dz = -np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)
+    # dome: floor 0.74 (the silver stage), horizon 0.42, zenith 0.20, a slow gradient so faces show a sweep
+    t = np.clip(dz, -1, 1)
+    sky = np.where(t < 0, 0.42 + (0.74 - 0.42) * np.clip(-t, 0, 1) ** 0.7, 0.42 + (0.20 - 0.42) * np.clip(t, 0, 1) ** 0.8)
+    img = np.stack([sky * 0.96, sky * 0.975, sky * 1.0], -1)
+    for (cd, hw, hh, inten, tint) in SOFTBOXES:
+        c = np.array(cd, float); c /= np.linalg.norm(c)
+        up = np.array([0, 0, 1.0]) if abs(c[2]) < 0.95 else np.array([1.0, 0, 0])
+        t1 = np.cross(up, c); t1 /= np.linalg.norm(t1)
+        t2 = np.cross(c, t1)
+        dot = dx * c[0] + dy * c[1] + dz * c[2]
+        a1 = np.degrees(np.arctan2(dx * t1[0] + dy * t1[1] + dz * t1[2], np.maximum(dot, 1e-3)))
+        a2 = np.degrees(np.arctan2(dx * t2[0] + dy * t2[1] + dz * t2[2], np.maximum(dot, 1e-3)))
+        soft = 0.35
+        m1 = np.clip((hw - np.abs(a1)) / (hw * soft), 0, 1)
+        m2 = np.clip((hh - np.abs(a2)) / (hh * soft), 0, 1)
+        m = (m1 * m1 * (3 - 2 * m1)) * (m2 * m2 * (3 - 2 * m2)) * (dot > 0)
+        # a gentle falloff across the box so the reflection is a gradient, not a flat patch
+        m = m * (1 - 0.35 * np.clip((a2 / max(hh, 1e-3)) * 0.5 + 0.5, 0, 1))
+        for k in range(3):
+            img[..., k] += m * inten * tint[k]
+    im = bpy.data.images.new("studio", wpx, hpx, alpha=False, float_buffer=True)
+    px = np.concatenate([img[::-1].reshape(-1, 3), np.ones((wpx * hpx, 1))], 1).astype(np.float32)   # blender rows go bottom-up
+    im.pixels.foreach_set(px.ravel())
+    im.filepath_raw = path
+    im.file_format = "OPEN_EXR"
+    im.save()
+    return im
 
 
 def stage(hero=False):
@@ -148,7 +415,7 @@ def stage(hero=False):
         bpy.ops.mesh.primitive_plane_add(size=90, location=(0, 0, 0))
         gp = bpy.context.object
         gp.name = "ground"
-        gp.data.materials.append(mat("bg", (0.905, 0.915, 0.935, 1), 0.0, 0.5))
+        gp.data.materials.append(make_material("bg", (0.905, 0.915, 0.935, 1), 0.0, 0.5))
 
     def lamp(name, loc, energy, size):
         d = bpy.data.lights.new(name, "AREA")
@@ -163,17 +430,21 @@ def stage(hero=False):
     tgt = bpy.data.objects.new("tgt", None)
     bpy.context.collection.objects.link(tgt)
     tgt.location = (1.05, -0.40, 1.50)
-    # key front-right-high (the door side), rim back-left so the roof ridge and eaves get an edge, soft fill front-left
-    for l in (lamp("key", (4.6, -5.6, 6.2), 1500, 7),
-              lamp("rim", (-5.2, 4.8, 3.8), 2600, 4.5),
-              lamp("fill", (-4.8, -5.4, 2.2), 380, 11)):
+    # the lamps carry the diffuse; the HDRI carries the reflections
+    for l in (lamp("key", (4.6, -5.6, 6.2), 1100, 6),
+              lamp("rim", (-5.2, 4.8, 3.8), 2000, 4),
+              lamp("fill", (-4.8, -5.4, 2.2), 260, 10)):
         l.constraints[0].target = tgt
 
     w = bpy.context.scene.world or bpy.data.worlds.new("W")
     bpy.context.scene.world = w
     w.use_nodes = True
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0.80, 0.83, 0.88, 1)
-    w.node_tree.nodes["Background"].inputs[1].default_value = 0.55
+    nt = w.node_tree
+    env = nt.nodes.new("ShaderNodeTexEnvironment")
+    env.image = write_studio(os.path.join(OUT, "studio.exr"))
+    bg = nt.nodes["Background"]
+    nt.links.new(env.outputs["Color"], bg.inputs["Color"])
+    bg.inputs[1].default_value = 0.85
 
     bpy.ops.object.camera_add(location=(9.8, -11.6, 4.7))
     cam = bpy.context.object
@@ -186,37 +457,48 @@ def stage(hero=False):
     s.render.engine = "BLENDER_EEVEE"
     s.render.resolution_x = 1500 if hero else 1200
     s.render.resolution_y = 1150 if hero else 900
+    if FAST:
+        s.render.resolution_percentage = 66
     s.render.film_transparent = hero
     try:
         s.eevee.use_raytracing = True
-        s.eevee.taa_render_samples = 128 if hero else 64
+        s.eevee.ray_tracing_options.resolution_scale = "1"
+        s.eevee.taa_render_samples = 24 if FAST else (128 if hero else 64)
     except Exception:
         pass
     s.view_settings.look = "AgX - Medium High Contrast"
     s.view_settings.exposure = 0.10
 
 
-reset()
-wall = mat("wall", WALL, metallic=0.04, rough=0.66)   # matte: the house
-roof = mat("roof", ROOF, metallic=0.08, rough=0.58)
-ink = mat("ink", INK, metallic=0.80, rough=0.36)      # metallic: the blocks
-red = mat("red", RED, metallic=0.35, rough=0.38)
-build(wall, roof, ink, red)
-stage(hero=WANT_HERO)
-
+# ---------------------------------------------------------------- run
 os.makedirs(OUT, exist_ok=True)
-bpy.context.scene.render.filepath = os.path.join(OUT, "house-hero.png" if WANT_HERO else "house.png")
-bpy.ops.render.render(write_still=True)
+FR = house_fragments()
+DATA = formations(FR)
+if WANT_JSON:
+    with open(os.path.join(OUT, "shapes.json"), "w") as fh:
+        json.dump(DATA, fh, separators=(",", ":"))
+    print("wrote shapes.json n=%d targets=%s" % (DATA["n"], list(DATA["targets"])))
 
-if WANT_GLB:
-    bpy.ops.object.select_all(action="SELECT")
-    for n in ("ground", "key", "rim", "fill", "tgt", "Camera"):
-        if n in bpy.data.objects:
-            bpy.data.objects[n].select_set(False)
-    bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, "house.glb"),
-                              export_format="GLB", use_selection=True,
-                              export_draco_mesh_compression_enable=True, export_apply=True)
-    tris = sum(len(p.vertices) - 2 for o in bpy.data.objects if o.type == "MESH" and o.name != "ground"
-               for p in o.evaluated_get(bpy.context.evaluated_depsgraph_get()).data.polygons)
-    print("TRIS", tris)
+forms = ORDER if FORM == "all" else [FORM]
+for form in forms:
+    reset()
+    build(FR, DATA["targets"][form], form)
+    stage(hero=WANT_HERO)
+    tag = "house" if form == "house" else form
+    bpy.context.scene.render.filepath = os.path.join(OUT, f"{tag}-hero.png" if WANT_HERO else f"{tag}.png")
+    if not NORENDER:
+        bpy.ops.render.render(write_still=True)
+    print("RENDERED", form)
+    if WANT_GLB and form == "house":
+        bpy.ops.object.select_all(action="SELECT")
+        for n in ("ground", "key", "rim", "fill", "tgt", "Camera"):
+            if n in bpy.data.objects:
+                bpy.data.objects[n].select_set(False)
+        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, "house.glb"),
+                                  export_format="GLB", use_selection=True,
+                                  export_draco_mesh_compression_enable=True, export_apply=True,
+                                  export_draco_position_quantization=QUANT, export_draco_normal_quantization=8)
+        tris = sum(len(p.vertices) - 2 for o in bpy.data.objects if o.type == "MESH" and o.name != "ground"
+                   for p in o.evaluated_get(bpy.context.evaluated_depsgraph_get()).data.polygons)
+        print("TRIS", tris, "FRAGS", len(FR))
 print("DONE house")

@@ -2,19 +2,23 @@
    Camera, lens and target are the Blender ones from brand/house.py, converted to glTF axes (Blender Y -> -Z,
    Blender Z -> Y), so the first live frame sits exactly where the poster sat.
 
-   v2 (2026-09-22): rebuilt for the closed house with the door on the right face.
-   - blocks are MeshPhysicalMaterial with a light clearcoat, so the edges catch a real highlight
-   - a soft contact shadow under the plinth, the same one poster.py bakes into the poster
-   - a deliberate cycle: each block dwells in the doorway, then lifts with ease-out and fades near the top
-   - an idle sway of the whole object, the pointer leans it and pulls the blocks a little, and both settle back
-   - a click on the hero is a "clear-out" beat: the stream runs fast for a moment, then returns to its pace */
+   v3 (2026-09-22): ONE SET OF FRAGMENTS that travels between formations, driven by scroll.
+   - assets/house.glb holds the 66 fragments in their house pose (real bevelled geometry, named frag0.., lift0..3).
+   - assets/house-shapes.json (written by brand/house.py) holds every fragment's position, rotation, scale ratio and
+     colour for each formation: house, couch, fridge, map, message, truck. Nothing is added or removed between
+     forms, they only move, so it reads as one object transforming.
+   - PROGRAM: each homepage section names the formation it resolves to. Scroll position is turned into one
+     continuous value per fragment (a stagger over the transition), so it scrubs both ways and settles when the
+     reader stops. In the hero the house sits in the page; as the hero scrolls away the canvas docks to the bottom
+     right corner as a small companion (pointer-events none, never over the text column) and re-forms per section.
+   - the studio environment is the same hand-built HDRI as the Blender one (gradient dome + softboxes), so metal
+     faces carry the same gradient live as in the poster.
+   - prefers-reduced-motion never reaches this file: house.js keeps the poster. */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-const LIFTS = ['lift0', 'lift1', 'lift2', 'lift3'];
-const CYCLE = 24;             // seconds for one block to travel the whole arc: a new one clears the door every 6s
+const CYCLE = 24;             // seconds for one block to travel the whole arc in the house state
 const POINTER_YAW = 0.16;     // radians of lean toward the pointer, either way
 const POINTER_PITCH = 0.06;
 const SWAY = 0.035;           // idle yaw sway, radians
@@ -25,7 +29,79 @@ const CAM_POS = new THREE.Vector3(9.8, 4.7, 11.6);
 const CAM_TGT = new THREE.Vector3(1.05, 1.50, 0.40);
 const HFOV = 2 * Math.atan(18 / 105);
 // poster.py prints this: the alpha crop of the full frame, padded to the page's 1400:1309 box
-const CROP = { x: 21, y: -145, w: 1376, h: 1287 };
+const CROP = { x: -7, y: -172, w: 1403, h: 1312 };
+
+// brand/house.py COLORS (linear) and SURF (metalness, roughness), kept in step by hand
+const COLORS = [[0.062, 0.074, 0.094], [0.030, 0.037, 0.050], [0.014, 0.020, 0.036], [0.36, 0.024, 0.030]];
+const SURF = [[0.78, 0.34], [0.80, 0.36], [0.85, 0.28], [0.40, 0.30]];
+// brand/house.py SOFTBOXES: (blender direction, half-width deg, half-height deg, intensity, tint)
+const SOFTBOXES = [
+  [[4.6, -5.6, 6.2], 30, 20, 7.0, [1, 1, 1]],
+  [[7.0, -3.0, 1.2], 5, 42, 9.0, [0.98, 0.99, 1]],
+  [[-5.2, 4.8, 3.8], 5, 34, 6.5, [0.92, 0.95, 1]],
+  [[0, 0, 1], 48, 7, 3.2, [1, 1, 1]],
+  [[3.5, -6.5, -0.7], 46, 6, 2.4, [0.96, 0.97, 1]],
+  [[-5, -5, 1.6], 24, 16, 1.8, [0.95, 0.96, 1]],
+];
+
+// the homepage program: which formation each section resolves to. A section not listed keeps the previous form.
+// Companion mode docks the canvas bottom-right once the hero has scrolled away (set to false to keep it in the hero only).
+const PROGRAM = [
+  { sel: '#how', form: 'message' },
+  { sel: '#services', form: 'couch' },
+  { sel: '#areas', form: 'map' },
+  { sel: '#proof', form: 'truck' },
+  { sel: '#faq', form: 'house' },
+  { sel: '#contact', form: 'message' },
+];
+const COMPANION = { size: 240, right: 32, bottom: 28 };
+
+const b2t = (v) => new THREE.Vector3(v[0], v[2], -v[1]);                       // blender -> three axes
+const q2t = (q) => new THREE.Quaternion(q[0], q[2], -q[1], q[3]);              // same, for quaternions (x,y,z,w)
+const s2t = (s) => new THREE.Vector3(s[0], s[2], s[1]);                        // scale ratios: axes swap only
+const smooth = (a, b, x) => { const t = THREE.MathUtils.clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const hash = (i, k) => { let h = (i * 374761393 + k * 668265263) | 0; h = ((h ^ (h >>> 13)) * 1274126177) | 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+
+function studioTexture() {
+  // the same procedural HDRI as brand/house.py write_studio(): three.js equirect, +Y up
+  const W = 512, H = 256, data = new Float32Array(W * H * 4);
+  const boxes = SOFTBOXES.map(([d, hw, hh, i, tint]) => {
+    const c = b2t(d).normalize();
+    const up = Math.abs(c.y) < 0.95 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+    const t1 = new THREE.Vector3().crossVectors(up, c).normalize();
+    const t2 = new THREE.Vector3().crossVectors(c, t1);
+    return { c, t1, t2, hw, hh, i, tint };
+  });
+  const dir = new THREE.Vector3();
+  for (let y = 0; y < H; y++) {
+    const el = ((y + 0.5) / H - 0.5) * Math.PI;                 // row 0 = straight down
+    for (let x = 0; x < W; x++) {
+      const az = ((x + 0.5) / W - 0.5) * 2 * Math.PI;           // three: u = atan2(z, x) / 2pi + 0.5
+      dir.set(Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az));
+      const t = dir.y;
+      const sky = t < 0 ? 0.42 + (0.74 - 0.42) * Math.pow(-t, 0.7) : 0.42 + (0.20 - 0.42) * Math.pow(t, 0.8);
+      let r = sky * 0.96, g = sky * 0.975, b = sky;
+      for (const bx of boxes) {
+        const dot = dir.dot(bx.c);
+        if (dot <= 0) continue;
+        const a1 = THREE.MathUtils.radToDeg(Math.atan2(dir.dot(bx.t1), Math.max(dot, 1e-3)));
+        const a2 = THREE.MathUtils.radToDeg(Math.atan2(dir.dot(bx.t2), Math.max(dot, 1e-3)));
+        const m1 = THREE.MathUtils.clamp((bx.hw - Math.abs(a1)) / (bx.hw * 0.35), 0, 1);
+        const m2 = THREE.MathUtils.clamp((bx.hh - Math.abs(a2)) / (bx.hh * 0.35), 0, 1);
+        let m = (m1 * m1 * (3 - 2 * m1)) * (m2 * m2 * (3 - 2 * m2));
+        m *= 1 - 0.35 * THREE.MathUtils.clamp((a2 / Math.max(bx.hh, 1e-3)) * 0.5 + 0.5, 0, 1);
+        r += m * bx.i * bx.tint[0]; g += m * bx.i * bx.tint[1]; b += m * bx.i * bx.tint[2];
+      }
+      const o = (y * W + x) * 4;
+      data[o] = r; data[o + 1] = g; data[o + 2] = b; data[o + 3] = 1;
+    }
+  }
+  const tex = new THREE.DataTexture(data, W, H, THREE.RGBAFormat, THREE.FloatType);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.colorSpace = THREE.LinearSRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
 
 function shadowTexture() {
   const c = document.createElement('canvas'); c.width = c.height = 256;
@@ -39,18 +115,21 @@ function shadowTexture() {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 
-export async function init(piece) {
+export async function init(piece, opts = {}) {
+  const program = opts.program || PROGRAM;
+  const companion = opts.companion === undefined ? COMPANION : opts.companion;
+
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
-  renderer.toneMappingExposure = 1.35;
+  renderer.toneMappingExposure = 1.3;
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.9;
+  scene.environment = pmrem.fromEquirectangular(studioTexture()).texture;
+  scene.environmentIntensity = 2.0;
   pmrem.dispose();
 
   const VFOV = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(HFOV / 2) * 1150 / 1500));
@@ -59,25 +138,28 @@ export async function init(piece) {
   camera.lookAt(CAM_TGT);
   camera.setViewOffset(1500, 1150, CROP.x, CROP.y, CROP.w, CROP.h);
 
-  // the Blender lamps, same places: key front-right-high (door side), rim back-left, soft fill front-left
-  const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(4.6, 6.2, 5.6); key.target.position.copy(CAM_TGT); scene.add(key, key.target);
-  const rim = new THREE.DirectionalLight(0xffffff, 2.2); rim.position.set(-5.2, 3.8, -4.8); rim.target.position.copy(CAM_TGT); scene.add(rim, rim.target);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.55); fill.position.set(-4.8, 2.2, 5.4); fill.target.position.copy(CAM_TGT); scene.add(fill, fill.target);
+  // the Blender area lamps, same places: they carry the diffuse, the studio carries the reflections
+  const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(4.6, 6.2, 5.6); key.target.position.copy(CAM_TGT); scene.add(key, key.target);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.6); rim.position.set(-5.2, 3.8, -4.8); rim.target.position.copy(CAM_TGT); scene.add(rim, rim.target);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.4); fill.position.set(-4.8, 2.2, 5.4); fill.target.position.copy(CAM_TGT); scene.add(fill, fill.target);
 
   const draco = new DRACOLoader();
   draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/');
   const loader = new GLTFLoader();
   loader.setDRACOLoader(draco);
-  const gltf = await loader.loadAsync('assets/house.glb?v=4');
+  const [gltf, shapes] = await Promise.all([
+    loader.loadAsync('assets/house.glb?v=5'),
+    fetch('assets/house-shapes.json?v=5').then((r) => r.json()),
+  ]);
   const house = gltf.scene;
   const rig = new THREE.Group();          // the pivot the pointer lean and sway act on
-  rig.position.set(0.9, 0.9, 0);          // roughly the object's visual centre, so a lean turns it rather than swinging it
+  rig.position.set(0.9, 0.9, 0);
   house.position.set(-0.9, -0.9, 0);
   rig.add(house);
   scene.add(rig);
   house.updateMatrixWorld(true);
 
-  // contact shadow under the plinth, drawn before everything so the base sits on it
+  // contact shadow under the plinth, drawn before everything so the base sits on it; fades as the house comes apart
   const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
     new THREE.MeshBasicMaterial({ map: shadowTexture(), transparent: true, depthWrite: false, toneMapped: false }));
   shadow.rotation.x = -Math.PI / 2;
@@ -86,75 +168,116 @@ export async function init(piece) {
   shadow.renderOrder = -1;
   house.add(shadow);
 
-  // ---- materials: the shell stays matte, the blocks get a light clearcoat so their edges pick up the key ----
-  house.traverse((m) => {
-    if (!m.isMesh) return;
-    const src = m.material;
-    if (/^(lift|inside)/.test(m.name)) {
-      const p = new THREE.MeshPhysicalMaterial({ color: src.color, metalness: src.metalness, roughness: src.roughness, clearcoat: 0.55, clearcoatRoughness: 0.28 });
-      m.material = p;
-    } else {
-      src.envMapIntensity = 0.55;   // the walls take a little of the room, not a mirror of it
+  // ---- fragments: one mesh each, its own material, targets from shapes.json ----
+  const FORMS = Object.keys(shapes.targets);
+  const N = shapes.n;
+  const frags = [];
+  const colorOf = (c) => new THREE.Color().setRGB(COLORS[c][0], COLORS[c][1], COLORS[c][2], THREE.LinearSRGBColorSpace);
+  for (let i = 0; i < N; i++) {
+    const f = shapes.frags[i];
+    const m = house.getObjectByName(f.name);
+    if (!m || !m.isMesh) { console.warn('house: missing fragment', f.name); continue; }
+    const c0 = shapes.targets.house[i].c;
+    m.material = new THREE.MeshPhysicalMaterial({
+      color: colorOf(c0).multiplyScalar(1 + f.v[0] * 2.2), metalness: SURF[c0][0], roughness: Math.max(0.06, SURF[c0][1] + f.v[1]),
+      clearcoat: SURF[c0][0] < 0.6 ? 0.35 : 0.18, clearcoatRoughness: 0.12, transparent: true,
+    });
+    m.material.envMapIntensity = c0 === 3 ? 0.45 : 1;   // the lacquer red takes less of the studio, or it runs pink
+    const targets = {};
+    for (const k of FORMS) {
+      const t = shapes.targets[k][i];
+      targets[k] = { p: b2t(t.p), r: q2t(t.r), k: s2t(t.k), c: t.c, col: colorOf(t.c).multiplyScalar(1 + f.v[0] * 2.2) };
     }
-  });
-
-  // ---- the four travelling blocks ----
-  const lifts = [];
-  const box = new THREE.Box3();
-  const size = new THREE.Vector3();
-  for (const name of LIFTS) {
-    const m = house.getObjectByName(name);
-    if (!m || !m.isMesh) continue;
-    m.updateMatrixWorld(true);
-    box.setFromObject(m);
-    const homeW = box.getCenter(new THREE.Vector3());
-    const home = house.worldToLocal(homeW.clone());
-    box.getSize(size);
-    // the exporter may have baked the offset into the geometry: put the pivot at the block's centre either way
-    const local = m.worldToLocal(homeW.clone());
-    if (local.length() > 1e-4) { m.geometry.translate(-local.x, -local.y, -local.z); m.position.add(local.applyQuaternion(m.quaternion).multiply(m.scale)); }
-    m.material = m.material.clone();
-    m.material.transparent = true;
-    lifts.push({ mesh: m, home, quat: m.quaternion.clone(), baseScale: m.scale.clone(), extent: Math.max(size.x, size.y, size.z), pull: new THREE.Vector3() });
+    // stagger: blocks go first, then the roof, walls, gables, and the base last; a hash spreads each group
+    const order = { lift: 0.0, inside: 0.12, roof: 0.2, wall: 0.45, gable: 0.55, base: 0.75 }[f.role] ?? 0.5;
+    const d = THREE.MathUtils.clamp(order + hash(i, 1) * 0.22, 0, 0.95);
+    const fly = new THREE.Vector3(hash(i, 2) - 0.5, 0.35 + hash(i, 3) * 0.5, hash(i, 4) - 0.5).normalize().multiplyScalar(0.5 + hash(i, 5) * 0.7);
+    const spin = new THREE.Vector3(hash(i, 6) - 0.5, hash(i, 7) - 0.5, hash(i, 8) - 0.5).normalize();
+    frags.push({ mesh: m, role: f.role, name: f.name, targets, d, fly, spin, spinAmt: (0.6 + hash(i, 9)) * (f.role === 'lift' ? 0.6 : 1), pull: new THREE.Vector3() });
   }
-  lifts.sort((a, b) => LIFTS.indexOf(a.mesh.name) - LIFTS.indexOf(b.mesh.name));
 
+  // ---- the four travelling blocks: same arc as before, animated only in the house state ----
+  const lifts = ['lift0', 'lift1', 'lift2', 'lift3'].map((n) => frags.find((f) => f.name === n)).filter(Boolean);
   let path = null, homeU = [], sizeAt = () => 1;
   if (lifts.length === 4) {
-    // house.py: inside block (0.72,-0.02,0.37) and the doorway on the right face at x = W/2 (glTF: y up, z = -Blender y)
     const inside = new THREE.Vector3(0.72, 0.40, 0.02);
     const door = new THREE.Vector3(1.32, 0.62, 0.02);
-    const l = lifts.map((o) => o.home);
+    const l = lifts.map((o) => o.targets.house.p);
     const end = l[3].clone().add(l[3].clone().sub(l[2]).multiplyScalar(1.3));
     const pts = [inside, door, l[0], l[1], l[2], l[3], end];
     path = new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.5);
     const n = pts.length - 1;
     homeU = [2 / n, 3 / n, 4 / n, 5 / n];
-    const e0 = lifts[0].extent, e3 = lifts[3].extent;
+    const ext = (o) => { const s = shapes.frags[frags.indexOf(o)].s; return Math.max(s[0], s[1], s[2]); };
+    const e0 = ext(lifts[0]), e3 = ext(lifts[3]);
+    lifts.forEach((o) => { o.extent = ext(o); });
     sizeAt = (u) => THREE.MathUtils.clamp(e0 + (u - homeU[0]) * (e3 - e0) / (homeU[3] - homeU[0]), e3 * 0.55, e0 * 1.2);
   }
-  // time -> path parameter with a dwell in the doorway (u about 0.12 to 0.2) and ease-out on the lift.
-  // A block is "inside" for the first 12 percent, waits, then goes. Monotonic, so the order never changes.
   const warp = (u) => {
-    if (u < 0.10) return u * 0.6;                                 // still inside, barely moving
-    if (u < 0.22) return 0.06 + (u - 0.10) * 0.5;                  // creeping into the doorway
-    const v = (u - 0.22) / 0.78;                                   // the lift: ease-out so it leaves quick and drifts
+    if (u < 0.10) return u * 0.6;
+    if (u < 0.22) return 0.06 + (u - 0.10) * 0.5;
+    const v = (u - 0.22) / 0.78;
     return 0.12 + 0.88 * (1 - Math.pow(1 - v, 1.6));
   };
 
   // ---- canvas in the piece, sized to the poster's aspect ----
   const canvas = renderer.domElement;
   piece.appendChild(canvas);
+  let docked = 0;   // 0 = in the hero, 1 = companion in the corner
   function resize() {
     const w = piece.clientWidth, h = piece.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
+    if (docked) applyDock(docked, true);
   }
   resize();
   addEventListener('resize', resize);
 
+  // docking: the canvas leaves the hero box and settles bottom-right as a small companion, scrubbed by scroll
+  let pr = null;
+  function applyDock(k, force) {
+    if (!companion) return;
+    const r = piece.getBoundingClientRect();
+    if (k <= 0.001) {
+      if (docked > 0.001 || force) { canvas.style.cssText = ''; }
+      docked = 0; return;
+    }
+    const s = companion.size, ar = r.width / r.height;
+    const w1 = s, h1 = s / ar;
+    const x0 = r.left, y0 = r.top, x1 = innerWidth - companion.right - w1, y1 = innerHeight - companion.bottom - h1;
+    const e = k * k * (3 - 2 * k);
+    const w = r.width + (w1 - r.width) * e, h = r.height + (h1 - r.height) * e;
+    const x = x0 + (x1 - x0) * e, y = y0 + (y1 - y0) * e;
+    canvas.style.cssText = `position:fixed;inset:auto;left:${x}px;top:${y}px;width:${w}px !important;height:${h}px !important;z-index:2;pointer-events:none;opacity:1`;
+    if (Math.abs(w - pr) > 1) { renderer.setSize(Math.round(w), Math.round(h), false); pr = w; }
+    docked = k;
+  }
+
+  // ---- the program: scroll -> which two formations, and how far between them ----
+  const stops = program.map((s) => ({ el: document.querySelector(s.sel), form: s.form })).filter((s) => s.el && shapes.targets[s.form]);
+  let fromForm = 'house', toForm = 'house', mix = 0, dockWant = 0, heroGone = 0;
+  function readScroll() {
+    const r = piece.getBoundingClientRect();
+    // the hero leaving: the piece's bottom crossing up through the viewport. 0 in place, 1 fully gone.
+    heroGone = smooth(innerHeight * 0.55, -r.height * 0.2, r.bottom);
+    dockWant = companion ? heroGone : 0;
+    // formation: walk the stops; a stop takes over as its top rises from 85% to 35% of the viewport
+    let a = 'house', b = 'house', m = 0;
+    for (const s of stops) {
+      const t = s.el.getBoundingClientRect().top;
+      const k = smooth(innerHeight * 0.85, innerHeight * 0.35, t);
+      if (k <= 0) break;
+      a = b; b = s.form; m = k;
+      if (k < 1) break;
+    }
+    if (m >= 1) { a = b; m = 0; }
+    fromForm = a; toForm = b; mix = m;
+  }
+  addEventListener('scroll', readScroll, { passive: true });
+  readScroll();
+
   // ---- pointer: lean over the whole window, pull only while the hand is over the hero ----
-  let px = 0, py = 0, yaw = 0, pitch = 0, over = 0, overT = 0, wantOver = 0;
+  let px = 0, py = 0, yaw = 0, pitch = 0, over = 0, wantOver = 0;
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hit = new THREE.Vector3(), hitL = new THREE.Vector3();
   let hitOk = false;
   addEventListener('pointermove', (e) => {
@@ -166,66 +289,97 @@ export async function init(piece) {
     if (inside) {
       ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
-      // the blocks travel roughly in the plane z = -0.7 (Blender y 0.7 toward the camera): intersect that
       plane.constant = 0.7;
       hitOk = !!ray.ray.intersectPlane(plane, hit);
       if (hitOk) house.worldToLocal(hitL.copy(hit));
     }
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => { px = 0; py = 0; wantOver = 0; });
-  // a click on the hero: a clear-out beat, the stream runs fast for a moment then settles to its pace
   let beat = 0;
   piece.addEventListener('pointerdown', () => { beat = 1; }, { passive: true });
 
-  // ---- run only while on screen and the tab is visible ----
+  // ---- run only while something of it is on screen and the tab is visible ----
   let visible = true, hidden = document.hidden, raf = 0, last = performance.now(), t = 0, shown = false;
-  new IntersectionObserver((es) => { visible = es[0].isIntersecting; kick(); }, { threshold: 0.05 }).observe(piece);
+  new IntersectionObserver((es) => { visible = es[0].isIntersecting || dockWant > 0; kick(); }, { threshold: 0.02 }).observe(piece);
   document.addEventListener('visibilitychange', () => { hidden = document.hidden; kick(); });
-  function kick() { if (visible && !hidden && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+  addEventListener('scroll', kick, { passive: true });
+  function kick() { if (!hidden && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
 
-  const q = new THREE.Quaternion(), axis = new THREE.Vector3(), toP = new THREE.Vector3(), tmp = new THREE.Vector3();
+  const q = new THREE.Quaternion(), qa = new THREE.Quaternion(), qb = new THREE.Quaternion(), axis = new THREE.Vector3(), toP = new THREE.Vector3();
+  const pa = new THREE.Vector3(), pb = new THREE.Vector3(), sa = new THREE.Vector3(), sb = new THREE.Vector3(), ca = new THREE.Color();
+  let mixS = 0, dockS = 0, showFrom = 'house', showTo = 'house';
+  const K = 0.5;   // each fragment's own transition takes this share of the whole, staggered by d
+
   function frame(now) {
     raf = 0;
-    if (!visible || hidden) return;
+    if (hidden) return;
+    if (!visible && dockS < 0.001 && mixS < 0.001) return;
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     beat = THREE.MathUtils.damp(beat, 0, 1.1, dt);
     t += dt * (1 + beat * 5);
     over = THREE.MathUtils.damp(over, wantOver, 3, dt);
-    overT += dt;
 
-    // orientation: idle sway + pointer lean, both damped so the object settles rather than stops
+    // settle toward the scroll targets rather than snapping, so the object responds and then comes to rest
+    if (showTo !== toForm || showFrom !== fromForm) {
+      // the pair changed: continue from where the fragments are by re-basing the mix
+      if (showTo === fromForm) { showFrom = showTo; showTo = toForm; mixS = 0; }
+      else { showFrom = fromForm; showTo = toForm; mixS = Math.min(mixS, mix); }
+    }
+    mixS = THREE.MathUtils.damp(mixS, mix, 6, dt);
+    dockS = THREE.MathUtils.damp(dockS, dockWant, 5, dt);
+    applyDock(dockS);
+
+    // orientation: idle sway + pointer lean; the companion turns a little more so the form shows its face
     const sway = Math.sin(t * (2 * Math.PI / 11)) * SWAY;
-    yaw = THREE.MathUtils.damp(yaw, px * POINTER_YAW + sway, 3.2, dt);
-    pitch = THREE.MathUtils.damp(pitch, py * POINTER_PITCH + Math.sin(t * (2 * Math.PI / 13)) * 0.008, 3.2, dt);
+    yaw = THREE.MathUtils.damp(yaw, px * POINTER_YAW * (1 - dockS) + sway, 3.2, dt);
+    pitch = THREE.MathUtils.damp(pitch, py * POINTER_PITCH * (1 - dockS) + Math.sin(t * (2 * Math.PI / 13)) * 0.008, 3.2, dt);
     rig.rotation.set(pitch, yaw, 0);
 
-    if (path) {
-      for (let i = 0; i < 4; i++) {
-        const o = lifts[i];
+    const inHouse = (showFrom === 'house' ? 1 - mixS : 0) + (showTo === 'house' ? mixS : 0);
+    shadow.material.opacity = inHouse;
+    shadow.visible = inHouse > 0.01;
+
+    for (const o of frags) {
+      const A = o.targets[showFrom], B = o.targets[showTo];
+      pa.copy(A.p); qa.copy(A.r); sa.copy(A.k);
+      pb.copy(B.p); qb.copy(B.r); sb.copy(B.k);
+      let opA = 1, opB = 1;
+      // in the house state the four blocks ride their arc
+      if (path && o.extent) {
+        const i = lifts.indexOf(o);
         const u = warp((homeU[i] + t / CYCLE) % 1);
-        path.getPointAt(u, o.mesh.position);
-        // pointer pull: only once the block is out of the door, stronger for the nearer blocks, settles back when the hand goes
+        const s = sizeAt(u) / o.extent;
+        const op = smooth(0.09, 0.20, u) * (1 - smooth(0.84, 0.94, u));
+        axis.set(0.6 + i * 0.1, 1, 0.3 - i * 0.15).normalize();
+        q.setFromAxisAngle(axis, t * (0.16 + i * 0.03));
+        if (showFrom === 'house') { path.getPointAt(u, pa); sa.setScalar(s); qa.multiply(q); opA = op; }
+        if (showTo === 'house') { path.getPointAt(u, pb); sb.setScalar(s); qb.multiply(q); opB = op; }
+        // pointer pull, only in the house at rest
         let want = 0;
-        if (hitOk && over > 0.01 && u > 0.26 && u < 0.85) {
-          toP.copy(hitL).sub(o.mesh.position);
-          const d = toP.length();
-          want = over * PULL * Math.exp(-d * d / 4.5) * (1 - i * 0.12);
+        if (hitOk && over > 0.01 && u > 0.26 && u < 0.85 && inHouse > 0.5) {
+          toP.copy(hitL).sub(pa);
+          const dd = toP.length();
+          want = over * PULL * Math.exp(-dd * dd / 4.5) * (1 - i * 0.12) * inHouse;
           toP.normalize().multiplyScalar(want);
         } else toP.set(0, 0, 0);
         o.pull.x = THREE.MathUtils.damp(o.pull.x, toP.x, 2.4, dt);
         o.pull.y = THREE.MathUtils.damp(o.pull.y, toP.y, 2.4, dt);
         o.pull.z = THREE.MathUtils.damp(o.pull.z, toP.z, 2.4, dt);
-        o.mesh.position.add(o.pull);
-        const s = sizeAt(u) / o.extent;
-        o.mesh.scale.copy(o.baseScale).multiplyScalar(s);
-        // a slow tumble on top of the block's own resting angle, each on its own axis; faster during a beat
-        axis.set(0.6 + i * 0.1, 1, 0.3 - i * 0.15).normalize();
-        q.setFromAxisAngle(axis, t * (0.16 + i * 0.03));
-        o.mesh.quaternion.copy(o.quat).multiply(q);
-        // hidden inside, in through the doorway, out before the top of the crop
-        o.mesh.material.opacity = THREE.MathUtils.smoothstep(u, 0.09, 0.20) * (1 - THREE.MathUtils.smoothstep(u, 0.84, 0.94));
-        o.mesh.visible = o.mesh.material.opacity > 0.01;
+        pa.add(o.pull);
       }
+      // this fragment's own progress through the transition, staggered
+      const lt = showFrom === showTo ? 0 : smooth(0, 1, (mixS - o.d * (1 - K)) / K);
+      const arc = Math.sin(Math.PI * lt);
+      o.mesh.position.lerpVectors(pa, pb, lt).addScaledVector(o.fly, arc);
+      o.mesh.quaternion.slerpQuaternions(qa, qb, lt);
+      if (arc > 0.001) { q.setFromAxisAngle(o.spin, arc * o.spinAmt); o.mesh.quaternion.multiply(q); }
+      o.mesh.scale.lerpVectors(sa, sb, lt);
+      ca.copy(A.col).lerp(B.col, lt);
+      o.mesh.material.color.copy(ca);
+      o.mesh.material.metalness = SURF[A.c][0] + (SURF[B.c][0] - SURF[A.c][0]) * lt;
+      o.mesh.material.envMapIntensity = (A.c === 3 ? 0.45 : 1) + ((B.c === 3 ? 0.45 : 1) - (A.c === 3 ? 0.45 : 1)) * lt;
+      o.mesh.material.opacity = opA + (opB - opA) * lt;
+      o.mesh.visible = o.mesh.material.opacity > 0.01;
     }
 
     renderer.render(scene, camera);
@@ -233,5 +387,5 @@ export async function init(piece) {
     raf = requestAnimationFrame(frame);
   }
   kick();
-  return { renderer, scene, camera, house, rig, lifts };
+  return { renderer, scene, camera, house, rig, frags, forms: FORMS, readScroll };
 }
