@@ -25,10 +25,21 @@ Headlines: Fraunces (warm editorial serif, Light/Medium)
 Body + UI:  Inter
 Both Google Fonts, self-hosted for speed.
 
-## Logo
-Wordmark-led. "Hero's" in Fraunces, with a small open-doorway mark to its left: two verticals
-and a soft arch with the threshold open, in clay. Means "we come through the door and it is
-handled." No figure. No shield. No truck.
+## Logo — SUPERSEDED 2026-09-22 by Jack
+The open-doorway wordmark was REJECTED by Jack on 2026-09-22: "we need a much better logo, make it
+in blender, something with a truck". His live call overrides the 09-21 "no truck" rule below.
+CURRENT DIRECTION: a 3D TRUCK mark built in Blender, dark navy metal with terracotta as the single
+accent, staged as an interactive hero piece on a gradient backdrop, in the manner of the Wing
+Digital site's metallic sculpture (reference running at localhost:4812).
+Deliverables live in heros-v2/brand/. A flat 2D truck-mark.svg carries the header, favicon and the
+reduced-motion poster, so the mark must read at 40px as well as it does in 3D.
+
+SUPERSEDED (kept for the reasoning, which still constrains execution):
+Wordmark-led, "Hero's" in Fraunces with a small open-doorway mark. No figure, no shield, no truck.
+The reason for that original no-truck rule still matters and must be answered by the execution:
+4 of 5 major competitors use green + a truck + bold condensed sans, so a generic truck reads as
+category signage. Ours must not be generic. It is dark navy metal, never green, rendered as a
+designed object with real craft, not clipart on a page.
 
 ## Voice
 Calm, plain, adult. Short sentences. No hype, no coupon language, no exclamation marks.
