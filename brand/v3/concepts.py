@@ -212,4 +212,21 @@ for name in (ORDER if WHICH == "all" else [WHICH]):
     stage(heights[name], dists[name])
     bpy.context.scene.render.filepath = os.path.join(OUT, f"{name}.png")
     bpy.ops.render.render(write_still=True)
+
+    if os.environ.get("HJR_HERO"):
+        # transparent poster + GLB, for the web hero
+        sc = bpy.context.scene
+        sc.render.film_transparent = True
+        sc.render.resolution_x, sc.render.resolution_y = 1500, 1150
+        bpy.data.objects["ground"].hide_render = True
+        sc.render.filepath = os.path.join(OUT, f"{name}-hero.png")
+        bpy.ops.render.render(write_still=True)
+        bpy.ops.object.select_all(action="SELECT")
+        for n_ in ("ground", "key", "rim", "fill", "tgt"):
+            if n_ in bpy.data.objects:
+                bpy.data.objects[n_].select_set(False)
+        bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f"{name}.glb"),
+                                  export_format="GLB", use_selection=True,
+                                  export_draco_mesh_compression_enable=True,
+                                  export_apply=True)
     print("DONE", name)

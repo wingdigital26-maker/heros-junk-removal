@@ -85,7 +85,7 @@ p{margin:0 0 1em}
    Sits in its own column so it never crosses a word of the H1/lede/CTAs; it is only allowed to
    bleed into the gutter between the text column and itself, which is empty space, not copy. */
 .hero-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,1fr);align-items:center;gap:clamp(8px,3vw,40px)}
-.hero-stage{position:relative;width:100%;height:clamp(320px,46vw,560px);z-index:1;
+.hero-stage{position:relative;width:100%;height:clamp(380px,54vw,680px);z-index:1;
   margin-right:clamp(-40px,-4vw,-10px)}
 .stage-shadow{position:absolute;left:14%;right:16%;bottom:6%;height:10%;border-radius:50%;
   background:radial-gradient(ellipse at center,rgba(14,22,33,.30) 0%,rgba(14,22,33,0) 72%);

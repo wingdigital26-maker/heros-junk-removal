@@ -1,7 +1,7 @@
 /* Hero's Junk Removal v2, real 3D hero.
    Poster shows first (never the LCP-blocking canvas). Once the page is idle this loads
    three.js r170 from the importmap (jsdelivr, no build step) and a GLTFLoader for
-   assets/truck.glb, then fades the canvas in over the poster.
+   assets/room.glb, then fades the canvas in over the poster.
    prefers-reduced-motion and narrow viewports (<820px) stay on the poster, honestly: a
    loaded, orbit-controlled render is not worth the payload or the jank on a phone hero. */
 (function(){
@@ -76,7 +76,7 @@
     loader.setDRACOLoader(draco);
 
     var gltf = await new Promise(function(res, rej){
-      loader.load('assets/truck.glb', res, undefined, rej);
+      loader.load('assets/room.glb', res, undefined, rej);
     });
 
     function getW(){ return stage.clientWidth || 1; }
