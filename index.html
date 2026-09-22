@@ -6,7 +6,8 @@
 <title>Junk Removal in Frisco, Plano and McKinney | Hero&#8217;s Junk Removal</title>
 <meta name="description" content="Veteran owned junk removal across Frisco, Plano, McKinney, Prosper, Allen and Little Elm. Text a photo of the pile and get a firm price before we arrive. Same day when we have the room.">
 <link rel="canonical" href="https://herosjunkremoval.com/">
-<link rel="icon" href="assets/logo-mark.svg" type="image/svg+xml">
+<link rel="icon" href="img/truck-icon.webp" type="image/webp">
+<link rel="icon" href="img/truck-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -63,13 +64,13 @@
         <span class="trust-item">Father and son, not a franchise</span>
       </div>
     </div>
-    <div class="hero-stage" aria-hidden="true">
-      <!-- SLOT: 3D truck render. Blender truck (matte navy, clay trim, 3/4 angle) is being
-           built and is not ready yet. Until the GLB/poster ships, the flat doorway mark stands
-           in at large scale so the stage, scale and contact shadow are already correct and the
-           truck can drop straight in without restructuring this section. -->
+    <div class="hero-stage" id="heroStage" aria-hidden="true">
       <div class="stage-shadow"></div>
-      <img src="assets/logo-mark.svg" alt="" class="stage-mark">
+      <picture>
+        <source media="(max-width:820px)" srcset="img/truck-hero-sm.webp" type="image/webp">
+        <source srcset="img/truck-hero.webp" type="image/webp">
+        <img src="img/truck-hero.png" alt="" class="stage-mark" id="heroTruck" width="1400" height="897">
+      </picture>
     </div>
   </div>
 </section>
@@ -276,6 +277,7 @@
 {"@type":"Question","name":"Which areas do you cover?","acceptedAnswer":{"@type":"Answer","text":"Frisco, Plano, McKinney, Prosper, Allen and Little Elm, plus the surrounding North Dallas suburbs."}},
 {"@type":"Question","name":"Do you clean up afterwards?","acceptedAnswer":{"@type":"Answer","text":"Yes. We sweep the space before we leave."}}]}
 </script>
+<script src="assets/hero-truck.js" defer></script>
 <script src="assets/estimator.js" defer></script>
 </body>
 </html>

@@ -62,12 +62,12 @@ p{margin:0 0 1em}
   padding:132px 0 40px;overflow:hidden}
 .hero-bg{position:absolute;inset:0;z-index:0;
   background:
-    radial-gradient(ellipse 62% 50% at 52% 36%, rgba(255,252,246,.92) 0%, rgba(255,252,246,0) 70%),
+    radial-gradient(ellipse 68% 56% at 66% 38%, rgba(255,253,248,.96) 0%, rgba(255,253,248,0) 72%),
     linear-gradient(180deg,#C9B79C 0%,#DCD2BE 28%,#EDE7DE 60%,#F8F5EF 100%)}
 .hero-bg::after{content:"";position:absolute;inset:0;opacity:.05;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .hero-wrap{position:relative;z-index:2}
-.hero-inner{position:relative;z-index:2;max-width:640px}
+.hero-inner{position:relative;z-index:2;max-width:560px}
 .hero h1{color:var(--navy);font-weight:700;
   font-size:clamp(3rem,8.5vw,6.4rem);letter-spacing:-.03em;line-height:.96;margin-bottom:.32em}
 .hero .lede{color:var(--charcoal);max-width:30em;margin-bottom:1.5em;font-size:clamp(1rem,1.6vw,1.12rem)}
@@ -78,22 +78,29 @@ p{margin:0 0 1em}
 .trust-item{display:flex;align-items:center;gap:.5em;color:var(--navy);font-size:.9rem;font-weight:500}
 .stars{color:var(--clay);letter-spacing:1px}
 
-/* the staged object: a defined zone with a contact shadow, sized and placed so the
-   truck GLB can drop in later without restructuring. Overlaps the headline's lower-right
-   on purpose, that overlap is what reads as one composition instead of two stacked blocks. */
-.hero-stage{position:absolute;right:-1%;top:4%;width:clamp(140px,18vw,230px);
-  z-index:1;pointer-events:none}
-.stage-shadow{position:absolute;left:10%;right:10%;bottom:2%;height:18%;border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(28,43,58,.2) 0%,rgba(28,43,58,0) 72%);
-  filter:blur(6px)}
-.stage-mark{width:100%;height:auto;opacity:.85;filter:drop-shadow(0 18px 26px rgba(28,43,58,.14))}
+/* the staged truck: the dominant hero object. Overlaps the headline's lower-right
+   on purpose, that overlap is what reads as one composition instead of two stacked blocks.
+   Idle float + pointer-tilt via CSS custom properties set from assets/hero-truck.js. */
+.hero-stage{--tx:0deg;--ty:0deg;position:absolute;right:-13%;top:2%;width:clamp(280px,34vw,500px);
+  z-index:1;pointer-events:none;animation:truck-float 7s ease-in-out infinite}
+.stage-shadow{position:absolute;left:12%;right:14%;bottom:4%;height:12%;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(28,43,58,.28) 0%,rgba(28,43,58,0) 72%);
+  filter:blur(10px)}
+.stage-mark{width:100%;height:auto;filter:drop-shadow(0 28px 40px rgba(28,43,58,.22));
+  transform:rotateX(var(--tx)) rotateY(var(--ty));transition:transform .1s linear}
+@keyframes truck-float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-14px)}
+}
 @media(min-width:821px){
   .hero-wrap{display:grid;grid-template-columns:1fr}
 }
 @media(max-width:820px){
-  .hero-stage{position:static;width:132px;margin:18px 0 0 auto}
-  .stage-shadow{display:none}
-  .stage-mark{opacity:.85}
+  .hero-stage{position:static;width:min(420px,86vw);margin:8px auto 0;animation-duration:8s}
+  .stage-shadow{left:16%;right:16%;bottom:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-stage{animation:none}
 }
 
 /* the quiet break right after the hero: near-empty, lets the hero land before content starts */
