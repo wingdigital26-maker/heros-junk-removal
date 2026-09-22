@@ -112,9 +112,12 @@
     var pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(envScene, 0.04).texture;
 
-    var key = new THREE.DirectionalLight(0xf4f7ff, 1.6); key.position.set(-5, 7, 9); scene.add(key);
-    var rim = new THREE.DirectionalLight(0xffffff, 2.2); rim.position.set(7, 3, -6); scene.add(rim);
-    var fill = new THREE.AmbientLight(0x9aa8c4, 0.5); scene.add(fill);
+    var key = new THREE.DirectionalLight(0xf4f7ff, 2.0); key.position.set(-5, 7, 9); scene.add(key);
+    var rim = new THREE.DirectionalLight(0xffffff, 2.6); rim.position.set(7, 3, -6); scene.add(rim);
+    var fill = new THREE.AmbientLight(0x9aa8c4, 0.42); scene.add(fill);
+    // a low, cool bounce under the room so the pale walls separate from the silver backdrop
+    // instead of washing into it
+    var bounce = new THREE.DirectionalLight(0xdfe6f2, 0.7); bounce.position.set(-2, -4, 5); scene.add(bounce);
 
     // the model's own "clay" material is the old orange rail/load-strap accent; retint it to the
     // new signal-red so the piece matches the page theme instead of carrying the retired colour
@@ -127,16 +130,29 @@
 
     var group = new THREE.Group();
     group.add(gltf.scene);
-    // frame the truck: centre it and fit it to a consistent visual height regardless of source scale
+    // frame the room: centre it and fit it to a consistent visual height regardless of source scale.
+    // Bigger than the original pass so the piece reads as the dominant object, not a small prop
+    // floating in the gradient.
     var box = new THREE.Box3().setFromObject(gltf.scene);
     var size = new THREE.Vector3(); box.getSize(size);
     var center = new THREE.Vector3(); box.getCenter(center);
     gltf.scene.position.sub(center);
-    var targetH = 3.4;
+    var targetH = 4.35;
     var scale = targetH / (size.y || 1);
     group.scale.setScalar(scale);
     group.rotation.y = THREE.MathUtils.degToRad(-28);
+    // sit the room lower in frame, grounded against the shadow rather than centred and floating
+    group.position.y = -targetH * 0.10;
     scene.add(group);
+
+    // grab the three lifting blocks and the settled one by name so only they animate;
+    // the room shell (floor/wallB/wallL*/lintel) stays put and reads as the building.
+    var liftBlocks = [];
+    gltf.scene.traverse(function(o){
+      if(o.isMesh && /^up\d/.test(o.name)){
+        liftBlocks.push({ mesh: o, baseY: o.position.y, baseX: o.position.x });
+      }
+    });
 
     // soft contact shadow under the truck, staged like the reference
     var shadowTex = (function(){
@@ -146,10 +162,10 @@
       x.fillStyle = g; x.fillRect(0, 0, 256, 256);
       var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
     })();
-    var shadowMat = new THREE.SpriteMaterial({map: shadowTex, transparent: true, opacity: 0.85, depthWrite: false});
+    var shadowMat = new THREE.SpriteMaterial({map: shadowTex, transparent: true, opacity: 0.9, depthWrite: false});
     var shadowSprite = new THREE.Sprite(shadowMat);
-    shadowSprite.scale.set(5.2, 2.05, 1);
-    shadowSprite.position.set(0, -targetH * 0.52, 0);
+    shadowSprite.scale.set(6.4, 2.5, 1);
+    shadowSprite.position.set(0, group.position.y - targetH * 0.54, 0);
     scene.add(shadowSprite);
 
     // idle drift, matching the reference: it performs on its own, reacts to the pointer,
@@ -194,7 +210,19 @@
       var driftY = pointerActive ? 0 : t * 0.12;              // slow rotation when left alone
       group.rotation.y = THREE.MathUtils.degToRad(-28) + driftY * 0.3 + curTiltY;
       group.rotation.x = curTiltX + Math.sin(t * 0.55) * 0.015;
-      group.position.y = Math.sin(t * 0.7) * 0.08;             // gentle float, settles visually with the sprite shadow
+
+      // the idea, not just the object: the three blocks lift out of the room and settle back,
+      // each slightly out of phase so they read as separate pieces leaving one at a time, and
+      // drift a touch further from the pointer before re-gathering when it is left alone.
+      var period = 5.2;
+      liftBlocks.forEach(function(b, i){
+        var phase = t / period * Math.PI * 2 + i * 2.1;
+        var lift = (Math.sin(phase) * 0.5 + 0.5);              // 0..1, eased rise and settle
+        b.mesh.position.y = b.baseY + lift * 0.34;
+        var drift = pointerActive ? curTiltY * (0.5 + i * 0.25) : 0;
+        b.mesh.position.x = b.baseX + drift;
+      });
+
       renderer.render(scene, camera);
     }
     animate();
