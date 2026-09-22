@@ -1,0 +1,32 @@
+/* Hero's v2 core-page layer: about, contact, areas, pricing, services hub.
+   Loaded AFTER styles.css. Owned by the blog/core-pages work only. */
+
+/* ---- page hero: warm gradient instead of flat navy ---- */
+.inner-band--gradient{
+  background:
+    radial-gradient(720px 420px at 88% -10%, rgba(217,122,61,.22), transparent 60%),
+    linear-gradient(150deg, #223444 0%, var(--navy) 46%, #16212c 100%);
+}
+.inner-band--gradient::before{background:rgba(217,122,61,.14)}
+.inner-band--gradient::after{background:rgba(255,255,255,.05)}
+
+/* terracotta stripe motif, one clean move echoing the truck's stripe */
+.inner-band--gradient::before,
+.inner-band--gradient::after{content:none}
+.page-stripe{position:absolute;left:0;top:0;width:100%;height:5px;
+  background:linear-gradient(90deg, var(--clay) 0%, var(--clay) 38%, transparent 38%);
+  z-index:2}
+
+.inner-band--gradient .wrap{position:relative}
+
+/* truck icon as a small signature mark above the eyebrow, CSS background so it
+   is decorative rather than a repeated content image */
+.hero-mark{display:block;width:40px;height:40px;margin-bottom:18px;opacity:.92;
+  background:url("../img/truck-icon.webp") center/contain no-repeat}
+
+/* real type-scale jump on the page H1, quieter than the homepage hero but still designed */
+.inner-band--gradient h1{font-size:clamp(2.5rem,6.6vw,4.2rem);max-width:15em}
+
+@media (max-width:640px){
+  .hero-mark{width:36px;height:36px;margin-bottom:14px}
+}
