@@ -1,6 +1,7 @@
 /* Heros Junk Removal v2 - "The Quiet Arrival" */
 :root{
-  --navy:#1C2B3A; --stone:#EDE7DE; --charcoal:#33383D; --sand:#C9B79C; --clay:#D97A3D;
+  --navy:#1C2B3A; --stone:#F2F3F6; --charcoal:#33383D; --sand:#C9B79C; --clay:#D97A3D;
+  /* --stone moved from warm beige (#EDE7DE) to cool paper so the page continues the hero's silver instead of fighting it */
   --navy-06:rgba(28,43,58,.06); --navy-12:rgba(28,43,58,.12);
   --serif:"Fraunces",Georgia,serif; --sans:"Inter",system-ui,-apple-system,Segoe UI,sans-serif;
   --wrap:1140px; --gut:20px; --r:14px;
@@ -73,12 +74,12 @@ p{margin:0 0 1em}
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .hero-wrap{position:relative;z-index:2}
 .hero-inner{position:relative;z-index:2;max-width:560px}
-.hero .eyebrow{color:var(--steel)}
+.hero .eyebrow{color:rgba(14,22,33,.72)}
 .hero h1{color:var(--ink);font-weight:500;
   font-size:clamp(3rem,8.5vw,6.6rem);letter-spacing:-.04em;line-height:.9;margin-bottom:.3em}
-.hero .lede{color:var(--steel);max-width:30em;margin-bottom:1.4em;font-size:clamp(1rem,1.6vw,1.12rem)}
+.hero .lede{color:var(--charcoal);max-width:30em;margin-bottom:1.4em;font-size:clamp(1rem,1.6vw,1.12rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:13px;margin-bottom:22px}
-.hero-note{color:var(--steel);font-size:.9rem;margin:0}
+.hero-note{color:rgba(14,22,33,.72);font-size:.9rem;margin:0}
 .trustline{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:28px;padding-top:22px;
   border-top:1px solid var(--navy-12)}
 .trust-item{display:flex;align-items:center;gap:.5em;color:var(--ink);font-size:.9rem;font-weight:500}
@@ -122,7 +123,7 @@ p{margin:0 0 1em}
 }
 
 /* the quiet break right after the hero: near-empty, lets the hero land before content starts */
-.quiet{background:#F8F5EF;padding:clamp(48px,9vw,120px) 0}
+.quiet{background:#F6F7F9;padding:clamp(48px,9vw,120px) 0}
 .quiet-line{margin:0;text-align:center;font-family:var(--serif);font-weight:500;color:var(--navy);
   font-size:clamp(1.1rem,2.4vw,1.55rem);max-width:22em;margin:0 auto;line-height:1.5}
 
@@ -282,7 +283,7 @@ form.hjr-form input:focus,form.hjr-form select:focus,form.hjr-form textarea:focu
   .hero{min-height:auto;padding:116px 0 44px}
   .hero-cta .btn{width:100%}
   .callbar{display:grid;grid-template-columns:1fr 1fr;gap:9px;position:fixed;left:0;right:0;bottom:0;
-    z-index:60;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:rgba(237,231,222,.97);
+    z-index:60;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:rgba(242,243,246,.97);
     border-top:1px solid var(--navy-12);backdrop-filter:blur(8px)}
   .callbar .btn{min-height:54px;padding:0 10px;font-size:1rem;width:100%}
   body{padding-bottom:78px}

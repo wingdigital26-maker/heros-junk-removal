@@ -174,22 +174,20 @@
       }
     });
 
-    // soft contact shadow under the truck, staged like the reference
-    var shadowTex = (function(){
-      var c = document.createElement('canvas'); c.width = c.height = 256;
-      var x = c.getContext('2d'); var g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
-      g.addColorStop(0, 'rgba(14,22,33,0.62)'); g.addColorStop(0.42, 'rgba(14,22,33,0.2)'); g.addColorStop(0.8, 'rgba(14,22,33,0)');
-      x.fillStyle = g; x.fillRect(0, 0, 256, 256);
-      var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
-    })();
-    // a flat plane on the ground (a billboard sprite at floor level is edge-on to the camera and
-    // vanishes). Drawn first and without depth so the floor slab never occludes its own shadow.
-    var shadowMat = new THREE.MeshBasicMaterial({map: shadowTex, transparent: true, opacity: 0.8, depthWrite: false, depthTest: false});
+    // contact shadow: a flat plane on the ground with the falloff computed in a tiny shader.
+    // (A canvas gradient texture uploaded as fully transparent here, so no texture is used.)
+    // Drawn first and without depth so the floor slab never occludes its own shadow.
+    var shadowMat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, depthTest: false,
+      uniforms: { uColor: { value: new THREE.Color(0x0E1621) }, uAlpha: { value: 0.55 } },
+      vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'uniform vec3 uColor; uniform float uAlpha; varying vec2 vUv; void main(){ float d = length((vUv - 0.5) * 2.0); float a = uAlpha * (1.0 - smoothstep(0.15, 1.0, d)) * (1.0 - smoothstep(0.55, 1.0, d)); gl_FragColor = vec4(uColor, a); }'
+    });
     var shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), shadowMat);
     shadowPlane.rotation.x = -Math.PI / 2;
     shadowPlane.renderOrder = -1;
-    shadowPlane.scale.set(targetH * 2.1, targetH * 1.7, 1);
-    shadowPlane.position.set(0.1, floorY - 0.04, 0.2);
+    shadowPlane.scale.set(targetH * 2.3, targetH * 1.9, 1);
+    shadowPlane.position.set(0.1, floorY - 0.03, 0.2);
     scene.add(shadowPlane);
     if(/[?&]dbg=1/.test(location.search)) window.__heroScene = scene;   // inspection only
 
