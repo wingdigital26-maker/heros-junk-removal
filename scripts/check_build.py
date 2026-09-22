@@ -33,7 +33,10 @@ IDENTITY_IMAGE_NAMES = {
 
 
 def find_html_files():
-    return sorted(p for p in ROOT.rglob("*.html") if "node_modules" not in p.parts)
+    # "brand" holds internal design tools (logo contact sheets, previews). They are never
+    # served to customers, so the customer-facing rules below do not apply to them.
+    SKIP = {"node_modules", "brand", ".git"}
+    return sorted(p for p in ROOT.rglob("*.html") if not SKIP & set(p.parts))
 
 
 def check_tel_links(html_files):
