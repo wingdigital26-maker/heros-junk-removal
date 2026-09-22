@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hero's Junk Removal — Logo Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1621; --steel:#6E7A8A; --accent:#C2362F;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:40px;font-family:Inter,system-ui,sans-serif;background:#e7e9ed;color:var(--ink);}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:600;font-size:28px;margin:0 0 4px;}
+  p.sub{color:var(--steel);margin:0 0 32px;font-size:14px;}
+  .candidate{margin-bottom:56px;border-bottom:1px solid #ccd0d6;padding-bottom:40px;}
+  .candidate h2{font-family:Fraunces,Georgia,serif;font-weight:500;font-size:18px;margin:0 0 4px;}
+  .candidate .desc{font-size:13px;color:var(--steel);margin:0 0 16px;max-width:640px;}
+  .row{display:flex;gap:16px;flex-wrap:wrap;}
+  .swatch{border-radius:8px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .swatch.light{background:linear-gradient(135deg,#B9BEC9,#F7F8FA);}
+  .swatch.dark{background:#0E1621;}
+  .swatch .size-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;}
+  .light .size-label{color:#4b5563;}
+  .dark .size-label{color:#9aa4b2;}
+  .light svg{color:#0E1621;}
+  .dark svg{color:#F7F8FA;}
+  .lockup{display:flex;align-items:center;gap:12px;}
+  .lockup .word{font-family:Fraunces,Georgia,serif;}
+  .lockup .word .name{font-size:22px;font-weight:500;}
+  .lockup .word .service{font-size:9px;font-family:Inter,sans-serif;letter-spacing:.18em;color:var(--steel);text-transform:uppercase;display:block;margin-top:2px;}
+  .light .lockup .name{color:#0E1621;}
+  .dark .lockup .name{color:#F7F8FA;}
+</style>
+</head>
+<body>
+  <h1>Hero's Junk Removal — six logo directions</h1>
+  <p class="sub">Palette: ink #0E1621, steel #6E7A8A, accent #C2362F (signal red, sparing use only). Orange is retired. Each mark shown at 32 / 64 / 200px, on the silver gradient and on navy, then beside the wordmark.</p>
+
+  <!-- template repeated per candidate via manual blocks -->
+  <div id="candidates"></div>
+
+<script>
+const candidates = [
+  {file:"candidates/01-truck.svg", title:"1. Loaded truck, geometric", desc:"A confident faceted silhouette: chassis, cab and a stacked junk mound above the bed so it never reads as an empty hauling truck."},
+  {file:"candidates/02-monogram.svg", title:"2. Monogram H, cleared space", desc:"An H built from two uprights with a broken crossbar and one detached chip pulled free, standing in for Hero's and for the thing that got removed."},
+  {file:"candidates/03-cleared-space.svg", title:"3. Abstract cleared volume", desc:"An open crate outline with a solid block lifted up and away from it: the literal before/after of a job, no figures, no truck."},
+  {file:"candidates/04-badge.svg", title:"4. Shield badge, trust cue", desc:"A rounded shield with a restrained upward chevron inside, borrowing calm trust signals from security and insurance marks, no comic shield."},
+  {file:"candidates/05-wordmark-h.svg", title:"5. Custom-cut H glyph", desc:"A standalone serif-style H with one sharp chamfered corner, the same detail that can live inside the full wordmark's H."},
+  {file:"candidates/06-before-after.svg", title:"6. Full becoming empty", desc:"One square: the upper-left triangle solid (full), the rest just an outline (cleared). The whole brand promise in one shape."},
+];
+
+const sizes = [32, 64, 200];
+
+async function build(){
+  const root = document.getElementById('candidates');
+  for(const c of candidates){
+    const svgText = await fetch(c.file).then(r=>r.text());
+    const block = document.createElement('div');
+    block.className = 'candidate';
+    block.innerHTML = `
+      <h2>${c.title}</h2>
+      <p class="desc">${c.desc}</p>
+      <div class="row">
+        ${['light','dark'].map(mode => sizes.map(s => `
+          <div class="swatch ${mode}">
+            <div class="size-label">${s}px · ${mode}</div>
+            <div style="width:${s}px;height:${s}px;display:flex;align-items:center;justify-content:center;">${svgText.replace('<svg', `<svg style="width:100%;height:100%;"`)}</div>
+          </div>
+        `).join('')).join('')}
+        ${['light','dark'].map(mode => `
+          <div class="swatch ${mode}">
+            <div class="size-label">lockup · ${mode}</div>
+            <div class="lockup">
+              <div style="width:44px;height:44px;">${svgText.replace('<svg', `<svg style="width:100%;height:100%;"`)}</div>
+              <div class="word">
+                <span class="name">Hero&#8217;s</span>
+                <span class="service">Junk Removal</span>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    root.appendChild(block);
+  }
+}
+build();
+</script>
+</body>
+</html>

@@ -15,8 +15,8 @@ argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 VARIANT = argv[0] if argv else "1"
 OUT = argv[1] if len(argv) > 1 else os.path.dirname(os.path.abspath(__file__))
 
-NAVY = (0.045, 0.075, 0.115, 1.0)      # #1C2B3A linearised-ish
-CLAY = (0.72, 0.19, 0.045, 1.0)        # #D97A3D
+NAVY = (0.022, 0.034, 0.055, 1.0)      # #0E1621 near-black navy
+CLAY = (0.55, 0.045, 0.035, 1.0)       # #C2362F signal red
 TYRE = (0.022, 0.026, 0.032, 1.0)
 
 # variant knobs: (bed tip degrees, chassis length, cab height, bed length, abstraction)
@@ -152,7 +152,7 @@ def build():
     bpy.ops.mesh.primitive_plane_add(size=60, location=(0, 0, 0))
     gp = bpy.context.object
     gp.name = "ground"
-    gp.data.materials.append(mat("bg", (0.93, 0.91, 0.88, 1), metallic=0.0, rough=0.55))
+    gp.data.materials.append(mat("bg", (0.90, 0.91, 0.93, 1), metallic=0.0, rough=0.55))
 
     # three point rig. the rim light is what sells the bevels.
     def lamp(name, loc, energy, size, kind="AREA"):
@@ -183,7 +183,7 @@ def build():
         w = bpy.data.worlds.new("W")
         bpy.context.scene.world = w
     w.use_nodes = True
-    w.node_tree.nodes["Background"].inputs[0].default_value = (0.88, 0.87, 0.85, 1)
+    w.node_tree.nodes["Background"].inputs[0].default_value = (0.86, 0.88, 0.91, 1)
     w.node_tree.nodes["Background"].inputs[1].default_value = 1.15
 
     bpy.ops.object.camera_add(location=(-7.6, -9.2, 4.6))
@@ -247,4 +247,14 @@ elif os.environ.get("HJR_ICON"):
 else:
     render(os.path.join(OUT, f"v{VARIANT}.png"))
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, f"v{VARIANT}.blend"))
+for o in bpy.data.objects:
+    if o.name == "ground":
+        o.hide_render = True
+        o.select_set(False)
+bpy.ops.object.select_all(action="SELECT")
+bpy.data.objects["ground"].select_set(False)
+bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, f"v{VARIANT}.glb"),
+                          export_format="GLB", use_selection=True,
+                          export_draco_mesh_compression_enable=True,
+                          export_apply=True)
 print("DONE", VARIANT)

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 44" role="img" aria-label="Hero's loaded truck mark">
+  <g fill="currentColor">
+    <circle cx="16" cy="40" r="7"/>
+    <circle cx="48" cy="40" r="7"/>
+    <rect x="8" y="26" width="48" height="5" rx="1"/>
+    <rect x="8" y="13" width="17" height="13" rx="2"/>
+    <rect x="25" y="21" width="31" height="5" rx="1"/>
+    <polygon points="25,21 40,4 55,21"/>
+  </g>
+</svg>
