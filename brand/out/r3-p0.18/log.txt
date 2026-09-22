@@ -1,0 +1,24 @@
+C:\Users\wjack\heros-v3\brand\house.py:346: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:448: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  bg = bpy.data.materials.new("bg"); bg.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:470: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+00:11.000  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\house.png'
+FRAGS 1074 pitch 0.18 roles {'base': 165, 'wall': 318, 'window': 9, 'reveal': 24, 'lintel': 21, 'roof': 296, 'gable': 44, 'inside': 27, 'lift': 170}
+wrote shapes.json n=1074 bytes=299806
+RENDERED house
+00:14.391  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\couch.png'
+RENDERED couch
+00:17.407  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\fridge.png'
+RENDERED fridge
+00:20.547  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\map.png'
+RENDERED map
+00:23.407  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\message.png'
+RENDERED message
+00:26.094  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\r3-p0.18\truck.png'
+RENDERED truck
+DONE house
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

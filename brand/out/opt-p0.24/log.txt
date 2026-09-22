@@ -1,0 +1,18 @@
+C:\Users\wjack\heros-v3\brand\house.py:349: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:451: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  bg = bpy.data.materials.new("bg"); bg.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:473: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+00:15.297  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\opt-p0.24\house.png'
+  layout pitch 0.175 surface 557 interior 0 parked 19
+  layout pitch 0.171 surface 553 interior 23 parked 0
+  layout pitch 0.132 surface 567 interior 8 parked 1
+  layout pitch 0.152 surface 525 interior 0 parked 51
+  layout pitch 0.217 surface 528 interior 48 parked 0
+FRAGS 576 pitch 0.24 roles {'base': 88, 'wall': 174, 'window': 4, 'reveal': 12, 'lintel': 17, 'roof': 174, 'gable': 20, 'inside': 8, 'lift': 79}
+RENDERED house
+DONE house
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit

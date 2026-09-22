@@ -1,0 +1,35 @@
+C:\Users\wjack\heros-v3\brand\house.py:349: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:473: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+00:27.719  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\house-hero.png'
+  layout pitch 0.142 surface 1011 interior 63 parked 0
+  layout pitch 0.128 surface 1059 interior 15 parked 0
+  layout pitch 0.101 surface 969 interior 27 parked 78
+  layout pitch 0.116 surface 1038 interior 36 parked 0
+  layout pitch 0.172 surface 1044 interior 30 parked 0
+FRAGS 1074 pitch 0.18 roles {'base': 165, 'wall': 318, 'window': 9, 'reveal': 24, 'lintel': 21, 'roof': 296, 'gable': 44, 'inside': 27, 'lift': 170}
+wrote shapes.json n=1074 bytes=298856
+RENDERED house
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+15:57:34 | INFO: Starting glTF 2.0 export
+15:57:34 | INFO: Extracting primitive: Cube
+15:57:34 | INFO: Primitives created: 1
+15:57:35 | INFO: Finished glTF 2.0 export in 0.0849144458770752 s
+00:37.906  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\couch-hero.png'
+
+GLB bytes 3860 tris 108
+RENDERED couch
+00:45.578  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\fridge-hero.png'
+RENDERED fridge
+01:08.547  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\map-hero.png'
+RENDERED map
+01:21.438  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\message-hero.png'
+RENDERED message
+01:36.297  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\v2-final\truck-hero.png'
+RENDERED truck
+DONE house
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+
+Blender quit
