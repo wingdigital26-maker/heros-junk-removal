@@ -34,7 +34,8 @@
   /* SPACING, 4px base. Inside a thing < between things in a group < between groups < between chapters. */
   --space-1:.25rem;  --space-2:.5rem;  --space-3:.75rem; --space-4:1rem;  --space-5:1.5rem;
   --space-6:2rem;    --space-7:3rem;   --space-8:4rem;   --space-9:6rem;  --space-10:8rem;
-  --space-chapter:clamp(4rem, 2.667rem + 5.926vw, 8rem);
+  --space-chapter:clamp(5rem, 3rem + 8vw, 10.5rem);       /* 80 on a phone, 163 at 1440: the between-chapters tier */
+  --space-beat:clamp(7rem, 4rem + 12vw, 15rem);           /* 112 to 237: the empty beat before the two chapters that stand alone (proof, the final ask) */
   --gutter:var(--space-5);
   --target:2.75rem;  /* 44px minimum tap target */
   --nav-h:calc(var(--target) + var(--space-3) * 2);
@@ -44,8 +45,8 @@
   --col-text:45rem;   /* 720 */
   --col-media:60rem;  /* 960 */
   --col-wide:80rem;   /* 1280 */
-  --measure:60ch;
-  --measure-lead:44ch;
+  --measure:52ch;      /* 52ch of this grotesque is 66 to 70 real characters; 60ch measured at 80 to 84 */
+  --measure-lead:40ch; /* 24px lead: 52 to 55 real characters */
 }
 
 *{box-sizing:border-box}
@@ -124,7 +125,8 @@ p + p{margin-top:var(--space-4)}
   font-variant-numeric:tabular-nums;
 }
 .nav-phone svg{width:16px; height:16px}
-.nav-cta{min-height:var(--target); padding:0 var(--space-4); font-size:var(--step--1)}
+.nav-cta{min-height:var(--target); padding:0 var(--space-4); font-size:var(--step--1); background:var(--ink); color:#fff}  /* ink, not accent: the hero button is the one red thing on the first screen */
+.nav-cta:hover{background:#26304A}
 .burger{display:none}
 
 @media (max-width:900px){
@@ -157,7 +159,7 @@ body.menu-locked{overflow:hidden}
   position:relative; z-index:1;
   min-height:100vh; min-height:100svh;
   padding:calc(var(--nav-h) + var(--space-6)) 0 var(--space-6);
-  display:grid; grid-template-rows:1fr auto auto; row-gap:var(--space-6);
+  display:grid; grid-template-rows:1fr auto auto; row-gap:var(--space-5);
 }
 .stage{
   position:relative; width:100%; max-width:var(--col-wide); margin:0 auto; padding:0 var(--gutter);
@@ -172,7 +174,7 @@ body.menu-locked{overflow:hidden}
 
 /* the piece: poster first, canvas over it once it is ready. The contact shadow is CSS so poster and live scene share it. */
 .piece{
-  position:relative; width:min(44vw, 64vh, 40rem); aspect-ratio:1400 / 1309; justify-self:center;
+  position:relative; width:min(44vw, 60vh, 40rem); aspect-ratio:1400 / 1309; justify-self:center;
 }
 .piece::after{
   content:''; position:absolute; left:8%; right:14%; bottom:-3%; height:14%;
@@ -186,7 +188,7 @@ body.menu-locked{overflow:hidden}
 @media (prefers-reduced-motion:reduce){ .piece canvas{display:none} .piece.live img{opacity:1} }
 
 .ask{
-  max-width:var(--col-text); margin:0 auto; padding:0 var(--gutter);
+  max-width:var(--col-text); margin:var(--space-5) auto 0; padding:0 var(--gutter);   /* 24 + 24 row-gap = 48 above the ask, 24 below it to the trust line */
   display:flex; flex-direction:column; align-items:center; text-align:center; gap:var(--space-5);
 }
 .ask .lead{max-width:40ch}
@@ -205,7 +207,7 @@ body.menu-locked{overflow:hidden}
   .word--a,.word--b{text-align:center; justify-self:center}
   .piece{width:min(82vw, 44vh); grid-row:2}
   .word--b{grid-row:3}
-  .ask{gap:var(--space-4)}
+  .ask{gap:var(--space-4); margin-top:0}
   .cta-row{flex-direction:column; width:100%}
   .cta-row .btn{width:100%}
   .hero-line{flex-direction:column; gap:var(--space-1)}
@@ -213,21 +215,26 @@ body.menu-locked{overflow:hidden}
 
 /* ---------- chapters ---------- */
 .chapter{position:relative; z-index:1; padding:var(--space-chapter) 0}
-.chapter .lbl + h2{margin-top:var(--space-4)}      /* label hugs its heading */
-.chapter h2 + .lead{margin-top:var(--space-5)}     /* lead belongs to the heading */
+.chapter .lbl + h2{margin-top:var(--space-3)}      /* 12: label hugs its heading */
+.chapter .lbl + .proof{margin-top:var(--space-5)}  /* 24: the figure is the heading of its group */
+.chapter h2 + .lead{margin-top:var(--space-5)}     /* 24: lead belongs to the heading; above the heading sits the whole chapter pad */
+#proof,#contact{padding-top:var(--space-beat)}      /* the two chapters that stand alone get a real empty beat before them */
+#proof{padding-bottom:var(--space-beat)}
 .chapter h2 + .steps,.chapter .lead + .steps,.chapter h2 + .rows,.chapter .lead + .rows,.chapter .lead + .cities{margin-top:var(--space-8)}  /* a group break */
 
 /* 01 how a price happens: three steps in a row, each one a tight pair (title close to its text) */
-.steps{display:grid; gap:var(--space-7); counter-reset:step}
-.step{max-width:34ch}
-.step .n{display:block; font-family:var(--font-mono); font-size:var(--step--1); letter-spacing:.08em; color:var(--muted); margin-bottom:var(--space-3)}
-.step h3{margin-bottom:var(--space-2)}
-.step p{color:var(--muted)}
-@media (min-width:821px){ .steps{grid-template-columns:repeat(3, 1fr); gap:var(--space-7)} }
+.steps{display:grid; gap:var(--space-7)}   /* 48 between steps: three things in one group */
+.step{display:grid; grid-template-columns:2.5rem 1fr; column-gap:var(--space-4); align-items:start}
+.step .n{display:block; font-family:var(--font-mono); font-size:var(--step--1); letter-spacing:.08em; color:var(--muted); padding-top:.45em}
+.step .n{grid-row:1 / span 2}
+.step h3,.step p{grid-column:2}
+.step h3{margin-bottom:var(--space-2)}      /* 8: title and its text are one thing */
+.step p{color:var(--muted); max-width:var(--measure)}
 
-.frame{border:1px solid var(--hair); border-radius:var(--radius-3); overflow:hidden; background:var(--panel); margin-top:var(--space-8)}
+.frame{border:1px solid var(--hair); border-radius:var(--radius-3); overflow:hidden; background:var(--panel); margin-top:var(--space-9); max-width:var(--col-text)}  /* 96: the photo is its own idea, farther than the steps are from each other */
 .frame img{width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover}
-.frame .cap{padding:var(--space-4) var(--space-5); color:var(--muted); max-width:none}
+.frame .cap{padding:var(--space-4) var(--space-5); color:var(--muted); max-width:calc(var(--measure) + var(--space-5) * 2)}
+.frame .cap b{display:block; margin-bottom:var(--space-1)}
 .frame .cap b{color:var(--ink); font-weight:700}
 
 /* 02 what we take: open hairline rows, the whole row is the link */
@@ -238,7 +245,7 @@ body.menu-locked{overflow:hidden}
   text-decoration:none; font-size:var(--step-1); font-weight:700; letter-spacing:-.01em;
 }
 .rows a small{font-family:var(--font-mono); font-size:var(--step--1); font-weight:400; letter-spacing:.02em; color:var(--muted); text-align:right}
-.rows a:hover{color:var(--accent)}
+.rows a:hover{text-decoration:underline; text-underline-offset:.18em; text-decoration-thickness:2px}
 @media (min-width:821px){ .rows{display:grid; grid-template-columns:1fr 1fr; column-gap:var(--space-8)} }
 
 /* 03 where: six cities as pills you can tap */
@@ -257,7 +264,7 @@ body.menu-locked{overflow:hidden}
 .proof .term{display:block; margin-top:var(--space-2); font-family:var(--font-mono); font-size:var(--step--1); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
 .proof p{color:var(--muted)}
 .tlink{display:inline-flex; align-items:center; min-height:var(--target); margin-top:var(--space-2); text-decoration:none; font-weight:700; color:var(--ink)}
-.tlink:hover{color:var(--accent)}
+.tlink:hover{text-decoration:underline; text-underline-offset:.18em; text-decoration-thickness:2px}
 @media (min-width:821px){ .proof{grid-template-columns:14rem 1fr; column-gap:var(--space-8)} }
 
 /* 05 faq: native details, hairline rows */
@@ -273,18 +280,25 @@ body.menu-locked{overflow:hidden}
 .faq details > p{padding:0 0 var(--space-5); color:var(--muted)}
 
 /* 06 contact: the ask again, this time with the email and the hours next to it */
-.contact{text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--space-5)}
-.contact .cta-row{margin-top:var(--space-2)}
-.contact .meta{display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-2) var(--space-6); font-family:var(--font-mono); font-size:var(--step--1); color:var(--muted)}
-.contact .meta a{text-decoration:none; color:var(--ink)}
+.contact{text-align:center; display:flex; flex-direction:column; align-items:center}
+.contact .cta-row{margin-top:var(--space-7)}   /* 48: buttons are a new group */
+.contact .meta{margin-top:var(--space-5); display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-2) var(--space-6); font-family:var(--font-mono); font-size:var(--step--1); color:var(--muted)}
+.contact .meta a{display:inline-flex; align-items:center; min-height:var(--target); text-decoration:none; color:var(--ink)}
+.faq details > p a{display:inline-block; padding:.7em 0; margin:-.7em 0}   /* inline call link reaches a 44px tap target without moving the line */
 
 /* ---------- footer ---------- */
-footer{position:relative; z-index:1; padding:var(--space-8) 0 var(--space-7); border-top:1px solid var(--hair); font-size:var(--step--1); color:var(--muted)}
+footer{position:relative; z-index:1; padding:var(--space-9) 0 var(--space-7); border-top:1px solid var(--hair); font-size:var(--step--1); color:var(--muted)}
 footer .wrap{display:grid; gap:var(--space-6)}
 footer .brand{color:var(--ink); font-size:var(--step-0)}
-footer .col{display:grid; gap:var(--space-2); align-content:start}
+footer .col{display:grid; gap:0; align-content:start}
 footer .fh{font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase; margin-bottom:var(--space-2)}
-footer a{text-decoration:none; color:var(--ink); display:inline-flex; align-items:center; min-height:var(--space-6)}
-footer a:hover{color:var(--accent)}
+footer a{text-decoration:none; color:var(--ink); display:inline-flex; align-items:center; min-height:var(--target)}
+footer a:hover{text-decoration:underline; text-underline-offset:.18em}
 footer .legal{grid-column:1 / -1; padding-top:var(--space-5); border-top:1px solid var(--hair)}
 @media (min-width:821px){ footer .wrap{grid-template-columns:1.4fr 1fr 1fr 1fr} }
+
+@media (max-width:820px){
+  .chapter h2 + .steps,.chapter .lead + .steps,.chapter h2 + .rows,.chapter .lead + .rows,.chapter .lead + .cities,.faq{margin-top:var(--space-7)}
+  .steps{gap:var(--space-6)}
+  .frame{margin-top:var(--space-8)}
+}
