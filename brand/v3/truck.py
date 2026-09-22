@@ -124,6 +124,24 @@ def build():
     box("rail", (cx, 0, cz), (blen * 0.995, W * 1.012, 0.10), clay,
         rot=(0, tip, 0), bw=0.02)
 
+
+    # THE LOAD. Jack's note 2026-09-22: a bare truck reads as "truck removal" / a trucking
+    # company. Junk piled above the bed sides is what makes the category unmistakable, and it
+    # is also what every competitor's empty truck fails to say.
+    import random
+    random.seed(7)
+    bedtop = cz + 0.31
+    for i in range(9):
+        fx = (i / 8.0 - 0.5) * blen * 0.82
+        sx = random.uniform(0.17, 0.34)
+        sy = random.uniform(0.20, 0.42)
+        sz = random.uniform(0.18, 0.34)
+        jz = bedtop + sz * 0.30 - random.uniform(0.06, 0.20)
+        box(f"load{i}", (cx + fx, random.uniform(-0.20, 0.20), jz),
+            (sx, sy, sz), clay if i == 4 else navy,
+            rot=(random.uniform(-0.5, 0.5), random.uniform(-0.4, 0.4),
+                 random.uniform(-0.9, 0.9)), bw=0.028)
+
     # wheels, inset so they belong to the body
     wy = W / 2 - 0.02
     for i, wx in enumerate((-clen * 0.36, clen * 0.34)):
@@ -198,7 +216,23 @@ def render(path):
 
 build()
 os.makedirs(OUT, exist_ok=True)
-if os.environ.get("HJR_ICON"):
+if os.environ.get("HJR_HERO"):
+    s = bpy.context.scene
+    s.render.resolution_x = 1600
+    s.render.resolution_y = 1100
+    s.render.film_transparent = True
+    try:
+        s.eevee.taa_render_samples = 128
+    except Exception:
+        pass
+    for o in bpy.data.objects:
+        if o.name == "ground":
+            o.hide_render = True
+    cam = s.camera
+    cam.location = (-8.0, -9.0, 3.9)
+    cam.data.lens = 105
+    render(os.path.join(OUT, "hero.png"))
+elif os.environ.get("HJR_ICON"):
     s = bpy.context.scene
     s.render.resolution_x = 640
     s.render.resolution_y = 640

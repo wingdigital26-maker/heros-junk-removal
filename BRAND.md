@@ -55,3 +55,11 @@ No em dashes. Never claim anything Hero's has not verified.
 - Services: junk removal, furniture, appliance, mattress, couch, hot tub, estate cleanout,
   garage cleanout, construction debris, yard debris, same-day.
 - NO PRICES EXIST. Do not invent one, ever.
+
+## The mark must say JUNK removal, not TRUCK removal (Jack, 2026-09-22)
+Jack's catch: "a truck might work, it is just that it says truck removal". A bare truck reads as a
+trucking or hauling company, which is also why every competitor's empty-truck logo fails to say what
+they actually do.
+RULE: the truck is ALWAYS shown carrying a visible load. The junk piled above the bed line is what
+makes the category unmistakable at a glance. Never ship an empty-bed version of this mark.
+The flat 2D mark must keep the load in its silhouette too, not just the 3D render.
