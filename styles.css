@@ -57,6 +57,8 @@ p{margin:0 0 1em}
 .inner-head{position:relative;background:var(--navy)}
 .inner-head .brand-name,.inner-head .nav a{color:#fff}
 .inner-head .brand-sub{color:rgba(255,255,255,.75)}
+/* the mark is authored in ink; on navy surfaces it is shown in white */
+.inner-head .brand img,.intro img{filter:brightness(0) invert(1)}
 
 /* hero: one composition, gradient backdrop, giant type, one staged object.
    Phone stays reachable via the fixed header call button at every scroll position. */
@@ -65,17 +67,18 @@ p{margin:0 0 1em}
 /* cool silver ramp, Wing-style: white hotspot behind the piece over a steel to silver gradient */
 .hero-bg{position:absolute;inset:0;z-index:0;
   background:
-    radial-gradient(ellipse 60% 48% at 74% 42%, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(ellipse 54% 46% at 71% 46%, rgba(255,255,255,.96) 0%, rgba(255,255,255,0) 70%),
     linear-gradient(180deg,#B9BEC9 0%,#D5D9E0 30%,#ECEEF2 62%,#F7F8FA 100%)}
 .hero-bg::after{content:"";position:absolute;inset:0;opacity:.045;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .hero-wrap{position:relative;z-index:2}
 .hero-inner{position:relative;z-index:2;max-width:560px}
-.hero h1{color:var(--ink);font-weight:700;
-  font-size:clamp(3rem,8.5vw,6.4rem);letter-spacing:-.03em;line-height:.96;margin-bottom:.32em}
-.hero .lede{color:var(--charcoal);max-width:30em;margin-bottom:1.5em;font-size:clamp(1rem,1.6vw,1.12rem)}
+.hero .eyebrow{color:var(--steel)}
+.hero h1{color:var(--ink);font-weight:500;
+  font-size:clamp(3rem,8.5vw,6.6rem);letter-spacing:-.04em;line-height:.9;margin-bottom:.3em}
+.hero .lede{color:var(--steel);max-width:30em;margin-bottom:1.4em;font-size:clamp(1rem,1.6vw,1.12rem)}
 .hero-cta{display:flex;flex-wrap:wrap;gap:13px;margin-bottom:22px}
-.hero-note{color:rgba(14,22,33,.6);font-size:.9rem;margin:0}
+.hero-note{color:var(--steel);font-size:.9rem;margin:0}
 .trustline{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:28px;padding-top:22px;
   border-top:1px solid var(--navy-12)}
 .trust-item{display:flex;align-items:center;gap:.5em;color:var(--ink);font-size:.9rem;font-weight:500}
@@ -84,21 +87,21 @@ p{margin:0 0 1em}
 /* the staged truck: the dominant hero object, a real 3D piece (assets/hero3d.js) over a poster.
    Sits in its own column so it never crosses a word of the H1/lede/CTAs; it is only allowed to
    bleed into the gutter between the text column and itself, which is empty space, not copy. */
-.hero-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,1fr);align-items:center;gap:clamp(8px,3vw,40px)}
-.hero-stage{position:relative;width:100%;height:clamp(380px,54vw,680px);z-index:1;
-  margin-right:clamp(-40px,-4vw,-10px)}
-.stage-shadow{position:absolute;left:14%;right:16%;bottom:6%;height:10%;border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(14,22,33,.30) 0%,rgba(14,22,33,0) 72%);
-  filter:blur(10px);z-index:1}
+.hero-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,1fr);align-items:center;gap:0}
+.hero-stage{position:relative;width:calc(100% + clamp(40px,7vw,120px));height:clamp(420px,52vw,660px);z-index:1;
+  margin:0 clamp(-80px,-6vw,-20px) 0 clamp(-40px,-2.5vw,-10px)}
+/* contact shadow: thin, dark, tight under the piece, as on the reference. Never a wide blur. */
+.stage-shadow{position:absolute;left:22%;right:20%;bottom:9%;height:4.5%;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(14,22,33,.42) 0%,rgba(14,22,33,.14) 45%,rgba(14,22,33,0) 72%);
+  filter:blur(5px);z-index:1}
 .stage-poster{--tx:0deg;--ty:0deg;position:absolute;inset:0;width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;animation:truck-float 7s ease-in-out infinite}
 .stage-mark{width:100%;height:auto;max-height:100%;object-fit:contain;
-  /* the source poster photo still carries the retired orange rail; hue-shift it toward the new
-     signal red so the no-JS/reduced-motion/mobile fallback matches the live 3D piece's palette */
-  filter:drop-shadow(0 28px 40px rgba(14,22,33,.22));
+  filter:drop-shadow(0 18px 22px rgba(14,22,33,.16));
   transform:rotateX(var(--tx)) rotateY(var(--ty));transition:transform .1s linear}
 .hero-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .6s ease;z-index:2}
 .hero-canvas.is-live{opacity:1}
+.hero-stage.is-live .stage-shadow{opacity:0}   /* the live scene draws its own contact shadow */
 .hero-canvas.is-live ~ .stage-poster,.stage-poster.is-hidden{opacity:0;pointer-events:none}
 @keyframes truck-float{
   0%,100%{transform:translateY(0)}
@@ -106,7 +109,7 @@ p{margin:0 0 1em}
 }
 @media(max-width:1080px){
   .hero-wrap{grid-template-columns:1fr}
-  .hero-stage{margin-right:0;height:min(420px,60vw);order:2}
+  .hero-stage{width:100%;margin:0;height:min(420px,60vw);order:2}
   .hero-inner{order:1}
 }
 @media(max-width:820px){

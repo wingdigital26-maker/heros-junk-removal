@@ -122,9 +122,19 @@
     // the model's own "clay" material is the old orange rail/load-strap accent; retint it to the
     // new signal-red so the piece matches the page theme instead of carrying the retired colour
     gltf.scene.traverse(function(o){
-      if(o.isMesh && o.material && o.material.name === 'clay'){
-        o.material = o.material.clone();
+      if(!o.isMesh || !o.material) return;
+      o.material = o.material.clone();
+      if(o.material.name === 'red' || o.material.name === 'clay'){
+        // the one accent block, in the site's signal red (the model's own red is a shade off)
         o.material.color.set(0xC2362F);
+        o.material.metalness = 0.15; o.material.roughness = 0.42;
+      } else if(/^(up|left)\d/.test(o.name)){
+        // the blocks: deep ink with a metal edge so they separate from the pale walls
+        o.material.color.set(0x111b28);
+        o.material.metalness = 0.55; o.material.roughness = 0.36;
+      } else {
+        // the shell: cool matte, a shade darker than the backdrop so the room has an edge
+        o.material.metalness = 0.05; o.material.roughness = 0.75;
       }
     });
 
@@ -133,24 +143,34 @@
     // frame the room: centre it and fit it to a consistent visual height regardless of source scale.
     // Bigger than the original pass so the piece reads as the dominant object, not a small prop
     // floating in the gradient.
-    var box = new THREE.Box3().setFromObject(gltf.scene);
-    var size = new THREE.Vector3(); box.getSize(size);
-    var center = new THREE.Vector3(); box.getCenter(center);
+    // frame on the ROOM SHELL, not the whole model: the lifting blocks extend the bounding box
+    // upward, and centring on that pushes the building down into the shadow and off the stage.
+    var shellBox = new THREE.Box3();
+    gltf.scene.updateWorldMatrix(true, true);
+    gltf.scene.traverse(function(o){
+      if(o.isMesh && /^(floor|wallB|wallL\d|lintel)$/.test(o.name)) shellBox.expandByObject(o);
+    });
+    if(shellBox.isEmpty()) shellBox.setFromObject(gltf.scene);
+    var size = new THREE.Vector3(); shellBox.getSize(size);
+    var center = new THREE.Vector3(); shellBox.getCenter(center);
     gltf.scene.position.sub(center);
-    var targetH = 4.35;
+    // the piece is THE hero object, sized like the reference's sculpture: the shell alone takes
+    // about a third of the stage height and the blocks rise into the space above it.
+    var targetH = 3.6;
     var scale = targetH / (size.y || 1);
     group.scale.setScalar(scale);
     group.rotation.y = THREE.MathUtils.degToRad(-28);
-    // sit the room lower in frame, grounded against the shadow rather than centred and floating
-    group.position.y = -targetH * 0.10;
+    // the room sits a little below centre so the lifted blocks have headroom and the shadow stays in frame
+    group.position.y = -targetH * 0.36;
     scene.add(group);
+    var floorY = group.position.y - targetH * 0.5;   // world y of the underside of the floor slab
 
     // grab the three lifting blocks and the settled one by name so only they animate;
     // the room shell (floor/wallB/wallL*/lintel) stays put and reads as the building.
     var liftBlocks = [];
     gltf.scene.traverse(function(o){
       if(o.isMesh && /^up\d/.test(o.name)){
-        liftBlocks.push({ mesh: o, baseY: o.position.y, baseX: o.position.x });
+        liftBlocks.push({ mesh: o, baseY: o.position.y, baseX: o.position.x, baseRY: o.rotation.y });
       }
     });
 
@@ -158,19 +178,29 @@
     var shadowTex = (function(){
       var c = document.createElement('canvas'); c.width = c.height = 256;
       var x = c.getContext('2d'); var g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
-      g.addColorStop(0, 'rgba(14,22,33,0.55)'); g.addColorStop(0.55, 'rgba(14,22,33,0.22)'); g.addColorStop(1, 'rgba(14,22,33,0)');
+      g.addColorStop(0, 'rgba(14,22,33,0.62)'); g.addColorStop(0.42, 'rgba(14,22,33,0.2)'); g.addColorStop(0.8, 'rgba(14,22,33,0)');
       x.fillStyle = g; x.fillRect(0, 0, 256, 256);
       var t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
     })();
-    var shadowMat = new THREE.SpriteMaterial({map: shadowTex, transparent: true, opacity: 0.9, depthWrite: false});
-    var shadowSprite = new THREE.Sprite(shadowMat);
-    shadowSprite.scale.set(6.4, 2.5, 1);
-    shadowSprite.position.set(0, group.position.y - targetH * 0.54, 0);
-    scene.add(shadowSprite);
+    // a flat plane on the ground (a billboard sprite at floor level is edge-on to the camera and
+    // vanishes). Drawn first and without depth so the floor slab never occludes its own shadow.
+    var shadowMat = new THREE.MeshBasicMaterial({map: shadowTex, transparent: true, opacity: 0.8, depthWrite: false, depthTest: false});
+    var shadowPlane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), shadowMat);
+    shadowPlane.rotation.x = -Math.PI / 2;
+    shadowPlane.renderOrder = -1;
+    shadowPlane.scale.set(targetH * 2.1, targetH * 1.7, 1);
+    shadowPlane.position.set(0.1, floorY - 0.04, 0.2);
+    scene.add(shadowPlane);
+    if(/[?&]dbg=1/.test(location.search)) window.__heroScene = scene;   // inspection only
 
     // idle drift, matching the reference: it performs on its own, reacts to the pointer,
     // and settles back to rest when left alone.
     var t0 = performance.now();
+    // ?pose=rest freezes the choreography at its resting frame (used to capture the poster image)
+    var FREEZE = /[?&]pose=rest(&|$)/.test(location.search);
+    function clamp01(v){ return v < 0 ? 0 : v > 1 ? 1 : v; }
+    function easeOut(v){ v = clamp01(v); return 1 - Math.pow(1 - v, 3); }
+    function easeInOut(v){ v = clamp01(v); return v < 0.5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2; }
     var pTiltX = 0, pTiltY = 0, curTiltX = 0, curTiltY = 0;
     var pointerActive = false, settleTimer = null;
 
@@ -204,7 +234,7 @@
     function animate(){
       requestAnimationFrame(animate);
       if(!visible) return;
-      var t = (performance.now() - t0) / 1000;
+      var t = FREEZE ? 0 : (performance.now() - t0) / 1000;
       curTiltX += (pTiltX - curTiltX) * 0.06;
       curTiltY += (pTiltY - curTiltY) * 0.06;
       var driftY = pointerActive ? 0 : t * 0.12;              // slow rotation when left alone
@@ -214,13 +244,21 @@
       // the idea, not just the object: the three blocks lift out of the room and settle back,
       // each slightly out of phase so they read as separate pieces leaving one at a time, and
       // drift a touch further from the pointer before re-gathering when it is left alone.
-      var period = 5.2;
+      // one cycle: block 0 lifts, then 1, then 2 (each 1.1s later), they hang for a beat, then settle
+      // back in the same order. A rest at the end so the room reads as a still building between cycles.
+      // The highest block leaves first and the lowest settles first, so they never run into each other.
+      var CYCLE = 9.0, RISE = 1.6, HANG = 1.4, STAGGER = 1.1, n = liftBlocks.length;
+      var tc = t % CYCLE;
       liftBlocks.forEach(function(b, i){
-        var phase = t / period * Math.PI * 2 + i * 2.1;
-        var lift = (Math.sin(phase) * 0.5 + 0.5);              // 0..1, eased rise and settle
-        b.mesh.position.y = b.baseY + lift * 0.34;
-        var drift = pointerActive ? curTiltY * (0.5 + i * 0.25) : 0;
-        b.mesh.position.x = b.baseX + drift;
+        var k = n - 1 - i;                                                 // rise order: top first
+        var up = easeOut((tc - k * STAGGER) / RISE);                       // 0..1 as it rises
+        var downStart = n * STAGGER + RISE + HANG + i * STAGGER;           // settle order: bottom first
+        var down = easeInOut((tc - downStart) / (RISE * 1.25));            // 0..1 as it settles
+        var lift = up * (1 - down);
+        b.mesh.position.y = b.baseY + lift * (0.45 + i * 0.22);
+        var drift = pointerActive ? curTiltY * (0.45 + i * 0.25) : 0;
+        b.mesh.position.x = b.baseX + drift + lift * (0.08 - i * 0.06);
+        b.mesh.rotation.y = b.baseRY + lift * (0.35 - i * 0.12);           // a slight turn as it comes free
       });
 
       renderer.render(scene, camera);
@@ -228,6 +266,7 @@
     animate();
 
     canvas.classList.add('is-live');
+    stage.classList.add('is-live');
     poster.classList.add('is-hidden');
   }
 })();
