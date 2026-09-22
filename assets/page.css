@@ -1,32 +1,61 @@
 /* Hero's v2 core-page layer: about, contact, areas, pricing, services hub.
-   Loaded AFTER styles.css. Owned by the blog/core-pages work only. */
+   Loaded AFTER styles.css. Owned by the blog/core-pages work only.
+   Palette: ink/steel/signal-red, cool silver backdrop (matches the homepage hero-bg). */
 
-/* ---- page hero: warm gradient instead of flat navy ---- */
-.inner-band--gradient{
+/* ---- whole-page surface: the same quiet silver ramp behind every section, so the
+   inner pages read as one surface with the homepage rather than a flat stone band ---- */
+body{
   background:
-    radial-gradient(720px 420px at 88% -10%, rgba(217,122,61,.22), transparent 60%),
-    linear-gradient(150deg, #223444 0%, var(--navy) 46%, #16212c 100%);
+    radial-gradient(ellipse 60% 34% at 50% 0%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 68%),
+    linear-gradient(180deg,#C7CBD4 0%,#DADEE5 20%,#EEF0F3 52%,#F7F8FA 100%);
+  background-attachment:fixed;
 }
-.inner-band--gradient::before{background:rgba(217,122,61,.14)}
-.inner-band--gradient::after{background:rgba(255,255,255,.05)}
 
-/* terracotta stripe motif, one clean move echoing the truck's stripe */
-.inner-band--gradient::before,
+/* ---- page hero: cool silver ramp, radial hotspot, quieter than the homepage hero ---- */
+.inner-band--gradient{
+  position:relative;
+  background:
+    radial-gradient(38vw 34vh at 88% -8%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 60%),
+    linear-gradient(160deg, #1C2733 0%, var(--navy) 48%, #101822 100%);
+  background-position:50% 0, 0 0;
+}
+@media (max-width:640px){
+  .inner-band--gradient{
+    background:
+      radial-gradient(60vw 22vh at 92% -4%, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 58%),
+      linear-gradient(160deg, #1C2733 0%, var(--navy) 48%, #101822 100%);
+  }
+}
+.inner-band--gradient::before{content:"";position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .inner-band--gradient::after{content:none}
+
+/* accent stripe, echoes the truck's stripe, signal red not clay */
 .page-stripe{position:absolute;left:0;top:0;width:100%;height:5px;
-  background:linear-gradient(90deg, var(--clay) 0%, var(--clay) 38%, transparent 38%);
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent) 38%, transparent 38%);
   z-index:2}
 
 .inner-band--gradient .wrap{position:relative}
 
-/* truck icon as a small signature mark above the eyebrow, CSS background so it
-   is decorative rather than a repeated content image */
+/* truck icon signature mark above the eyebrow, reacts a little to the pointer via inner.js */
 .hero-mark{display:block;width:40px;height:40px;margin-bottom:18px;opacity:.92;
-  background:url("../img/truck-icon.webp") center/contain no-repeat}
+  background:url("../img/truck-icon.webp") center/contain no-repeat;
+  transition:transform .15s ease-out}
 
 /* real type-scale jump on the page H1, quieter than the homepage hero but still designed */
-.inner-band--gradient h1{font-size:clamp(2.5rem,6.6vw,4.2rem);max-width:15em}
+.inner-band--gradient h1{font-size:clamp(2.6rem,6.8vw,4.3rem);max-width:15em;letter-spacing:-.01em}
+.inner-band--gradient .eyebrow{color:#DDE3EC}
+.inner-band--gradient .lede{color:rgba(255,255,255,.82)}
 
 @media (max-width:640px){
   .hero-mark{width:36px;height:36px;margin-bottom:14px}
 }
+
+/* ---- rise-in on first view (inner.js adds .rv then .iv) ---- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .5s ease-out,transform .5s ease-out}
+.rv.iv{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none;transition:none} }
+
+/* ---- vertical rhythm: breathe consistently between sections ---- */
+.section{padding:clamp(56px,8vw,104px) 0}
+.section + .section{padding-top:clamp(48px,7vw,88px)}
