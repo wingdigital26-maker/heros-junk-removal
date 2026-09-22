@@ -24,7 +24,7 @@ function ok() {
 function boot() {
   if (!ok()) return;
   // never race the poster: wait for the page to be quiet, then load three
-  const start = () => import('./house-scene.js?v=3').then((m) => m.init(piece)).catch((e) => console.warn('house: live scene skipped', e));
+  const start = () => import('./house-scene.js?v=4').then((m) => m.init(piece)).catch((e) => console.warn('house: live scene skipped', e));
   if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 });
   else setTimeout(start, 600);
 }
