@@ -83,8 +83,8 @@
     function getH(){ return stage.clientHeight || 1; }
 
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(32, getW() / getH(), 0.1, 100);
-    camera.position.set(0, 0.9, 13);
+    var camera = new THREE.PerspectiveCamera(26, getW() / getH(), 0.1, 200);
+    camera.position.set(0, 1.1, 24);
 
     var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
     renderer.setSize(getW(), getH());
@@ -116,6 +116,15 @@
     var rim = new THREE.DirectionalLight(0xffffff, 2.2); rim.position.set(7, 3, -6); scene.add(rim);
     var fill = new THREE.AmbientLight(0x9aa8c4, 0.5); scene.add(fill);
 
+    // the model's own "clay" material is the old orange rail/load-strap accent; retint it to the
+    // new signal-red so the piece matches the page theme instead of carrying the retired colour
+    gltf.scene.traverse(function(o){
+      if(o.isMesh && o.material && o.material.name === 'clay'){
+        o.material = o.material.clone();
+        o.material.color.set(0xC2362F);
+      }
+    });
+
     var group = new THREE.Group();
     group.add(gltf.scene);
     // frame the truck: centre it and fit it to a consistent visual height regardless of source scale
@@ -123,7 +132,7 @@
     var size = new THREE.Vector3(); box.getSize(size);
     var center = new THREE.Vector3(); box.getCenter(center);
     gltf.scene.position.sub(center);
-    var targetH = 1.9;
+    var targetH = 3.4;
     var scale = targetH / (size.y || 1);
     group.scale.setScalar(scale);
     group.rotation.y = THREE.MathUtils.degToRad(-28);
@@ -139,7 +148,7 @@
     })();
     var shadowMat = new THREE.SpriteMaterial({map: shadowTex, transparent: true, opacity: 0.85, depthWrite: false});
     var shadowSprite = new THREE.Sprite(shadowMat);
-    shadowSprite.scale.set(2.9, 1.15, 1);
+    shadowSprite.scale.set(5.2, 2.05, 1);
     shadowSprite.position.set(0, -targetH * 0.52, 0);
     scene.add(shadowSprite);
 

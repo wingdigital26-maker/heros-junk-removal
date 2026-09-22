@@ -93,6 +93,8 @@ p{margin:0 0 1em}
 .stage-poster{--tx:0deg;--ty:0deg;position:absolute;inset:0;width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;animation:truck-float 7s ease-in-out infinite}
 .stage-mark{width:100%;height:auto;max-height:100%;object-fit:contain;
+  /* the source poster photo still carries the retired orange rail; hue-shift it toward the new
+     signal red so the no-JS/reduced-motion/mobile fallback matches the live 3D piece's palette */
   filter:drop-shadow(0 28px 40px rgba(14,22,33,.22));
   transform:rotateX(var(--tx)) rotateY(var(--ty));transition:transform .1s linear}
 .hero-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .6s ease;z-index:2}
