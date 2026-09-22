@@ -21,7 +21,7 @@ OUT = argv[1] if len(argv) > 1 else os.path.dirname(os.path.abspath(__file__))
 
 INK = (0.022, 0.034, 0.055, 1.0)
 RED = (0.55, 0.045, 0.035, 1.0)
-PALE = (0.62, 0.65, 0.70, 1.0)
+PALE = (0.085, 0.10, 0.125, 1.0)   # mid steel: frames the pieces, never glares
 
 
 def reset():
@@ -118,26 +118,33 @@ def c_hmono(ink, red, pale):
 
 # ------------------------------------------------------------------ concept 3
 def c_room(ink, red, pale):
-    """A room corner. Clutter lifts out and the space is left clean.
-    Emotionally the closest to what the customer is actually buying: relief."""
-    t = 0.14
-    W, H = 2.6, 1.9
-    box("floor", (0, 0, t / 2), (W, W, t), ink, bw=0.04)
-    box("wallB", (0, W / 2 - t / 2, H / 2), (W, t, H), pale, bw=0.04)
-    box("wallL", (-W / 2 + t / 2, 0, H / 2), (t, W, H), pale, bw=0.04)
+    """A room corner with clutter lifting out. Smaller and tighter than v1.
+    The walls are a mid steel so they FRAME the pieces instead of glaring white,
+    and one wall carries a doorway so it reads as a BUILDING, not an open box."""
+    t = 0.13
+    W, H = 2.0, 1.5          # smaller room than v1
+    box("floor", (0, 0, t / 2), (W, W, t), ink, bw=0.035)
 
-    # what is left on the floor, low and settled
-    box("left0", (0.62, -0.50, 0.38), (0.70, 0.62, 0.62), ink, bw=0.04)
+    # back wall, solid
+    box("wallB", (0, W / 2 - t / 2, H / 2), (W, t, H), pale, bw=0.035)
 
-    # the clutter on its way out, rising and tumbling
-    random.seed(11)
-    lift = [(-0.30, 0.20, 1.55, 0.62), (0.55, 0.42, 2.25, 0.50),
-            (-0.75, -0.25, 2.85, 0.42), (0.20, -0.10, 3.35, 0.34)]
-    for i, (x, y, z, s) in enumerate(lift):
-        box(f"up{i}", (x, y, z), (s, s * 0.92, s * 0.86),
-            red if i == 1 else ink,
-            rot=(random.uniform(-0.7, 0.7), random.uniform(-0.6, 0.6), random.uniform(-0.9, 0.9)),
-            bw=0.03)
+    # left wall WITH a doorway cut into it: this is what says building
+    door_w, door_h = 0.62, 0.98
+    seg = (W - door_w) / 2
+    for i, yy in enumerate((-(door_w / 2 + seg / 2), door_w / 2 + seg / 2)):
+        box(f"wallL{i}", (-W / 2 + t / 2, yy, H / 2), (t, seg, H), pale, bw=0.035)
+    box("lintel", (-W / 2 + t / 2, 0, door_h + (H - door_h) / 2),
+        (t, door_w, H - door_h), pale, bw=0.035)
+
+    # what is still on the floor, settled and low
+    box("left0", (0.46, -0.34, 0.33), (0.58, 0.52, 0.52), ink, bw=0.035)
+
+    # the clutter on its way out: FEWER and CHUNKIER than v1, so each block reads
+    lift = [(0.02, 0.10, 1.28, 0.52), (0.26, 0.02, 1.90, 0.44), (-0.14, 0.18, 2.42, 0.36)]
+    for i, (x, y, z, sc) in enumerate(lift):
+        box(f"up{i}", (x, y, z), (sc, sc * 0.92, sc * 0.86),
+            red if i == 0 else ink,
+            rot=(0.30 - i * 0.22, -0.18 + i * 0.20, 0.42 - i * 0.30), bw=0.03)
 
 
 CONCEPTS = {"gauge": c_gauge, "hmono": c_hmono, "room": c_room}
@@ -198,10 +205,10 @@ for name in (ORDER if WHICH == "all" else [WHICH]):
     reset()
     ink = mat("ink", INK)
     red = mat("red", RED, metallic=0.5, rough=0.33)
-    pale = mat("pale", PALE, metallic=0.75, rough=0.35)
+    pale = mat("pale", PALE, metallic=0.08, rough=0.62)
     CONCEPTS[name](ink, red, pale)
     heights = {"gauge": 1.5, "hmono": 1.4, "room": 1.5}
-    dists = {"gauge": 0.92, "hmono": 1.0, "room": 1.0}
+    dists = {"gauge": 0.92, "hmono": 1.0, "room": 1.35}
     stage(heights[name], dists[name])
     bpy.context.scene.render.filepath = os.path.join(OUT, f"{name}.png")
     bpy.ops.render.render(write_still=True)
