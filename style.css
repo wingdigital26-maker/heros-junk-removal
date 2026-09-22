@@ -205,7 +205,7 @@ body.menu-locked{overflow:hidden}
   .stage{grid-template-columns:1fr; row-gap:var(--space-2); text-align:center}
   .word{line-height:1}
   .word--a,.word--b{text-align:center; justify-self:center}
-  .piece{width:min(82vw, 44vh); grid-row:2}
+  .piece{width:min(70vw, 36vh); grid-row:2}   /* 375 x 740: both CTAs stay above the fold */
   .word--b{grid-row:3}
   .ask{gap:var(--space-4); margin-top:0}
   .cta-row{flex-direction:column; width:100%}

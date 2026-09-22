@@ -19,6 +19,17 @@ v7 to v11 (2026-09-22), judged render by render:
   - roof 2 x 2 panels per slope (3 x 2 read as solar panels), four gable steps (three read as a staircase)
   - bevel segments 2 (3 pushed the GLB to 134KB)
 
+VARIANT A (2026-09-22, Jack's pick from the contact sheet, overruling v12): the v8 house is the shipped one.
+  3 x 2 roof panels per slope, three gable steps, 0.014 seams, rounded 3-segment bevels: 68 fragments. The
+  defaults below ARE variant A. The v11/v12 look is still reachable with roofnx=2 gables=4 gap=0.006 seg=2.
+  Later than v8 and kept: the studio HDRI, the brushed walls, the leaving blocks' proportions, the formations
+  (couch/fridge/map/message/truck are authored against the homepage sections, not the house), and:
+  - jitter (lightness, roughness, micro tilt) is a HOUSE thing. In the other formations it is scaled by JIT_FORM
+    so slate and ink cells stop reading as a noisy checkerboard up close
+  - the studio floor is darker below the horizon (floor=) so the far roof slab's underside, which reflects the
+    floor, stops showing as a pale wedge at the right gable
+  - map: a flat tiled board with an ink route and one red pin, not a city block with a marker
+
   blender --background --python house.py -- <outdir> [form=house|couch|fridge|map|message|truck|all]
                                                      [glb] [hero] [fast] [json]
     (default form=house; "hero" = transparent 1500x1150 poster frame; "fast" = quick judging render)
@@ -59,8 +70,14 @@ BASE_H = 0.11
 OVER = 0.32                           # roof overhang
 ROOF_T = 0.16                         # roof slab thickness
 ROOF_H = 0.84                         # ridge above the eave line
-ROOF_NX, ROOF_NK = 2, 2               # roof panels along the ridge, down the slope
-GAP = float(KV.get("gap", "0.006"))   # hairline seam between panels (gap= override for variants)
+ROOF_NX, ROOF_NK = int(KV.get("roofnx", "3")), 2   # roof panels along the ridge (variant A: 3), down the slope
+GAP = float(KV.get("gap", "0.014"))   # seam between panels (variant A: 0.014; v12 was 0.006)
+SEG = int(KV.get("seg", "3"))         # bevel segments (variant A: 3, rounded; v11 was 2)
+GABLES = int(KV.get("gables", "3"))   # gable steps per end (variant A: 3; v11 was 4)
+JIT_FORM = float(KV.get("jit", "0.25"))  # jitter multiplier outside the house formation
+FLOOR = float(KV.get("floor", "0.58"))   # studio dome brightness straight down (was 0.74)
+BAND = float(KV.get("band", "2.4"))      # the low front softbox: what a down-and-front facing underside reflects
+FILL = float(KV.get("fill", "260"))      # the front-left fill lamp energy
 
 FORM_OFFSET = (0.75, -0.35, 0.0)      # where the non-house formations stand (house is at the origin)
 
@@ -123,7 +140,10 @@ def house_fragments():
                 F.append(frag(tuple(cpos), ((W + 2 * OVER) / ROOF_NX - GAP, slope_len / ROOF_NK - GAP, ROOF_T - GAP), 1,
                               rot=(-s * pitch, 0, 0), bw=0.016, role="roof"))
     # stepped gables under the slabs, at both ends, inside the wall line
-    rows = ((z0 + H, z0 + H + 0.20), (z0 + H + 0.20, z0 + H + 0.40), (z0 + H + 0.40, z0 + H + 0.58), (z0 + H + 0.58, z0 + H + 0.74))
+    if GABLES == 3:
+        rows = ((z0 + H, z0 + H + 0.28), (z0 + H + 0.28, z0 + H + 0.54), (z0 + H + 0.54, z0 + H + 0.76))
+    else:
+        rows = ((z0 + H, z0 + H + 0.20), (z0 + H + 0.20, z0 + H + 0.40), (z0 + H + 0.40, z0 + H + 0.58), (z0 + H + 0.58, z0 + H + 0.74))
     for sx_ in (-1, 1):
         for (za, zb) in rows:
             wid = min(D, 2 * half * (1 - (zb - ze) / ROOF_H) - 0.06)
@@ -180,25 +200,28 @@ def shape_fridge():
 
 
 def shape_map():
+    """A map, not a city: a flat tiled board (4 x 3, all one low height), an ink route running across it in
+    three legs, and one red pin standing on the route's end. Nothing on the board is taller than the route."""
     tiles = []
-    hs = [0.30, 0.30, 0.62, 0.30, 0.30, 0.30, 0.30, 0.96, 0.30, 0.30, 0.30, 0.30]
-    k = 0
     for iy in range(3):
         for ix in range(4):
-            h = hs[k]; k += 1
-            tiles.append((-1.35 + ix * 0.90, -0.90 + iy * 0.90, h / 2, 0.80, 0.80, h, 1 if h > 0.3 else 0, 0, None))
-    tiles.append((-1.35 + 3 * 0.90, -0.90 + 1 * 0.90, 0.96 + 0.50, 0.12, 0.12, 0.95, 2, 0, 1))   # pin post
-    tiles.append((-1.35 + 3 * 0.90, -0.90 + 1 * 0.90, 0.96 + 1.22, 0.52, 0.52, 0.52, 3, 45, 1))  # the red pin head, a diamond
+            tiles.append((-1.35 + ix * 0.90, -0.90 + iy * 0.90, 0.07, 0.86, 0.86, 0.14, 0, 0, None))
+    # the route: three legs laid on the board, leg ends overlap so it reads as one line
+    tiles.append((-1.10, -0.90, 0.20, 1.40, 0.20, 0.10, 2, 0, 2))     # west to east along the bottom row
+    tiles.append((-0.40, -0.25, 0.20, 0.20, 1.50, 0.10, 2, 0, 2))     # north up the middle
+    tiles.append((0.40, 0.40, 0.20, 1.80, 0.20, 0.10, 2, 0, 2))       # east to the pin
+    tiles.append((1.35, 0.40, 0.20 + 0.52, 0.12, 0.12, 0.95, 2, 0, 1))          # pin post
+    tiles.append((1.35, 0.40, 0.20 + 1.22, 0.50, 0.50, 0.50, 3, 45, 1))         # the red pin head, a diamond
     return tiles
 
 
 def shape_message():
     return [
-        (0.00, 0.00, 1.30, 3.10, 0.50, 1.90, 0, 0, None),       # the bubble, standing up
-        (-1.05, 0.00, 0.30, 0.55, 0.50, 0.55, 0, 45, 4),        # the tail, a diamond at the bottom left
-        (-0.65, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),        # three red dots: "typing"
-        (0.00, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),
-        (0.65, -0.32, 1.30, 0.42, 0.14, 0.42, 3, 0, 1),
+        (0.00, 0.00, 1.32, 3.10, 0.34, 1.90, 0, 0, None),       # the bubble, standing up, thin so the cells read as tiles
+        (-1.05, 0.00, 0.36, 0.50, 0.34, 0.50, 0, 45, 4),        # the tail, a diamond hanging off the bottom left edge
+        (-0.65, -0.26, 1.32, 0.42, 0.14, 0.42, 3, 0, 1),        # three red dots: "typing"
+        (0.00, -0.26, 1.32, 0.42, 0.14, 0.42, 3, 0, 1),
+        (0.65, -0.26, 1.32, 0.42, 0.14, 0.42, 3, 0, 1),
     ]
 
 
@@ -347,7 +370,7 @@ def build(frags, targets, form):
         bpy.ops.object.transform_apply(scale=True)
         m = o.modifiers.new("bev", "BEVEL")
         m.width = min(f["b"], min(f["s"]) * 0.42)
-        m.segments = 2
+        m.segments = SEG
         m.limit_method = "ANGLE"
         m.angle_limit = math.radians(38)
         m.harden_normals = True
@@ -355,7 +378,8 @@ def build(frags, targets, form):
             p.use_smooth = True
         col = t["c"]
         met, rough = SURF[col]
-        o.data.materials.append(make_material(f"m{i}", COLORS[col], met, rough, f["v"][0], f["v"][1]))
+        jit = 1.0 if form == "house" else JIT_FORM
+        o.data.materials.append(make_material(f"m{i}", COLORS[col], met, rough, f["v"][0] * jit, f["v"][1] * jit))
         o.location = t["p"]
         o.rotation_mode = "QUATERNION"
         o.rotation_quaternion = (t["r"][3], t["r"][0], t["r"][1], t["r"][2])
@@ -364,11 +388,11 @@ def build(frags, targets, form):
 
 # softboxes for the procedural HDRI: (direction xyz in Blender world, half-width deg, half-height deg, intensity, tint)
 SOFTBOXES = [
-    ((4.6, -5.6, 6.2), 30, 20, 7.0, (1.00, 1.00, 1.00)),    # key, front-right-high, over the door side
+    ((4.6, -5.6, 6.2), 30, 20, 3.5, (1.00, 1.00, 1.00)),    # key, front-right-high, over the door side (was 7.0: it is what the far slab's overhang face reflected as a pale wedge at the right gable; halved, walls unchanged)
     ((7.0, -3.0, 1.2), 5, 42, 9.0, (0.98, 0.99, 1.00)),     # tall strip right-front: the long travelling highlight
     ((-5.2, 4.8, 3.8), 5, 34, 6.5, (0.92, 0.95, 1.00)),     # rim strip back-left: the edge catch on ridge and eaves
     ((0.0, 0.0, 1.0), 48, 7, 3.2, (1.00, 1.00, 1.00)),      # overhead strip: top-edge catch along the ridge
-    ((3.5, -6.5, -0.7), 46, 6, 2.4, (0.96, 0.97, 1.00)),    # low front band: camera-facing faces reflect below the camera
+    ((3.5, -6.5, -0.7), 46, 6, BAND, (0.96, 0.97, 1.00)),   # low front band: camera-facing faces reflect below the camera
     ((-5.0, -5.0, 1.6), 24, 16, 1.8, (0.95, 0.96, 1.00)),   # soft fill front-left, dim
 ]
 
@@ -381,11 +405,13 @@ def write_studio(path, wpx=768, hpx=384):
     el = (v - 0.5) * math.pi
     az = (u - 0.5) * 2 * math.pi
     dx, dy, dz = -np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)
-    # dome: floor 0.74 (the silver stage), horizon 0.42, zenith 0.20, a slow gradient so faces show a sweep
+    # dome: floor FLOOR (0.58, the silver stage seen from below), horizon 0.42, zenith 0.20, a slow gradient so faces show a sweep
     t = np.clip(dz, -1, 1)
-    sky = np.where(t < 0, 0.42 + (0.74 - 0.42) * np.clip(-t, 0, 1) ** 0.7, 0.42 + (0.20 - 0.42) * np.clip(t, 0, 1) ** 0.8)
+    sky = np.where(t < 0, 0.42 + (FLOOR - 0.42) * np.clip(-t, 0, 1) ** 0.7, 0.42 + (0.20 - 0.42) * np.clip(t, 0, 1) ** 0.8)
     img = np.stack([sky * 0.96, sky * 0.975, sky * 1.0], -1)
-    for (cd, hw, hh, inten, tint) in SOFTBOXES:
+    SBM = [float(v) for v in KV.get("sb", "1,1,1,1,1,1").split(",")]   # per-softbox multipliers, for bisecting a reflection
+    for (cd, hw, hh, inten, tint), mul in zip(SOFTBOXES, SBM):
+        inten = inten * mul
         c = np.array(cd, float); c /= np.linalg.norm(c)
         up = np.array([0, 0, 1.0]) if abs(c[2]) < 0.95 else np.array([1.0, 0, 0])
         t1 = np.cross(up, c); t1 /= np.linalg.norm(t1)
@@ -433,7 +459,7 @@ def stage(hero=False):
     # the lamps carry the diffuse; the HDRI carries the reflections
     for l in (lamp("key", (4.6, -5.6, 6.2), 1100, 6),
               lamp("rim", (-5.2, 4.8, 3.8), 2000, 4),
-              lamp("fill", (-4.8, -5.4, 2.2), 260, 10)):
+              lamp("fill", (-4.8, -5.4, 2.2), FILL, 10)):
         l.constraints[0].target = tgt
 
     w = bpy.context.scene.world or bpy.data.worlds.new("W")
@@ -444,7 +470,7 @@ def stage(hero=False):
     env.image = write_studio(os.path.join(OUT, "studio.exr"))
     bg = nt.nodes["Background"]
     nt.links.new(env.outputs["Color"], bg.inputs["Color"])
-    bg.inputs[1].default_value = 0.85
+    bg.inputs[1].default_value = float(KV.get("env", "0.85"))
 
     bpy.ops.object.camera_add(location=(9.8, -11.6, 4.7))
     cam = bpy.context.object
@@ -497,7 +523,8 @@ for form in forms:
         bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, "house.glb"),
                                   export_format="GLB", use_selection=True,
                                   export_draco_mesh_compression_enable=True, export_apply=True,
-                                  export_draco_position_quantization=QUANT, export_draco_normal_quantization=8)
+                                  export_draco_position_quantization=QUANT, export_draco_normal_quantization=8,
+                                  export_materials="NONE" if "nomat" in FLAGS else "EXPORT")
         tris = sum(len(p.vertices) - 2 for o in bpy.data.objects if o.type == "MESH" and o.name != "ground"
                    for p in o.evaluated_get(bpy.context.evaluated_depsgraph_get()).data.polygons)
         print("TRIS", tris, "FRAGS", len(FR))

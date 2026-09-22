@@ -13,7 +13,14 @@
      right corner as a small companion (pointer-events none, never over the text column) and re-forms per section.
    - the studio environment is the same hand-built HDRI as the Blender one (gradient dome + softboxes), so metal
      faces carry the same gradient live as in the poster.
-   - prefers-reduced-motion never reaches this file: house.js keeps the poster. */
+   - prefers-reduced-motion never reaches this file: house.js keeps the poster.
+   v3.1 (2026-09-22, variant A shipped): 68 fragments (3 x 2 roof panels, three gable steps, rounded bevels).
+   - the program is authored against the homepage sections: 01 how a price happens = message, 02 what we take = couch,
+     03 where = map, 04 on Google = truck (the loads that earned the rating), 05 questions = fridge, 06 contact = the
+     house again, so the story is house on the way in, apart in the middle, house where the reader arrives
+   - jitter is a house thing: in the other formations it is scaled by JIT_FORM (same number as brand/house.py)
+   - the companion docks beside the text column, never over it: it lands just right of the widest column, clamped
+     inside the window, shrinks when the gap is tight, hides when there is no room, and fades out under the footer */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
@@ -23,20 +30,24 @@ const POINTER_YAW = 0.16;     // radians of lean toward the pointer, either way
 const POINTER_PITCH = 0.06;
 const SWAY = 0.035;           // idle yaw sway, radians
 const PULL = 0.28;            // how far (world units) a block drifts toward the pointer when it is over the hero
+const JIT_FORM = 0.25;        // brand/house.py JIT_FORM: jitter outside the house formation
+const FLOOR = 0.58;           // brand/house.py FLOOR: studio dome brightness straight down
+const RED_ROUGH = 0.08;       // live-only: the lacquer's highlight under NeutralToneMapping peaks hotter than AgX's, so it is a touch rougher
+const RED_ENV = 0.28;         // how much studio the lacquer red reflects live (0.45 ran hotter than the poster's deep red)
 
 // house.py stage(): camera (9.8,-11.6,4.7) lens 105 on a 36mm sensor, target (1.05,-0.40,1.50), render 1500x1150
 const CAM_POS = new THREE.Vector3(9.8, 4.7, 11.6);
 const CAM_TGT = new THREE.Vector3(1.05, 1.50, 0.40);
 const HFOV = 2 * Math.atan(18 / 105);
 // poster.py prints this: the alpha crop of the full frame, padded to the page's 1400:1309 box
-const CROP = { x: -7, y: -172, w: 1403, h: 1312 };
+const CROP = { x: -5, y: -172, w: 1402, h: 1311 };
 
 // brand/house.py COLORS (linear) and SURF (metalness, roughness), kept in step by hand
-const COLORS = [[0.062, 0.074, 0.094], [0.030, 0.037, 0.050], [0.014, 0.020, 0.036], [0.36, 0.024, 0.030]];
+const COLORS = [[0.062, 0.074, 0.094], [0.030, 0.037, 0.050], [0.014, 0.020, 0.036], [0.34, 0.038, 0.040]];   // red opened a touch: AgX in the poster desaturates it, Neutral here does not
 const SURF = [[0.78, 0.34], [0.80, 0.36], [0.85, 0.28], [0.40, 0.30]];
 // brand/house.py SOFTBOXES: (blender direction, half-width deg, half-height deg, intensity, tint)
 const SOFTBOXES = [
-  [[4.6, -5.6, 6.2], 30, 20, 7.0, [1, 1, 1]],
+  [[4.6, -5.6, 6.2], 30, 20, 3.5, [1, 1, 1]],
   [[7.0, -3.0, 1.2], 5, 42, 9.0, [0.98, 0.99, 1]],
   [[-5.2, 4.8, 3.8], 5, 34, 6.5, [0.92, 0.95, 1]],
   [[0, 0, 1], 48, 7, 3.2, [1, 1, 1]],
@@ -47,14 +58,15 @@ const SOFTBOXES = [
 // the homepage program: which formation each section resolves to. A section not listed keeps the previous form.
 // Companion mode docks the canvas bottom-right once the hero has scrolled away (set to false to keep it in the hero only).
 const PROGRAM = [
-  { sel: '#how', form: 'message' },
-  { sel: '#services', form: 'couch' },
-  { sel: '#areas', form: 'map' },
-  { sel: '#proof', form: 'truck' },
-  { sel: '#faq', form: 'house' },
-  { sel: '#contact', form: 'message' },
+  { sel: '#how', form: 'message' },      // 01 text a photo, get a price back
+  { sel: '#services', form: 'couch' },   // 02 what we take
+  { sel: '#areas', form: 'map' },        // 03 six cities
+  { sel: '#proof', form: 'truck' },      // 04 the loads behind the rating
+  { sel: '#faq', form: 'fridge' },       // 05 what do you take, can it go today
+  { sel: '#contact', form: 'house' },    // 06 the house again, where the reader arrives
 ];
-const COMPANION = { size: 240, right: 32, bottom: 28 };
+// size is the largest the companion gets; min is where it hides instead; gap is the clearance from the text column
+const COMPANION = { size: 240, min: 108, right: 32, bottom: 28, gap: 28 };
 
 const b2t = (v) => new THREE.Vector3(v[0], v[2], -v[1]);                       // blender -> three axes
 const q2t = (q) => new THREE.Quaternion(q[0], q[2], -q[1], q[3]);              // same, for quaternions (x,y,z,w)
@@ -79,7 +91,7 @@ function studioTexture() {
       const az = ((x + 0.5) / W - 0.5) * 2 * Math.PI;           // three: u = atan2(z, x) / 2pi + 0.5
       dir.set(Math.cos(el) * Math.cos(az), Math.sin(el), Math.cos(el) * Math.sin(az));
       const t = dir.y;
-      const sky = t < 0 ? 0.42 + (0.74 - 0.42) * Math.pow(-t, 0.7) : 0.42 + (0.20 - 0.42) * Math.pow(t, 0.8);
+      const sky = t < 0 ? 0.42 + (FLOOR - 0.42) * Math.pow(-t, 0.7) : 0.42 + (0.20 - 0.42) * Math.pow(t, 0.8);
       let r = sky * 0.96, g = sky * 0.975, b = sky;
       for (const bx of boxes) {
         const dot = dir.dot(bx.c);
@@ -148,8 +160,8 @@ export async function init(piece, opts = {}) {
   const loader = new GLTFLoader();
   loader.setDRACOLoader(draco);
   const [gltf, shapes] = await Promise.all([
-    loader.loadAsync('assets/house.glb?v=5'),
-    fetch('assets/house-shapes.json?v=5').then((r) => r.json()),
+    loader.loadAsync('assets/house.glb?v=6'),
+    fetch('assets/house-shapes.json?v=6').then((r) => r.json()),
   ]);
   const house = gltf.scene;
   const rig = new THREE.Group();          // the pivot the pointer lean and sway act on
@@ -179,14 +191,16 @@ export async function init(piece, opts = {}) {
     if (!m || !m.isMesh) { console.warn('house: missing fragment', f.name); continue; }
     const c0 = shapes.targets.house[i].c;
     m.material = new THREE.MeshPhysicalMaterial({
-      color: colorOf(c0).multiplyScalar(1 + f.v[0] * 2.2), metalness: SURF[c0][0], roughness: Math.max(0.06, SURF[c0][1] + f.v[1]),
-      clearcoat: SURF[c0][0] < 0.6 ? 0.35 : 0.18, clearcoatRoughness: 0.12, transparent: true,
+      color: colorOf(c0).multiplyScalar(1 + f.v[0] * 2.2), metalness: SURF[c0][0], roughness: Math.max(0.06, SURF[c0][1] + f.v[1] + (c0 === 3 ? RED_ROUGH : 0)),
+      clearcoat: SURF[c0][0] < 0.6 ? 0.22 : 0.18, clearcoatRoughness: 0.16, transparent: true,
     });
-    m.material.envMapIntensity = c0 === 3 ? 0.45 : 1;   // the lacquer red takes less of the studio, or it runs pink
+    m.material.envMapIntensity = c0 === 3 ? RED_ENV : 1;   // the lacquer red takes less of the studio, or it runs pink
     const targets = {};
     for (const k of FORMS) {
       const t = shapes.targets[k][i];
-      targets[k] = { p: b2t(t.p), r: q2t(t.r), k: s2t(t.k), c: t.c, col: colorOf(t.c).multiplyScalar(1 + f.v[0] * 2.2) };
+      const jit = k === 'house' ? 1 : JIT_FORM;
+      targets[k] = { p: b2t(t.p), r: q2t(t.r), k: s2t(t.k), c: t.c, col: colorOf(t.c).multiplyScalar(1 + f.v[0] * 2.2 * jit),
+        rough: Math.max(0.06, SURF[t.c][1] + f.v[1] * jit + (t.c === 3 ? RED_ROUGH : 0)) };
     }
     // stagger: blocks go first, then the roof, walls, gables, and the base last; a hash spreads each group
     const order = { lift: 0.0, inside: 0.12, roof: 0.2, wall: 0.45, gable: 0.55, base: 0.75 }[f.role] ?? 0.5;
@@ -233,8 +247,23 @@ export async function init(piece, opts = {}) {
   resize();
   addEventListener('resize', resize);
 
-  // docking: the canvas leaves the hero box and settles bottom-right as a small companion, scrubbed by scroll
+  // docking: the canvas leaves the hero box and settles beside the text column as a small companion, scrubbed by scroll.
+  // Where it lands: just right of the widest text column (so on a wide screen the travel is short and it stays by
+  // the reading line), clamped inside the window. If the column leaves no room it shrinks, and below companion.min
+  // it hides. Under the footer it fades, so it never covers a footer link. It never takes pointer events.
   let pr = null;
+  const columns = Array.from(document.querySelectorAll('main .column'));
+  const footer = document.querySelector('footer');
+  function dockRect() {
+    const s = companion.size, r = piece.getBoundingClientRect(), ar = r.width / r.height;
+    let colRight = 0;
+    for (const c of columns) { const cr = c.getBoundingClientRect(); if (cr.width && cr.right > colRight) colRight = cr.right; }
+    const room = innerWidth - companion.right - (colRight + companion.gap);
+    const w1 = Math.max(1, Math.min(s, room));
+    const h1 = w1 / ar;
+    const x1 = Math.min(colRight + companion.gap, innerWidth - companion.right - w1);
+    return { w1, h1, x1, y1: innerHeight - companion.bottom - h1, ok: w1 >= companion.min };
+  }
   function applyDock(k, force) {
     if (!companion) return;
     const r = piece.getBoundingClientRect();
@@ -242,13 +271,14 @@ export async function init(piece, opts = {}) {
       if (docked > 0.001 || force) { canvas.style.cssText = ''; }
       docked = 0; return;
     }
-    const s = companion.size, ar = r.width / r.height;
-    const w1 = s, h1 = s / ar;
-    const x0 = r.left, y0 = r.top, x1 = innerWidth - companion.right - w1, y1 = innerHeight - companion.bottom - h1;
+    const d = dockRect();
     const e = k * k * (3 - 2 * k);
-    const w = r.width + (w1 - r.width) * e, h = r.height + (h1 - r.height) * e;
-    const x = x0 + (x1 - x0) * e, y = y0 + (y1 - y0) * e;
-    canvas.style.cssText = `position:fixed;inset:auto;left:${x}px;top:${y}px;width:${w}px !important;height:${h}px !important;z-index:2;pointer-events:none;opacity:1`;
+    const w = r.width + (d.w1 - r.width) * e, h = r.height + (d.h1 - r.height) * e;
+    const x = r.left + (d.x1 - r.left) * e, y = r.top + (d.y1 - r.top) * e;
+    // fade: no room beside the column, or the footer has risen under the companion
+    let op = d.ok ? 1 : 1 - e;
+    if (footer) { const ft = footer.getBoundingClientRect().top; op *= 1 - smooth(innerHeight, innerHeight - d.h1 - companion.bottom, ft); }
+    canvas.style.cssText = `position:fixed;inset:auto;left:${x}px;top:${y}px;width:${w}px !important;height:${h}px !important;z-index:2;pointer-events:none;opacity:${op.toFixed(3)}`;
     if (Math.abs(w - pr) > 1) { renderer.setSize(Math.round(w), Math.round(h), false); pr = w; }
     docked = k;
   }
@@ -377,7 +407,8 @@ export async function init(piece, opts = {}) {
       ca.copy(A.col).lerp(B.col, lt);
       o.mesh.material.color.copy(ca);
       o.mesh.material.metalness = SURF[A.c][0] + (SURF[B.c][0] - SURF[A.c][0]) * lt;
-      o.mesh.material.envMapIntensity = (A.c === 3 ? 0.45 : 1) + ((B.c === 3 ? 0.45 : 1) - (A.c === 3 ? 0.45 : 1)) * lt;
+      o.mesh.material.roughness = A.rough + (B.rough - A.rough) * lt;
+      o.mesh.material.envMapIntensity = (A.c === 3 ? RED_ENV : 1) + ((B.c === 3 ? RED_ENV : 1) - (A.c === 3 ? RED_ENV : 1)) * lt;
       o.mesh.material.opacity = opA + (opB - opA) * lt;
       o.mesh.visible = o.mesh.material.opacity > 0.01;
     }

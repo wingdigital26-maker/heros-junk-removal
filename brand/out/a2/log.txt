@@ -1,0 +1,368 @@
+C:\Users\wjack\heros-v3\brand\house.py:348: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  m.use_nodes = True
+C:\Users\wjack\heros-v3\brand\house.py:467: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w.use_nodes = True
+00:15.109  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\house-hero.png'
+wrote shapes.json n=68 targets=['house', 'couch', 'fridge', 'map', 'message', 'truck']
+RENDERED house
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+15:09:10 | INFO: Starting glTF 2.0 export
+15:09:10 | INFO: Extracting primitive: Cube
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.001
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.002
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.003
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.004
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.005
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.006
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.007
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.008
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.009
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.010
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.011
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.012
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.013
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.014
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.015
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.016
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.018
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.019
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.020
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.021
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.022
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.023
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.024
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.025
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.026
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.027
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.028
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.029
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.030
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.031
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.032
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.033
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.034
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.035
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.036
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.037
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.038
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.039
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.040
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.041
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.042
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.045
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.046
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.047
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.048
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.049
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.050
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.051
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.052
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.053
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.054
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.055
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.056
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.057
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.058
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.059
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.060
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.061
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.062
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.063
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.064
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.065
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.066
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.067
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.043
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.044
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Extracting primitive: Cube.017
+15:09:10 | INFO: Primitives created: 1
+15:09:10 | INFO: Draco encoder: Encoding mesh frag0.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag1.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag2.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag3.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag4.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag5.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag6.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag7.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag8.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag9.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag10.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag11.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag12.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag13.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag14.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag15.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag16.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag18.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag19.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag20.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag21.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag22.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag23.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag24.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag25.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag26.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag27.
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 02:38:20)
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 911, compression ratio: 5.28
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 15:09:10 | INFO: Draco encoder: Encoding mesh frag28.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag29.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag30.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag31.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag32.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag33.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag34.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag35.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag36.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag37.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag38.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag39.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag40.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag41.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag42.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag45.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag46.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag47.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag48.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag49.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag50.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag51.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag52.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag53.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag54.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag55.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag56.
+564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 888, compression ratio: 5.41
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 922, compression ratio: 5.21
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 922, compression ratio: 5.21
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 922, compression ratio: 5.21
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 922, compression ratio: 5.21
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 ve15:09:10 | INFO: Draco encoder: Encoding mesh frag57.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag58.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag59.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag60.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag61.
+15:09:10 | INFO: Draco encoder: Encoding mesh frag62.
+15:09:10 | INFO: Draco encoder: Encoding mesh inside.
+15:09:10 | INFO: Draco encoder: Encoding mesh lift0.
+15:09:10 | INFO: Draco encoder: Encoding mesh lift1.
+15:09:10 | INFO: Draco encoder: Encoding mesh lift2.
+15:09:10 | INFO: Draco encoder: Encoding mesh lift3.
+15:09:10 | INFO: Draco encoder: Encoding mesh lintel.
+15:09:10 | INFO: Draco encoder: Encoding mesh reveal.
+15:09:10 | INFO: Draco encoder: Encoding mesh window.
+15:09:10 | INFO: Finished glTF 2.0 export in 0.3365345001220703 s
+00:25.891  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\couch-hero.png'
+00:34.453  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\fridge-hero.png'
+00:44.344  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\map-hero.png'
+00:52.750  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\message-hero.png'
+01:02.109  render           | Saved: 'C:\Users\wjack\heros-v3\brand\out\a2\truck-hero.png'
+
+TRIS 12784 FRAGS 68
+RENDERED couch
+RENDERED fridge
+RENDERED map
+RENDERED message
+RENDERED truck
+DONE house
+rtices, 564 indices, raw size: 4808, encoded size: 842, compression ratio: 5.71
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 871, compression ratio: 5.52
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 895, compression ratio: 5.37
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 960, compression ratio: 5.01
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 871, compression ratio: 5.52
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 895, compression ratio: 5.37
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 960, compression ratio: 5.01
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 900, compression ratio: 5.34
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 902, compression ratio: 5.33
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 908, compression ratio: 5.30
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 947, compression ratio: 5.08
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 958, compression ratio: 5.02
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 115 vertices, 564 indices, raw size: 4808, encoded size: 844, compression ratio: 5.70
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 116 vertices, 564 indices, raw size: 4840, encoded size: 892, compression ratio: 5.43
+DracoEncoder | Preserve triangle order: no
+DracoEncoder | Encoded 116 vertices, 564 indices, raw size: 4840, encoded size: 880, compression ratio: 5.50
+
+Blender quit
+EXIT 0
