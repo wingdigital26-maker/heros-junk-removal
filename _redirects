@@ -1,7 +1,13 @@
-# Permanent redirects. Old cost-guide slugs retired 2026-08-22 when pricing
-# content was removed sitewide. Keep these indefinitely so existing links,
-# bookmarks, and any indexed results keep landing on the right page.
+# v2 redirects. Cloudflare Pages serves clean URLs automatically (foo.html -> /foo,
+# foo/index.html -> /foo/) the same way v1 does, so no explicit rules are needed for
+# the 79 ported pages themselves. The only rules here are the deprecated-slug 301s
+# inherited unchanged from v1's _redirects, because those old URLs may still be
+# indexed, bookmarked, or linked from elsewhere even though they left the sitemap
+# back on 2026-08-22.
 
+# Old cost-guide slugs retired 2026-08-22 when pricing content was removed sitewide.
+# Keep these indefinitely so existing links, bookmarks, and any indexed results keep
+# landing on the right page.
 /blog/junk-removal-cost-dfw.html      /blog/how-junk-removal-works   301
 /blog/junk-removal-cost-dfw           /blog/how-junk-removal-works   301
 

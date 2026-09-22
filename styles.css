@@ -137,6 +137,49 @@ p{margin:0 0 1em}
 .foot-bar{border-top:1px solid rgba(255,255,255,.12);padding-top:18px;display:flex;
   flex-wrap:wrap;gap:8px 22px;justify-content:space-between;font-size:.86rem}
 
+/* inner pages: navy band carries the header so white text always reads,
+   and the phone/text stay above the fold with no hero photo needed */
+.inner-band{position:relative;background:var(--navy);padding:148px 0 52px}
+.inner-band .eyebrow{color:var(--clay)}
+.inner-band h1{color:#fff;margin-bottom:.42em}
+.inner-band .lede{color:rgba(255,255,255,.88);max-width:40em}
+.inner-band .hero-cta{margin-top:22px;margin-bottom:0}
+.breadcrumbs{color:rgba(255,255,255,.6);font-size:.85rem;margin:0 0 1em}
+.breadcrumbs a{color:rgba(255,255,255,.8)}
+
+/* simple content cards used on services hub / areas hub, no photos */
+.tile{background:#fff;border-radius:16px;padding:26px 24px;box-shadow:0 1px 3px var(--navy-12);
+  display:flex;flex-direction:column;gap:.5em;text-decoration:none;transition:transform .18s,box-shadow .18s}
+a.tile:hover{transform:translateY(-3px);box-shadow:0 10px 26px var(--navy-12)}
+.tile h3{margin:0}
+.tile p{color:#5a6067;font-size:.95rem;margin:0;flex:1}
+
+/* pricing / how it works steps */
+.steps{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:28px 0}
+.step{background:#fff;border-radius:16px;padding:22px 22px;box-shadow:0 1px 3px var(--navy-12)}
+.step .stepno{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:99px;background:var(--clay);color:var(--navy);font-weight:700;font-size:.85rem;margin-bottom:.6em}
+
+/* contact page */
+.contact-grid{display:grid;gap:clamp(24px,4vw,52px);grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start}
+.contact-way{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.contact-way svg{flex:0 0 auto;margin-top:3px;color:var(--clay)}
+.contact-way h3{margin:0 0 .2em;font-size:1.05rem}
+.contact-way p{margin:0;color:#5a6067}
+form.hjr-form{background:#fff;border-radius:18px;padding:clamp(22px,4vw,32px);box-shadow:0 1px 3px var(--navy-12)}
+form.hjr-form label{display:block;font-size:.85rem;font-weight:600;color:var(--navy);margin-bottom:.35em}
+form.hjr-form input,form.hjr-form select,form.hjr-form textarea{width:100%;padding:13px 14px;border-radius:10px;
+  border:1.5px solid var(--navy-12);font-family:inherit;font-size:1rem;color:var(--charcoal);background:var(--stone);margin-bottom:16px}
+form.hjr-form input:focus,form.hjr-form select:focus,form.hjr-form textarea:focus{outline:2px solid var(--clay);outline-offset:1px}
+.row2{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.hp-field{position:absolute;left:-9999px}
+.form-msg{border-radius:14px;padding:20px 22px;margin-top:2px}
+.form-msg.ok{background:rgba(217,122,61,.12);border:1.5px solid var(--clay)}
+.form-msg.fail{background:#fff;border:1.5px solid var(--navy-12)}
+.form-msg h3{margin:0 0 .4em}
+.form-msg .btn{margin-top:14px}
+
 /* branded intro, reduced-motion safe */
 .intro{position:fixed;inset:0;z-index:9999;background:var(--navy);display:grid;place-items:center;
   animation:introOut .5s ease 1.8s forwards}
