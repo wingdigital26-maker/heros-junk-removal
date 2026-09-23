@@ -18,8 +18,11 @@
    PROGRAM. Each homepage section names the formation it resolves to (PROGRAM below). Scroll is one continuous
    value; every fragment reads its own staggered slice of it, so a transition scrubs both ways, moves as a wave
    rather than a block, and settles when the reader stops. In the hero the house sits in the page; as the hero
-   scrolls away the canvas docks beside the text column as a small companion (pointer-events none, never over
-   a column or a CTA) and re-forms per section.
+   scrolls away it flies up into the nav and PARKS AS THE LOGO (v5, 2026-09-22): the static mark fades and the
+   live piece sits in its place, still breathing, still letting blocks out through the door, and re-forming per
+   section. The logo and the piece are one object. Hovering the logo pushes its fragments the same way the hero
+   does. On phones, with reduced motion, or on inner pages, the flat mark (assets/logo-mark.svg, generated from
+   the same house by brand/mark.py) stands in.
 
    FEEL. Untouched, the piece performs: the four blocks ride out through the door, a slow breath wave rolls
    across the fragments every few seconds, the rig sways. Over the hero the pointer takes over: fragments near
@@ -68,15 +71,17 @@ const SOFTBOXES = [
 
 // the homepage program: which formation each section resolves to. A section not listed keeps the previous form.
 const PROGRAM = [
-  { sel: '#how', form: 'message' },      // 01 text a photo, get a price back
-  { sel: '#services', form: 'couch' },   // 02 what we take
-  { sel: '#areas', form: 'map' },        // 03 six cities
-  { sel: '#proof', form: 'truck' },      // 04 the loads behind the rating
+  { sel: '#how', form: 'message' },      // 02 text a photo, get a price back
+  { sel: '#proof', form: 'truck' },      // 02b the reviews: the truck that showed up
+  { sel: '#services', form: 'couch' },   // 03 what we take
+  { sel: '#areas', form: 'map' },        // 04 six cities
   { sel: '#faq', form: 'fridge' },       // 05 what do you take, can it go today
   { sel: '#contact', form: 'house' },    // 06 the house again, where the reader arrives
-];
-// size is the largest the companion gets; min is where it hides instead; gap is the clearance from the text column
-const COMPANION = { size: 240, min: 108, right: 32, bottom: 28, gap: 28 };
+];   // kept in page order: readScroll walks this list top-down and stops at the first section still below the fold
+// the dock: the nav's brand mark (#nav .brand .mark). size is the canvas box (wider than the mark: the piece
+// overhangs its slot the way the house overhangs its plinth); lift raises the visual centre so the house body,
+// not the shadow, sits on the mark's centre.
+const DOCK = { sel: '#nav .brand .mark', size: 62, lift: 3, shift: -5 };   // shift: the blocks leave to the right, so the box sits a hair left of the slot and they never cross the wordmark
 
 const clamp = THREE.MathUtils.clamp;
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -293,7 +298,10 @@ async function fragmentGeometry(file) {
 // ---------------------------------------------------------------- init
 export async function init(piece, opts = {}) {
   const program = opts.program || PROGRAM;
-  const companion = opts.companion === undefined ? COMPANION : opts.companion;
+  const dockCfg = opts.dock === undefined ? DOCK : opts.dock;
+  const dockEl = dockCfg && document.querySelector(dockCfg.sel);
+  const companion = dockEl ? dockCfg : null;
+  const nav = dockEl && dockEl.closest('#nav');
   const params = new URLSearchParams(location.search);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -453,41 +461,21 @@ export async function init(piece, opts = {}) {
     if (docked) applyDock(docked, true);
   }
 
-  // docking: the canvas leaves the hero box and settles beside the text column as a small companion, scrubbed by scroll.
+  // docking: the canvas leaves the hero box and settles on the nav's brand mark, scrubbed by scroll.
   // Layout is READ only on scroll and resize (measure), never in the frame loop, and the style is WRITTEN only when it changes.
-  const columns = Array.from(document.querySelectorAll('main .column'));
-  const footer = document.querySelector('footer');
-  const M = { r: null, colRight: 0, footTop: Infinity, stops: [], clear: 1 };
-  // tags that carry reading text or an action: the companion must never land on one of these
-  const TEXTY = /^(P|H[1-6]|A|BUTTON|LI|DT|DD|LABEL|INPUT|TEXTAREA|SELECT|SPAN|STRONG|EM|B|I|SMALL|FIGCAPTION|SUMMARY|TD|TH|BLOCKQUOTE|CITE|Q|TIME|ADDRESS)$/;
-  function landingClear(d) {
-    // 4 x 3 points over the companion box; the canvas is pointer-events:none so it never blocks its own test
-    for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) {
-      const x = d.x1 + d.w1 * (0.08 + 0.84 * i / 3), y = d.y1 + d.h1 * (0.1 + 0.8 * j / 2);
-      if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) continue;
-      const el = document.elementFromPoint(x, y);
-      if (el && (TEXTY.test(el.tagName) || el.closest('a, button, .btn, .cta'))) return 0;
-    }
-    return 1;
-  }
+  const M = { r: null, mark: null, stops: [], d: null };
   const stops = program.map((s) => ({ el: document.querySelector(s.sel), form: s.form })).filter((s) => s.el && T[s.form]);
+  stops.sort((a, b) => a.el.getBoundingClientRect().top - b.el.getBoundingClientRect().top);   // page order, whatever order the list came in
   function measure() {
     M.r = piece.getBoundingClientRect();
-    let cr = 0;
-    for (const c of columns) { const b = c.getBoundingClientRect(); if (b.width && b.right > cr) cr = b.right; }
-    M.colRight = cr;
-    M.footTop = footer ? footer.getBoundingClientRect().top : Infinity;
+    M.mark = dockEl ? dockEl.getBoundingClientRect() : null;
     M.stops = stops.map((s) => s.el.getBoundingClientRect().top);
-    if (companion && M.r) { const d = dockRect(); M.clear = d.ok ? landingClear(d) : 1; }
   }
-  let clearS = 1;   // the fade over text is damped so it never flickers while the reader scrolls
   function dockRect() {
-    const s = companion.size, r = M.r, ar = r.width / r.height;
-    const room = innerWidth - companion.right - (M.colRight + companion.gap);
-    const w1 = Math.max(1, Math.min(s, room));
-    const h1 = w1 / ar;
-    const x1 = Math.min(M.colRight + companion.gap, innerWidth - companion.right - w1);
-    return { w1, h1, x1, y1: innerHeight - companion.bottom - h1, ok: w1 >= companion.min };
+    const s = companion.size, r = M.r, ar = r.width / r.height, m = M.mark;
+    const w1 = s, h1 = s / ar;
+    const x1 = m.left + m.width / 2 - w1 / 2 + (companion.shift || 0), y1 = m.top + m.height / 2 - h1 / 2 - companion.lift;
+    return { w1, h1, x1, y1, ok: !!m && m.width > 0 };
   }
   let lastCss = '';
   function applyDock(k, force) {
@@ -496,7 +484,8 @@ export async function init(piece, opts = {}) {
     if (k <= 0.001) {
       if (docked > 0.001 || force) {
         if (canvas.parentNode !== piece) piece.appendChild(canvas);   // back in the hero box: the page's own .piece rules apply again
-        canvas.style.cssText = ''; lastCss = '';
+        canvas.style.cssText = ''; lastCss = ''; M.d = null;
+        if (nav) nav.classList.remove('piece-parked');
         if (bufW !== M.r.width) { renderer.setSize(Math.round(M.r.width), Math.round(M.r.height), false); bufW = M.r.width; }
       }
       docked = 0; return;
@@ -505,14 +494,16 @@ export async function init(piece, opts = {}) {
     // fixed canvas left inside it would paint UNDER every later section. The WebGL context survives the move.
     if (canvas.parentNode !== document.body) document.body.appendChild(canvas);
     const r = M.r, d = dockRect();
-    const e = k * k * (3 - 2 * k);
+    // the flight: ease the box, and arc it a little above the straight line so it lifts before it lands
+    const e = k * k * (3 - 2 * k), arc = Math.sin(Math.PI * e) * 40;
     const w = r.width + (d.w1 - r.width) * e, h = r.height + (d.h1 - r.height) * e;
-    const x = r.left + (d.x1 - r.left) * e, y = r.top + (d.y1 - r.top) * e;
-    let op = d.ok ? 1 : 1 - e;
-    op *= 1 - smooth(innerHeight, innerHeight - d.h1 - companion.bottom, M.footTop);
-    op *= 1 - e * (1 - clearS);
-    const css = `position:fixed;inset:auto;left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${w.toFixed(1)}px !important;height:${h.toFixed(1)}px !important;z-index:5;pointer-events:none;opacity:${op.toFixed(3)};display:block`;
+    const x = r.left + (d.x1 - r.left) * e, y = r.top + (d.y1 - r.top) * e - arc;
+    const op = d.ok ? 1 : 1 - e;
+    M.d = { x, y, w, h };
+    // above the nav bar (z 50) so the parked piece paints over the faded mark; pointer-events none so the brand link stays a link
+    const css = `position:fixed;inset:auto;left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${w.toFixed(1)}px !important;height:${h.toFixed(1)}px !important;z-index:51;pointer-events:none;opacity:${op.toFixed(3)};display:block`;
     if (css !== lastCss) { canvas.style.cssText = css; lastCss = css; }
+    if (nav) { const parked = k > 0.6; if (parked !== nav.classList.contains('piece-parked')) nav.classList.toggle('piece-parked', parked); }
     // the drawing buffer follows the box in coarse steps and lands exactly at either end, so it is not reallocated every frame
     const settled = k > 0.995;
     if ((settled && Math.abs(w - bufW) > 1) || Math.abs(w - bufW) > 48) { renderer.setSize(Math.round(w), Math.round(h), false); bufW = w; }
@@ -521,13 +512,16 @@ export async function init(piece, opts = {}) {
 
   // ---- the program: scroll -> which two formations, and how far between them ----
   let fromForm = 'house', toForm = 'house', mix = 0, dockWant = 0, heroGone = 0;
+  // parked on the nav, the logo stays the house: at 62px the other formations read as grey lumps, and a brand mark
+  // that is a lump for most of the scroll is a worse mark. ?story=1 turns the per-section re-forming back on to compare.
+  const story = params.has('story') || !companion;
   function readScroll() {
     measure();
     const r = M.r;
     heroGone = smooth(innerHeight * 0.55, -r.height * 0.2, r.bottom);
     dockWant = companion ? heroGone : 0;
     let a = 'house', b = 'house', m = 0;
-    for (let i = 0; i < stops.length; i++) {
+    for (let i = 0; story && i < stops.length; i++) {
       const k = smooth(innerHeight * 0.85, innerHeight * 0.35, M.stops[i]);
       if (k <= 0) break;
       a = b; b = stops[i].form; m = k;
@@ -547,11 +541,12 @@ export async function init(piece, opts = {}) {
   const centreW = new THREE.Vector3();
   let hitOk = false;
   function pointerAt(cx, cy) {
-    const r = M.r || piece.getBoundingClientRect();
-    if (docked > 0.5) { wantOver = 0; return; }
+    // while parked, the piece's box is the fixed one on the nav, not the hero slot
+    const r = (docked > 0.5 && M.d) ? { left: M.d.x, top: M.d.y, width: M.d.w, height: M.d.h, right: M.d.x + M.d.w, bottom: M.d.y + M.d.h } : (M.r || piece.getBoundingClientRect());
+    const pad = docked > 0.5 ? 14 : 40;
     px = clamp((cx - (r.left + r.width / 2)) / innerWidth * 2, -1, 1);
     py = clamp((cy - (r.top + r.height / 2)) / innerHeight * 2, -1, 1);
-    const inside = cx >= r.left - 40 && cx <= r.right + 40 && cy >= r.top - 40 && cy <= r.bottom + 40;
+    const inside = cx >= r.left - pad && cx <= r.right + pad && cy >= r.top - pad && cy <= r.bottom + pad;
     wantOver = inside ? 1 : 0;
     if (inside) {
       lastInput = performance.now();
@@ -609,13 +604,14 @@ export async function init(piece, opts = {}) {
     }
     mixS = THREE.MathUtils.damp(mixS, mix, 6, dt);
     dockS = THREE.MathUtils.damp(dockS, dockWant, 5, dt);
-    clearS = THREE.MathUtils.damp(clearS, M.clear, 7, dt);
     applyDock(dockS);
 
     // orientation: idle sway + pointer lean
     const sway = Math.sin(t * (2 * Math.PI / 11)) * SWAY;
-    yaw = THREE.MathUtils.damp(yaw, px * POINTER_YAW * (1 - dockS) + sway, 3.2, dt);
-    pitch = THREE.MathUtils.damp(pitch, py * POINTER_PITCH * (1 - dockS) + Math.sin(t * (2 * Math.PI / 13)) * 0.008, 3.2, dt);
+    // parked, the lean follows the hand only while it is over the logo (a logo that turns to watch the cursor across the page is a gimmick)
+    const leanK = 1 - dockS * (1 - over);
+    yaw = THREE.MathUtils.damp(yaw, px * POINTER_YAW * leanK + sway, 3.2, dt);
+    pitch = THREE.MathUtils.damp(pitch, py * POINTER_PITCH * leanK + Math.sin(t * (2 * Math.PI / 13)) * 0.008, 3.2, dt);
     rig.rotation.set(pitch, yaw, 0);
 
     const A = F[showFrom], B = F[showTo], same = showFrom === showTo;
@@ -653,9 +649,9 @@ export async function init(piece, opts = {}) {
     bAmpLast = breathing ? bAmp : 0;              // the breath rolls front-left to back-right and upward
 
     // pointer field
-    const field = hitOk && over > 0.01 && dockS < 0.5;
+    const field = hitOk && over > 0.01;
     const hx = hitL.x, hy = hitL.y, hz = hitL.z;
-    const pushF = over * PUSH_F * (1 - dockS), gatherF = gather * GATHER_F;
+    const pushF = over * PUSH_F, gatherF = gather * GATHER_F;
     const sK = 1 - Math.exp(-SPRING_C * dt);
     const floatAmp = 0.012 * (1 - inHouse);                     // outside the house the fragments hover a hair, never dead still
 

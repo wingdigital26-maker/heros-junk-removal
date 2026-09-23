@@ -21,9 +21,15 @@ function ok() {
 }
 
 function boot() {
-  if (!ok()) return;
+  if (!ok()) {
+    // a narrow or reduced-motion load stays on the poster; if only the width was short, try once more when the window grows
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const mq = matchMedia('(min-width: 821px)');
+    if (!mq.matches) mq.addEventListener('change', () => { if (ok()) boot(); }, { once: true });
+    return;
+  }
   // never race the poster: wait for the page to be quiet, then load three
-  const start = () => import('./house-scene.js?v=6').then((m) => m.init(piece)).then((h) => { window.__houseScene = h; }).catch((e) => console.warn('house: live scene skipped', e));
+  const start = () => import('./house-scene.js?v=7').then((m) => m.init(piece)).then((h) => { window.__houseScene = h; }).catch((e) => console.warn('house: live scene skipped', e));
   if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2500 });
   else setTimeout(start, 600);
 }

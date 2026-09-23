@@ -104,3 +104,8 @@ Better than before: yes. The before-about and before-services renders had a stre
 | 5 | 2026-09-22 | WARN | PASS | 3/3 pass | **PASS** | clean |
 | 6 | 2026-09-22 | WARN | PASS | 3/3 pass | **PASS** | clean |
 | 7 | 2026-09-22 | WARN | PASS | 4/4 pass | **PASS** | clean |
+| 8 | 2026-09-22 | WARN | PASS | 5/5 pass | **PASS** | clean |
+| 9 | 2026-09-22 | WARN | PASS | 5/5 pass | **PASS** | clean |
+
+### Round 9 judge pass (Fable 5.1, in-chat on the captures, no agents per Jack, 2026-09-22)
+Utility 4 (kicker names job + place on the first screen; one red action, isolated; proof is three real Google reviews, attributed, no count). Usability 4 (header tel link, 44px targets, primary action above the fold at 900 and at 720 via the short-window rule). Craft 4 (one hairline system, two families, radius scale; the proof split leaves white under the rating column, same pattern as the other splits). Beauty 4 (the piece and its parked twin in the nav are the signature; real photos). Tells: none from the taxonomy. Gaps: the parked logo's leaving blocks can read as specks beside the wordmark at 32px; the flight's mid frame crosses the hero words for a beat; 1280x720 lands the button at the fold edge. Verdict PASS, better_than_previous true.
