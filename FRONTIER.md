@@ -10,7 +10,7 @@ Current LEVEL: 2 (section deep-dive). Round: 5.
 | R4 | - | about.html first-viewport card-estate-480.webp is lazy at 375px (W20 FAIL) | 1 | open | 1 | verifier | conversion_lint round 1 |
 | R5 | - | all 85 pages fetch Fraunces + Source Sans 3 from Google's CDN (W21) | 1 | done | 2 | verifier | self-hosted, 2 files, 89,968 bytes, 0 third-party requests |
 | R6 | - | nav labels and primary CTA differ between homepage and inner pages | 1 | done | 2 | jack | one nav on all 81 pages |
-| R9 | R1 | inner-page BODY components still come from the legacy styles.css, loaded before style.css | 2 | open | 2 | jack | drain styles.css, then delete it |
+| R9 | R1 | inner-page BODY components still come from the legacy styles.css, loaded before style.css | 2 | open | 5 | jack | DIRECTION SET 2026-09-22: homepage patterns win, see STEERING.md. Drain styles.css, then delete it |
 | R10 | R1 | favicon differed per page: inner pages used a navy data-URI truck from the pre-v3 palette | 1 | done | 2 | verifier | unified to assets/logo-mark.svg |
 | R7 | - | styles.css carries 33 raw hex + 60 raw px off-token (A3) | 1 | candidate | 1 | drain-check | may be moot once R1 lands |
 | R8 | - | brand/logo link tap target under 44px (A7) on home and inner pages | 1 | open | 1 | verifier | conversion_lint round 1 |
