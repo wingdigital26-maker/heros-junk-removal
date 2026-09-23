@@ -48,7 +48,7 @@ a:hover{text-decoration:underline}
 a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--teal-bright);outline-offset:2px}
 .skip{position:absolute;left:-9999px;top:0;z-index:100;background:var(--navy);color:#fff;padding:10px 18px;font-weight:700}
 .skip:focus{left:0}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
 h1,h2,h3{line-height:1.15;color:var(--navy);font-weight:700;font-family:var(--font-head);letter-spacing:.005em}
 h1{font-size:clamp(2.2rem,5vw,3.7rem);text-transform:uppercase;letter-spacing:.015em}
 h2{font-size:clamp(1.6rem,3.2vw,2.4rem)}
@@ -60,22 +60,21 @@ p{margin-bottom:1rem}
 section{padding:68px 0}
 section.band{padding:60px 0}
 .kicker{display:inline-block;font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
-.lead{font-size:1.15rem;color:var(--slate);max-width:46rem}
+
 .center{text-align:center}
 .center .lead{margin-left:auto;margin-right:auto}
 
 /* Buttons — work-boot slab style (brand loadout pick) */
-.btn{display:inline-block;padding:12px 26px;border-radius:var(--radius);font-weight:700;font-family:var(--font-head);text-transform:uppercase;letter-spacing:.05em;font-size:1.08rem;transition:background-color .15s,border-color .15s,transform .08s;text-decoration:none;border:0;cursor:pointer}
+
 .btn:hover{text-decoration:none}
-.btn-primary{background:var(--cta);color:#fff;border-bottom:4px solid var(--cta-deep)}
-.btn-primary:hover{background:var(--cta-deep)}
-.btn-primary:active{transform:translateY(2px);border-bottom-width:2px}
-.btn-ghost{border:2px solid rgba(255,255,255,.7);color:#fff;padding:10px 24px}
-.btn-ghost:hover{border-color:#fff}
+
+
+
+
+
 .btn-teal{background:var(--teal);color:#fff;border-bottom:4px solid var(--teal-deep)}
 .btn-teal:hover{background:var(--teal-deep)}
 .btn-teal:active{transform:translateY(2px);border-bottom-width:2px}
-.btn-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:1.4rem}
 
 /* Topbar + nav */
 .topbar{background:var(--navy-deep);color:#9fc4d8;font-size:.8rem;padding:7px 0;letter-spacing:.01em}
@@ -227,10 +226,9 @@ table.data th{background:var(--mist);color:var(--navy)}
 .table-scroll{overflow-x:auto}
 
 /* FAQ */
-.faq{margin-top:1.6rem}
-.faq details{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:10px}
-.faq summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:1.02rem}
-.faq details p{margin:.8rem 0 0;color:var(--slate)}
+
+
+
 
 /* Blog cards */
 .post-card{display:flex;flex-direction:column}

@@ -102,3 +102,4 @@ Answers:
 
 Better than before: yes. The before-about and before-services renders had a stretched, low-resolution red-and-blue logo banner in the footer, a promo top bar, no CTA in the hero at all, and a 'Site by Wing Digital' credit; all gone.
 | 5 | 2026-09-22 | WARN | PASS | 3/3 pass | **PASS** | clean |
+| 6 | 2026-09-22 | WARN | PASS | 3/3 pass | **PASS** | clean |

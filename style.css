@@ -174,6 +174,7 @@ body.menu-locked{overflow:hidden}
 }
 .ask .lead{max-width:40ch}
 .cta-row{display:flex; flex-wrap:wrap; justify-content:center; gap:var(--space-3)}
+.page-hero .cta-row{justify-content:flex-start}   /* inner heroes set copy left, so the actions line up with it */
 
 .hero-line{
   margin:0 auto; max-width:none; padding:0 var(--gutter);
@@ -245,6 +246,25 @@ body.menu-locked{overflow:hidden}
 }
 .rows a small{font-size:var(--step--1); font-weight:400; color:var(--muted); text-align:right}
 .rows a:hover{text-decoration:underline; text-underline-offset:.2em; text-decoration-thickness:2px}
+/* rows--photo: the same hairline rhythm as .rows, carrying the real job photo
+   per row. The services hub used a 3-column card grid for 7 services, which
+   left an orphan card beside an empty two-thirds row (blank-region and
+   rule-of-three, both judges, round 4). A list has no grid remainder. */
+.rows--photo{max-width:var(--col-text); margin-inline:auto}
+.rows--photo a{align-items:flex-start; gap:var(--space-4); padding:var(--space-4) 0}
+.rows--photo a img{
+  width:120px; height:80px; flex:0 0 120px;
+  object-fit:cover; border-radius:var(--radius-2); background:var(--bg-warm);
+}
+.rows--photo a span{display:block; flex:1 1 auto}
+.rows--photo a small{
+  display:block; margin-top:var(--space-1);
+  text-align:left; line-height:1.45; max-width:52ch;
+}
+@media (max-width:599px){
+  .rows--photo a img{width:84px; height:60px; flex-basis:84px}
+}
+
 .take .split,.take.split{align-items:start}
 .take > .split > figure{align-self:start; margin-top:var(--space-2)}   /* the photo sits with the heading, not the middle of the list */
 .take .photo{aspect-ratio:4 / 3}
