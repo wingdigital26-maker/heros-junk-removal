@@ -54,14 +54,6 @@ def prefix(p):
     return '../' * depth
 
 
-def areas_href(p):
-    """#areas lives on the homepage, so every other page has to walk to it."""
-    rel = p.relative_to(ROOT).as_posix()
-    if rel == 'index.html':
-        return '#areas'
-    return (prefix(p) or './') + '#areas'
-
-
 def grab(text, pattern):
     m = re.search(pattern, text, re.S | re.I)
     if not m:
@@ -102,7 +94,7 @@ def main():
                 ('href="about"', 'href="%sabout"' % pre),
                 ('href="contact"', 'href="%scontact"' % pre),
                 ('href="./"', 'href="%s"' % (pre or './')),
-                ('href="#areas"', 'href="%s"' % areas_href(p))):
+                ('href="areas.html"', 'href="%sareas.html"' % pre)):
             nav = nav.replace(tpl_from, tpl_to)
             foot = foot.replace(tpl_from, tpl_to)
 
