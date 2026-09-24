@@ -91,7 +91,7 @@ p + p{margin-top:var(--space-4)}
 .btn svg{width:18px; height:18px; flex:0 0 auto}
 
 /* ---------- nav: white bar, mark left, phone and the text pill on the right, on every width ---------- */
-#nav{position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(255,255,255,.96); border-bottom:1px solid transparent; transition:border-color .3s ease}
+#nav{position:fixed; top:0; left:0; right:0; z-index:50; background:var(--bg); border-bottom:1px solid transparent; transition:border-color .3s ease}
 #nav.solid{border-bottom-color:var(--hair)}
 #nav .wrap{display:flex; align-items:center; gap:var(--space-4); height:var(--nav-h)}
 .brand{display:inline-flex; align-items:center; gap:var(--space-3); min-height:var(--target); text-decoration:none; font-family:var(--font-display); font-weight:600; font-size:1.125rem; letter-spacing:-.01em; white-space:nowrap}
