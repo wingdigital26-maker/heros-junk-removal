@@ -225,6 +225,10 @@ body.menu-locked{overflow:hidden}
 /* ---------- sections ---------- */
 .section{position:relative; z-index:1; padding:var(--space-section) 0}
 .section--warm{background:var(--bg-warm)}
+/* two plain (non-warm) sections back to back double their padding into one
+   void (top+bottom stack); a warm section's own background absorbs its
+   half so it never doubles. Collapse the white-on-white case to one gap. */
+.section:not(.section--warm) + .section:not(.section--warm){margin-top:calc(var(--space-section) * -1)}
 .section h2 + .lead{margin-top:var(--space-4)}   /* 16: the lead belongs to its heading; the space above the heading is the whole section pad */
 .section h2 + p{margin-top:var(--space-4)}
 
@@ -383,8 +387,8 @@ main section:not(.section) h2, .by-city h2{
    .section headings which already get their gap from the section's own
    padding. Proximity law: the space above the heading (new group starting)
    is much larger than the space below it (heading belongs to its own copy). */
-main section:not(.section) :is(p,ul,.callout) + h2,
-main section:not(.section) :is(p,ul,.callout) + h3{margin-top:var(--space-7)}
+main section:not(.section) :is(p,ul,.callout,img) + h2,
+main section:not(.section) :is(p,ul,.callout,img) + h3{margin-top:var(--space-7)}
 main section:not(.section) h2 + p,
 main section:not(.section) h3 + p{margin-top:var(--space-3)}
 
@@ -394,6 +398,12 @@ main section:not(.section) h3 + p{margin-top:var(--space-3)}
 
 main section{padding:clamp(3rem, 2rem + 3vw, 5rem) 0}
 .band,section.band{background:var(--bg-warm)}
+/* the page-hero already pads its own bottom; the section right after it
+   only needs enough top padding to land the gap under the CTA row at
+   space-8 (64px), not the full section clamp stacked on top of it. */
+@media (min-width:701px){
+  .page-hero + section:not(.section){padding-top:var(--space-5)}
+}
 
 /* inline call/text links get a real tap target wherever they sit in body copy */
 main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:center; min-height:var(--target)}
@@ -515,7 +525,7 @@ form.demo .hp{position:absolute; left:-9999px; top:auto; width:1px; height:1px; 
 @media (max-width:768px){
   body:has(.call-bar){padding-bottom:60px}
   .call-bar{position:fixed; bottom:0; left:0; right:0; z-index:60; display:flex; height:60px; box-shadow:0 -1px 3px rgba(28,25,23,.18)}
-  .call-bar a{flex:1; display:flex; align-items:center; justify-content:center; gap:9px; font-weight:800; font-size:1rem; color:#fff; text-decoration:none; background:var(--accent)}
+  .call-bar a{flex:1; display:flex; align-items:center; justify-content:center; gap:9px; font-weight:800; font-size:1rem; color:#fff; text-decoration:none; background:var(--ink)}
   .call-bar a:hover{text-decoration:none}
 }
 
