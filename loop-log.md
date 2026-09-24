@@ -1,4 +1,4 @@
-# loop-log.md - heros / site
+﻿# loop-log.md - heros / site
 
 Written by scripts/visual_run.py, one row per round. Judge verdicts get
 appended underneath by the orchestrator.
@@ -78,7 +78,7 @@ Three independent runs with candidate and rubric order permuted (about/services/
     "beauty":    {"score": 3, "evidence": "after-about/desktop.png: serif display, sans body, cream FAQ band, white hairline cards and a black CTA band is the statistical average of a clean editorial template; the voxel house is the only distinctive element and it repeats unchanged on every inner hero."}
   },
   "tells": [
-    "eyebrow-microlabels: after-about/desktop.png 'OUR STORY' tracked caps above 'Meet Todd and Nash' and 'GOOD QUESTIONS' above the FAQ heading (also on after-about/mobile.png); after-blog-garage-cleanout-checklist/desktop.png meta string 'By the Hero's team · Updated July 2026 · 6 min read' with middle dots; after-services-index/desktop.png seven card links ending in an arrow 'Furniture removal details →'; SERVICES / CITIES / MORE tracked caps in every footer including round-4/desktop.png.",
+    "eyebrow-microlabels: after-about/desktop.png 'OUR STORY' tracked caps above 'Meet Todd and Nash' and 'GOOD QUESTIONS' above the FAQ heading (also on after-about/mobile.png); after-blog-garage-cleanout-checklist/desktop.png meta string 'By the Hero's team Â· Updated July 2026 Â· 6 min read' with middle dots; after-services-index/desktop.png seven card links ending in an arrow 'Furniture removal details â†’'; SERVICES / CITIES / MORE tracked caps in every footer including round-4/desktop.png.",
     "rule-of-three: after-services-index/desktop.png, seven services forced into a three-column card grid, leaving Construction Debris orphaned on its own row.",
     "blank-region: after-services-index/desktop.png, the two empty card slots beside Construction Debris leave roughly 800 by 400 px of white doing nothing in the middle of the page.",
     "uniform-radius: after-services-index/desktop.png and after-about/desktop.png, service cards, FAQ cards, callout boxes, the trailer photo, the card thumbnails and every button share the same rounding; there is no radius scale between a 1200 px photo and a 40 px button.",
@@ -109,3 +109,4 @@ Better than before: yes. The before-about and before-services renders had a stre
 
 ### Round 9 judge pass (Fable 5.1, in-chat on the captures, no agents per Jack, 2026-09-22)
 Utility 4 (kicker names job + place on the first screen; one red action, isolated; proof is three real Google reviews, attributed, no count). Usability 4 (header tel link, 44px targets, primary action above the fold at 900 and at 720 via the short-window rule). Craft 4 (one hairline system, two families, radius scale; the proof split leaves white under the rating column, same pattern as the other splits). Beauty 4 (the piece and its parked twin in the nav are the signature; real photos). Tells: none from the taxonomy. Gaps: the parked logo's leaving blocks can read as specks beside the wordmark at 32px; the flight's mid frame crosses the hero words for a beat; 1280x720 lands the button at the fold edge. Verdict PASS, better_than_previous true.
+| 10 | 2026-09-24 | PASS | PASS | 4/4 pass | **PASS** | clean |

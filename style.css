@@ -149,6 +149,7 @@ body.menu-locked{overflow:hidden}
 .stage{
   position:relative; width:100%; max-width:var(--col-wide); margin:0 auto; padding:0 var(--gutter);
   display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:var(--space-5);
+  overflow-x:clip;   /* the floor glow (.stage::before) bleeds to 120vw on a phone; contain it here, not on html/body */
 }
 .word{
   font-family:var(--font-display); font-variation-settings:'opsz' 144, 'SOFT' 100;
@@ -376,6 +377,16 @@ main section:not(.section) h2, .by-city h2{
   font-size:clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem); line-height:1.1;
 }
 .by-city h2{font-size:1.6rem; margin-bottom:.5rem}
+
+/* Inner-page body headings that follow prior body content (a paragraph,
+   list, or callout) need their own top margin, unlike the homepage's
+   .section headings which already get their gap from the section's own
+   padding. Proximity law: the space above the heading (new group starting)
+   is much larger than the space below it (heading belongs to its own copy). */
+main section:not(.section) :is(p,ul,.callout) + h2,
+main section:not(.section) :is(p,ul,.callout) + h3{margin-top:var(--space-7)}
+main section:not(.section) h2 + p,
+main section:not(.section) h3 + p{margin-top:var(--space-3)}
 
 /* the same body/article h3 (card titles, why-item titles) reads a
    size down from the homepage's own h3 */
