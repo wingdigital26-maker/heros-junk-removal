@@ -557,6 +557,7 @@ main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:cente
 @media (max-width:620px){ .row2{grid-template-columns:1fr} }
 
 .post-card{display:flex; flex-direction:column}
+main section:not(.section) .post-card h2{font-size:1.15rem}
 .tag{display:inline-block; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:.4rem}
 .post-meta{color:var(--muted); font-size:.9rem; margin-bottom:1.6rem}
 .more{font-weight:700; font-size:.95rem}
