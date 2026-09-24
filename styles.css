@@ -218,6 +218,8 @@ article.post h2{margin:2.2rem 0 .8rem}
 article.post h3{margin:1.6rem 0 .5rem}
 article.post ul,article.post ol{margin:0 0 1rem 1.4rem}
 article.post li{margin-bottom:.4rem}
+article.post .post-figure{margin:1.6rem 0 2rem}
+article.post .post-figure img{display:block;width:100%;height:auto;border-radius:12px;aspect-ratio:3/2;object-fit:cover}
 .post-meta{color:var(--slate);font-size:.9rem;margin-bottom:1.6rem}
 .callout{background:var(--mist);border-left:4px solid var(--teal-bright);padding:18px 22px;margin:1.6rem 0}
 .callout p{margin:0;color:var(--ink)}
