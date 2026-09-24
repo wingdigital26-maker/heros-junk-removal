@@ -30,7 +30,6 @@ CARD = (
     '        <p>Open 7am to 8pm, every day. Text a photo and we text back a firm price before anyone drives out.</p>\n'
     '        <div class="cta-row" style="justify-content:flex-start; margin-top:1.6rem">\n'
     '          <a class="btn btn--primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo, get a price</a>\n'
-    '          <a class="btn btn--quiet" href="tel:+12142779069">Call (214) 277-9069</a>\n'
     '        </div>\n'
     '      </div>'
 )

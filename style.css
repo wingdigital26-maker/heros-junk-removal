@@ -144,12 +144,16 @@ body.menu-locked{overflow:hidden}
 .hero{
   position:relative; z-index:1;
   min-height:100vh; min-height:100svh;
-  padding:calc(var(--nav-h) + var(--space-5)) 0 var(--space-7);
+  padding:calc(var(--nav-h) + var(--space-5)) 0 calc(var(--space-7) + var(--space-4));
   display:grid; grid-template-rows:auto 1fr auto auto; row-gap:var(--space-5);
 }
 /* the hero already ends in space-7 of its own padding; without a collapse the
    next section's top padding stacks on top of it (48+126 = 174px of blank
-   under the CTA strip). Cancel the hero's share so one section-gap remains. */
+   under the CTA strip). Cancel the hero's share so one section-gap remains.
+   Round 15: the meta strip (.hero-line) was landing flush on the warm band's
+   edge with zero gap once the collapse cancelled all of the hero's own
+   bottom padding, so the padding above carries one extra --space-4 step that
+   the collapse below deliberately leaves uncancelled as breathing room. */
 .hero + .section{margin-top:calc(var(--space-7) * -1)}
 .stage{
   position:relative; width:100%; max-width:var(--col-wide); margin:0 auto; padding:0 var(--gutter);
@@ -455,7 +459,12 @@ main section{padding:clamp(3rem, 2rem + 3vw, 5rem) 0}
    left the two columns starting ~50-70px apart. Match the card's padding on
    the body section's first child so both columns share one top edge. */
 @media (min-width:701px){
-  .rail-body > section:first-child{padding-top:var(--space-5)}
+  /* round 15: the padding-top match against the card's own padded content
+     line (round 14) left the body's first visible element sitting on the
+     card's padding line, one space-5 (24px) below the card's actual top
+     border. Zero it so the body column's first edge meets the card border
+     exactly, same top as the card box itself. */
+  .rail-body > section:first-child{padding-top:0}
   /* about.html is the one rail page whose body opens on a .callout, which
      carries its own 1.6rem margin (.callout{margin:1.6rem 0}) everywhere
      else it appears mid-copy. As the very first child that margin stacked
