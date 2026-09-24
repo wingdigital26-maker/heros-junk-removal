@@ -127,6 +127,15 @@ footer .brand .mark img{width:2rem; height:2rem}
     background:#fff; padding:calc(var(--nav-h) + var(--space-6)) var(--gutter) var(--space-6); gap:var(--space-2);
   }
   #nav.menu-open .navlinks a{font-family:var(--font-display); font-size:var(--step-3); color:var(--ink); padding:0; min-height:var(--space-8)}
+  /* the open panel is position:fixed inset:0 with its own z-index (49), which
+     paints over the brand/phone/CTA/burger row even though those stay in the
+     DOM and stay focusable (measured: elementFromPoint at the brand and CTA
+     centres returned the .navlinks panel, not the link, at 768px). Lift the
+     row's own stacking context above the panel while the menu is open. */
+  #nav.menu-open .wrap > .brand,
+  #nav.menu-open .wrap > .nav-phone,
+  #nav.menu-open .wrap > .nav-cta,
+  #nav.menu-open .wrap > .burger{position:relative; z-index:52}
 }
 @media (max-width:599px){
   #nav .wrap{gap:var(--space-2)}
@@ -479,9 +488,14 @@ main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:cente
 
 /* prose links: body copy on inner pages carries plain inline links
    (blog cross-links, callout call-to-actions) with no component
-   class of their own. Ink at rest, the one accent on hover. */
-.callout a,.why-item a,.faq a,article.post a{color:var(--ink); text-decoration:none}
-.callout a:hover,.why-item a:hover,.faq a:hover,article.post a:hover{color:var(--accent); text-decoration:underline}
+   class of their own. Ink at rest, the one accent on hover.
+   .callout a sits inside running text (axe link-in-text-block: a link
+   in a text block needs a non-colour cue at rest, not just on hover),
+   so it keeps a quiet underline at rest and a bolder one on hover. */
+.callout a{color:var(--ink); text-decoration:underline; text-underline-offset:.15em; text-decoration-thickness:1px; text-decoration-color:var(--hair-2)}
+.why-item a,.faq a,article.post a{color:var(--ink); text-decoration:none}
+.callout a:hover{color:var(--accent); text-decoration-color:currentColor; text-decoration-thickness:2px}
+.why-item a:hover,.faq a:hover,article.post a:hover{color:var(--accent); text-decoration:underline}
 
 /* ---------- page-hero: copy left, the house mark right ---------- */
 .page-hero{
@@ -591,6 +605,10 @@ form.demo input:focus,form.demo select:focus,form.demo textarea:focus{outline:2p
 /* spam honeypot: parked off-screen, aria-hidden, tabindex -1. The form's own
    submit handler drops any post that fills this. Do not give it a visible label. */
 form.demo .hp{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+form.demo .req-note{margin:0; font-size:.85rem; color:var(--muted)}
+form.demo .req{color:var(--accent)}
+form.demo .form-status{margin:0; font-weight:700; color:var(--ink)}
+form.demo .form-status:empty{display:none}
 
 /* ---------- about page photos ---------- */
 .about-photo{float:right; width:42%; max-width:330px; border-radius:var(--radius-2); height:auto; border:1px solid var(--hair); margin:.2rem 0 1rem 1.8rem}

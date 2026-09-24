@@ -17,7 +17,7 @@
 <meta name="twitter:image" content="https://herosjunkremovaltx.com/img/hero-junk.jpg">
 <link rel="canonical" href="https://herosjunkremovaltx.com/blog/shed-cleanout-whats-inside">
 <link rel="stylesheet" href="../assets/fonts.css">
-<link rel="stylesheet" href="../style.css?v=17">
+<link rel="stylesheet" href="../style.css?v=18">
 <link rel="preload" href="../assets/fonts/fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="../assets/logo-mark.svg?v=2" type="image/svg+xml">
@@ -111,7 +111,7 @@
   </div>
 </nav>
 
-<main id="main">
+<main id="main" tabindex="-1">
 <div class="page-hero ph-blog">
   <div class="wrap">
     <div class="hm" aria-hidden="true"><svg viewBox="0 0 34 32"><path class="hm-house" d="M2 29V14L13 4l11 10v7h-7v8Z"/><rect class="hm-b hm-b3" x="27.2" y="4" width="3.2" height="3.2" rx=".7"/><rect class="hm-b hm-b2" x="26.4" y="8" width="4.2" height="4.2" rx=".8"/><rect class="hm-b hm-b1" x="25" y="13" width="6" height="6" rx="1"/></svg></div>
@@ -247,6 +247,14 @@
     var open=nav.classList.toggle('menu-open');
     b.setAttribute('aria-expanded', open?'true':'false');
     document.body.classList.toggle('menu-locked', open);
+  });
+  addEventListener('keydown', function(e){
+    if(e.key==='Escape' && nav.classList.contains('menu-open')){
+      nav.classList.remove('menu-open');
+      b.setAttribute('aria-expanded','false');
+      document.body.classList.remove('menu-locked');
+      b.focus();
+    }
   }); }
 })();
 </script></body>

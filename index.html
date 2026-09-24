@@ -17,7 +17,7 @@
 <link rel="preload" href="assets/fonts/fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.css">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"Hero's Junk Removal","url":"https://herosjunkremovaltx.com/","telephone":"+12142779069","email":"herosjunkremovaltx@gmail.com","image":"https://herosjunkremovaltx.com/img/house-hero.webp","areaServed":["Frisco, TX","Plano, TX","McKinney, TX","Prosper, TX","Allen, TX","Little Elm, TX"],"openingHours":"Mo-Su 07:00-20:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","bestRating":"5"}}
@@ -47,7 +47,7 @@
   </div>
 </nav>
 
-<main id="main">
+<main id="main" tabindex="-1">
 
 <header class="hero">
   <p class="hero-kicker">Junk removal in Frisco, Plano, McKinney and the cities around them.</p>
@@ -327,6 +327,14 @@
     var open=nav.classList.toggle('menu-open');
     b.setAttribute('aria-expanded', open?'true':'false');
     document.body.classList.toggle('menu-locked', open);
+  });
+  addEventListener('keydown', function(e){
+    if(e.key==='Escape' && nav.classList.contains('menu-open')){
+      nav.classList.remove('menu-open');
+      b.setAttribute('aria-expanded','false');
+      document.body.classList.remove('menu-locked');
+      b.focus();
+    }
   }); }
 })();
 </script>

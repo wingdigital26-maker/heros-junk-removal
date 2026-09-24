@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="Contact Hero’s Junk Removal for fast junk pickup in Dallas-Fort Worth. Text a photo or fill out the form for a free price. Same-day appointments available 7 days a week.">
 <meta name="twitter:image" content="https://herosjunkremovaltx.com/img/hero-junk.jpg">
 <link rel="stylesheet" href="assets/fonts.css">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 <link rel="preload" href="assets/fonts/fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/logo-mark.svg?v=2" type="image/svg+xml">
@@ -45,7 +45,7 @@
   </div>
 </nav>
 
-<main id="main">
+<main id="main" tabindex="-1">
 <div class="page-hero ph-contact">
   <div class="wrap">
     <div class="hm" aria-hidden="true"><svg viewBox="0 0 34 32"><path class="hm-house" d="M2 29V14L13 4l11 10v7h-7v8Z"/><rect class="hm-b hm-b3" x="27.2" y="4" width="3.2" height="3.2" rx=".7"/><rect class="hm-b hm-b2" x="26.4" y="8" width="4.2" height="4.2" rx=".8"/><rect class="hm-b hm-b1" x="25" y="13" width="6" height="6" rx="1"/></svg></div>
@@ -97,12 +97,13 @@
           <input type="hidden" name="_subject" value="New Hero’s Junk Removal lead (website)">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_captcha" value="false">
+          <p class="req-note">Fields marked <span class="req" aria-hidden="true">*</span> are required.</p>
           <div class="row2">
-            <div><label for="full_name">Full name</label><input id="full_name" name="full_name" type="text" autocomplete="name" required></div>
-            <div><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
+            <div><label for="full_name">Full name <span class="req" aria-hidden="true">*</span></label><input id="full_name" name="full_name" type="text" autocomplete="name" required></div>
+            <div><label for="phone">Phone <span class="req" aria-hidden="true">*</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" required></div>
           </div>
-          <div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required></div>
-          <div><label for="city">City</label><input id="city" name="city" type="text" placeholder="e.g. Plano"></div>
+          <div><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
+          <div><label for="city">City</label><input id="city" name="city" type="text" placeholder="e.g. Plano" autocomplete="address-level2"></div>
           <div><label for="service">What needs to go?</label>
             <select id="service" name="service">
               <option>Furniture</option><option>Appliances</option><option>Garage cleanout</option><option>Estate or whole-home cleanout</option><option>Yard debris</option><option>Hot tub, shed, or playset</option><option>Something else</option>
@@ -111,6 +112,7 @@
           <div><label for="message">Details</label><textarea id="message" name="message" rows="4" placeholder="What is it, where is it, and when do you want it gone?"></textarea></div>
           <div class="hp" aria-hidden="true"><label for="company">Company (leave blank)</label><input id="company" name="company" type="text" tabindex="-1" autocomplete="off"></div>
           <button class="btn btn--quiet" type="submit" style="justify-self:start">Send details, get a price</button>
+          <p class="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
     </div>
@@ -175,19 +177,23 @@
 </div>
 <script>
 document.querySelectorAll('form.demo').forEach(function(f){
+  var status=f.querySelector('.form-status');
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var hp=f.querySelector('[name="company"]');
     if(hp&&hp.value){return}
     var hook=(f.getAttribute('data-webhook')||'').trim();
-    function done(msg){f.innerHTML='<p class="lead">'+msg+'</p>'}
-    if(!hook){done('Thanks! Got your request. We will be in touch shortly to lock in your pickup.');return}
+    function done(msg,ok){
+      if(status){status.textContent=msg}
+      if(ok){Array.prototype.forEach.call(f.querySelectorAll('input,select,textarea,button'),function(el){el.disabled=true})}
+    }
+    if(!hook){done('Thanks! Got your request. We will be in touch shortly to lock in your pickup.',true);return}
     var data={};
     new FormData(f).forEach(function(v,k){if(k!=='company'){data[k]=v}});
     data.source=location.pathname;
     fetch(hook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-      .then(function(r){if(!r.ok){throw new Error()}done('Thanks! Your request is in. Our dispatch team will call you back shortly.')})
-      .catch(function(){done('Something went wrong sending your request. Please try again or use our contact page.')});
+      .then(function(r){if(!r.ok){throw new Error()}done('Thanks! Your request is in. Our dispatch team will call you back shortly.',true)})
+      .catch(function(){done('Something went wrong sending your request. Please try again or use our contact page.',false)});
   });
 });
 </script>
@@ -210,6 +216,14 @@ var stats=document.querySelectorAll('[data-count]');if(stats.length){var run=fun
     var open=nav.classList.toggle('menu-open');
     b.setAttribute('aria-expanded', open?'true':'false');
     document.body.classList.toggle('menu-locked', open);
+  });
+  addEventListener('keydown', function(e){
+    if(e.key==='Escape' && nav.classList.contains('menu-open')){
+      nav.classList.remove('menu-open');
+      b.setAttribute('aria-expanded','false');
+      document.body.classList.remove('menu-locked');
+      b.focus();
+    }
   }); }
 })();
 </script></body>
