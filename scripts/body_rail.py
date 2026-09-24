@@ -20,7 +20,9 @@ import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
-SERVICES_EXCLUDE = {"index.html"}
+SERVICES_EXCLUDE = set()  # round 14: services/index.html now gets the rail too,
+                          # it was the one inner page left on a centered narrow
+                          # column with no rail card, off the shared grid.
 
 CARD = (
     '      <div class="card">\n'

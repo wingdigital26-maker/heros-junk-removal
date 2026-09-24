@@ -448,6 +448,22 @@ main section{padding:clamp(3rem, 2rem + 3vw, 5rem) 0}
 @media (min-width:701px){
   .page-hero + section:not(.section){padding-top:var(--space-5)}
 }
+/* round 14: the rail wrap (scripts/body_rail.py) sits between .page-hero and
+   the first body section now, so the rule above no longer matches on
+   about/areas/services inner pages - the section fell back to its full
+   section-clamp top padding (~75px) while the rail card's own 28px padding
+   left the two columns starting ~50-70px apart. Match the card's padding on
+   the body section's first child so both columns share one top edge. */
+@media (min-width:701px){
+  .rail-body > section:first-child{padding-top:var(--space-5)}
+  /* about.html is the one rail page whose body opens on a .callout, which
+     carries its own 1.6rem margin (.callout{margin:1.6rem 0}) everywhere
+     else it appears mid-copy. As the very first child that margin stacked
+     on top of the padding above and reopened a ~26px gap versus the card,
+     same fix as the existing .rows:first-child rule. */
+  .rail-body > section:first-child > .wrap > .callout:first-child{margin-top:0}
+  .rail-aside .card{padding-top:var(--space-5)}
+}
 
 /* inline call/text links get a real tap target wherever they sit in body copy */
 main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:center; min-height:var(--target)}
