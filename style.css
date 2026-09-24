@@ -234,6 +234,10 @@ body.menu-locked{overflow:hidden}
    void (top+bottom stack); a warm section's own background absorbs its
    half so it never doubles. Collapse the white-on-white case to one gap. */
 .section:not(.section--warm) + .section:not(.section--warm){margin-top:calc(var(--space-section) * -1)}
+/* a warm band's own bottom padding still stacks with the next white
+   section's top padding (the colour hides it, it does not remove it):
+   collapse that boundary to the same single gap. */
+.section--warm + .section:not(.section--warm){margin-top:calc(var(--space-section) * -1)}
 .section h2 + .lead{margin-top:var(--space-4)}   /* 16: the lead belongs to its heading; the space above the heading is the whole section pad */
 .section h2 + p{margin-top:var(--space-4)}
 
@@ -280,6 +284,9 @@ body.menu-locked{overflow:hidden}
 .quotes blockquote p{font-size:var(--step-1); font-weight:400; line-height:1.4; color:var(--ink); max-width:var(--measure)}   /* the reading face: a customer talking, not a headline */
 .quotes cite{display:block; margin-top:var(--space-3); font-style:normal; font-size:var(--step--1); font-weight:600; color:var(--muted)}
 @media (min-width:821px){ .proof .quotes{margin-top:var(--space-2)} }
+/* the rating/copy column is shorter than the three quotes beside it; stretching
+   it only moves the blank run, so it travels with the page instead (round 12). */
+@media (min-width:821px){ .proof .split > div:first-child{position:sticky; top:calc(var(--nav-h) + var(--space-5))} }
 
 /* 03 what we take: open hairline rows, the whole row is the link; the photo beside them */
 .rows{border-top:1px solid var(--hair); margin-top:var(--space-7)}
@@ -316,6 +323,9 @@ body.menu-locked{overflow:hidden}
 .take .split,.take.split{align-items:start}
 .take > .split > figure{align-self:start; margin-top:var(--space-2)}   /* the photo sits with the heading, not the middle of the list */
 .take .photo{aspect-ratio:4 / 3}
+/* the photo+caption is shorter than the nine-row service list beside it;
+   travel with the list instead of leaving a blank run under the caption (round 12). */
+@media (min-width:821px){ .take > .split > figure{position:sticky; top:calc(var(--nav-h) + var(--space-5))} }
 
 /* 04 where: six cities as pills, the rig beside them */
 .cities{display:flex; flex-wrap:wrap; gap:var(--space-3); margin-top:var(--space-7)}
@@ -442,8 +452,9 @@ main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:cente
 @media (max-width:700px){
   .page-hero{padding-top:calc(var(--nav-h) + var(--space-4)); padding-bottom:1.5rem}
   .page-hero .wrap{grid-template-columns:1fr; row-gap:1rem}
-  .page-hero .wrap > .hm{grid-column:1; grid-row:1; justify-self:start; width:84px; margin-bottom:0}
-  .page-hero .wrap > .hm.still{width:min(28vw, 110px)}
+  /* the nav already parks a copy of the mark; a second one here just pushes
+     the breadcrumb and h1 down. Hide it on phone (round 12). */
+  .page-hero .wrap > .hm{display:none}
   .page-hero h1{font-size:clamp(2rem, 1.4rem + 3.4vw, 2.5rem); margin-bottom:.5rem}
   .page-hero p{font-size:1.05rem}
 }
@@ -547,12 +558,29 @@ form.demo .hp{position:absolute; left:-9999px; top:auto; width:1px; height:1px; 
 .about-figure figcaption{color:var(--muted); font-size:.9rem; margin-top:var(--space-2)}
 
 /* ---------- mobile sticky call bar ---------- */
+/* the site's ask is a text with a photo, not a call, so the bar leads with
+   that: "Text a photo" is wider and first, "Call" is the quieter second
+   part. Both stay on the one ink bar (round 12: one red element per
+   viewport, and the bar is not it). */
 .call-bar{display:none}
 @media (max-width:768px){
   body:has(.call-bar){padding-bottom:60px}
+  /* the hero is a full-viewport grid ending in the hours line; without this
+     the fixed 60px bar sits on top of that last row instead of beside it
+     (round 12: measured 40px of the hours line covered on load). min-height
+     alone cannot shrink it (content already exceeds 100svh), so trim the
+     gaps and the piece a step tighter to actually reserve the 60px. */
+  body:has(.call-bar) .hero{
+    min-height:calc(100vh - 60px); min-height:calc(100svh - 60px);
+    padding-top:calc(var(--nav-h) + var(--space-3)); row-gap:var(--space-3);
+  }
+  body:has(.call-bar) .ask{gap:var(--space-3)}
+  body:has(.call-bar) .piece{width:min(58vw, 21vh)}
   .call-bar{position:fixed; bottom:0; left:0; right:0; z-index:60; display:flex; height:60px; box-shadow:0 -1px 3px rgba(28,25,23,.18)}
-  .call-bar a{flex:1; display:flex; align-items:center; justify-content:center; gap:9px; font-weight:800; font-size:1rem; color:#fff; text-decoration:none; background:var(--ink)}
+  .call-bar a{display:flex; align-items:center; justify-content:center; gap:9px; font-weight:800; font-size:1rem; color:#fff; text-decoration:none; background:var(--ink)}
   .call-bar a:hover{text-decoration:none}
+  .call-bar .cb-text{flex:1.6}
+  .call-bar .cb-call{flex:1; border-left:1px solid rgba(255,255,255,.22)}
 }
 
 .load-progress{display:none}
