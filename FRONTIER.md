@@ -1,4 +1,4 @@
-# FRONTIER.md - heros-v3 depth memory (committed)
+﻿# FRONTIER.md - heros-v3 depth memory (committed)
 
 Current LEVEL: 2 (section deep-dive). Round: 6.
 
@@ -6,14 +6,14 @@ Current LEVEL: 2 (section deep-dive). Round: 6.
 |---|---|---|---|---|---|---|---|
 | R1 | - | 84 inner pages load styles.css while index.html loads style.css: one site, two design systems | 1 | done | 2 | jack | chrome unified across all 81 pages; body components still on styles.css, see R9 |
 | R2 | - | contact.html field `company` has no visible label (W12 FAIL, phone + desktop) | 1 | pruned | 2 | verifier | FALSE POSITIVE: it is a spam honeypot, see REJECTED.md. Linter fixed instead |
-| R3 | - | contact.html first-viewport image contact-480/1100.webp is lazy (W20 FAIL) | 1 | open | 1 | verifier | conversion_lint round 1 |
-| R4 | - | about.html first-viewport card-estate-480.webp is lazy at 375px (W20 FAIL) | 1 | open | 1 | verifier | conversion_lint round 1 |
+| R3 | - | contact.html first-viewport image contact-480/1100.webp is lazy (W20 FAIL) | 1 | done | 4 | verifier | DONE r3: lazy removed, fetchpriority=high added |
+| R4 | - | about.html first-viewport card-estate-480.webp is lazy at 375px (W20 FAIL) | 1 | done | 4 | verifier | DONE r3: lazy removed, fetchpriority=high added |
 | R5 | - | all 85 pages fetch Fraunces + Source Sans 3 from Google's CDN (W21) | 1 | done | 2 | verifier | self-hosted, 2 files, 89,968 bytes, 0 third-party requests |
 | R6 | - | nav labels and primary CTA differ between homepage and inner pages | 1 | done | 2 | jack | one nav on all 81 pages |
-| R9 | R1 | inner-page BODY components still come from the legacy styles.css, loaded before style.css | 2 | open | 5 | jack | DIRECTION SET 2026-09-22: homepage patterns win, see STEERING.md. Drain styles.css, then delete it |
+| R9 | R1 | inner-page BODY components still come from the legacy styles.css, loaded before style.css | 2 | done | 6 | jack | DIRECTION SET 2026-09-22: homepage patterns win, see STEERING.md. Drain styles.css, then delete it |
 | R10 | R1 | favicon differed per page: inner pages used a navy data-URI truck from the pre-v3 palette | 1 | done | 2 | verifier | unified to assets/logo-mark.svg |
 | R7 | - | styles.css carries 33 raw hex + 60 raw px off-token (A3) | 1 | candidate | 1 | drain-check | may be moot once R1 lands |
-| R8 | - | brand/logo link tap target under 44px (A7) on home and inner pages | 1 | open | 1 | verifier | conversion_lint round 1 |
+| R8 | - | brand/logo link tap target under 44px (A7) on home and inner pages | 1 | done | 4 | verifier | DONE r4: .brand min-width var(--target) under 600px |
 
 ## SUCCESS CRITERIA (scored every round)
 1. Every page in this build shares ONE stylesheet, one nav, one footer, one CTA label.

@@ -351,3 +351,168 @@ footer .legal{grid-column:1 / -1; padding-top:var(--space-5); border-top:1px sol
   .split > figure{order:2}      /* on a phone the words come first, the photo follows */
   .owner .photo,.how .photo{max-width:none}
 }
+
+/* ==========================================================
+   INNER PAGES. Drained from styles.css (pre-v3 legacy sheet)
+   and assets/piece.css (v3 retrofit layer), both deleted.
+   Every value below is one of this file's own tokens; nothing
+   here introduces a new colour, font or radius step. Section
+   below is body content styling for the 80 non-homepage pages;
+   the chrome above (nav, hero, footer) is shared with them already.
+   ========================================================== */
+
+/* h1 only ever appears in .page-hero (the homepage's own h1 is
+   sr-only and never visible), so this is safe to set globally. */
+h1{
+  font-family:var(--font-display); font-weight:600;
+  font-size:clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem); line-height:1.04;
+}
+
+/* Inner-page body h2s (not the shared .section blocks, which already
+   use the homepage's own h2 size on purpose, e.g. the "Send the photo
+   now." closer every page ends on) read smaller, like an article
+   heading, not a hero headline. */
+main section:not(.section) h2, .by-city h2{
+  font-size:clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem); line-height:1.1;
+}
+.by-city h2{font-size:1.6rem; margin-bottom:.5rem}
+
+/* the same body/article h3 (card titles, why-item titles) reads a
+   size down from the homepage's own h3 */
+.card h3,.why-item h3{font-size:1.2rem; line-height:1.3}
+
+main section{padding:clamp(3rem, 2rem + 3vw, 5rem) 0}
+.band,section.band{background:var(--bg-warm)}
+
+/* inline call/text links get a real tap target wherever they sit in body copy */
+main a[href^="tel:"],main a[href^="sms:"]{display:inline-flex; align-items:center; min-height:var(--target)}
+
+/* prose links: body copy on inner pages carries plain inline links
+   (blog cross-links, callout call-to-actions) with no component
+   class of their own. Ink at rest, the one accent on hover. */
+.callout a,.why-item a,.faq a,article.post a{color:var(--ink); text-decoration:none}
+.callout a:hover,.why-item a:hover,.faq a:hover,article.post a:hover{color:var(--accent); text-decoration:underline}
+
+/* ---------- page-hero: copy left, the house mark right ---------- */
+.page-hero{
+  color:var(--ink); position:relative; overflow:hidden;
+  padding:clamp(2.5rem, 2rem + 3vw, 4.5rem) 0 clamp(1.5rem, 1rem + 2vw, 2.5rem);
+}
+.page-hero .wrap{display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; column-gap:clamp(1.5rem, 4vw, 4rem)}
+.page-hero .wrap > *{grid-column:1}
+.page-hero .wrap > .hm{grid-column:2; grid-row:1 / span 4}
+.page-hero h1{margin:0 0 .75rem; max-width:18ch}
+.page-hero p{color:var(--muted); max-width:48ch; font-size:1.2rem; line-height:1.45}
+@media (max-width:700px){
+  .page-hero{padding-top:1.5rem; padding-bottom:1.5rem}
+  .page-hero .wrap{grid-template-columns:1fr; row-gap:1rem}
+  .page-hero .wrap > .hm{grid-column:1; grid-row:1; justify-self:start; width:84px; margin-bottom:0}
+  .page-hero .wrap > .hm.still{width:min(28vw, 110px)}
+  .page-hero h1{font-size:clamp(2rem, 1.4rem + 3.4vw, 2.5rem); margin-bottom:.5rem}
+  .page-hero p{font-size:1.05rem}
+}
+
+.breadcrumbs{color:var(--muted); font-size:.9rem; margin-bottom:1.25rem}
+.breadcrumbs a{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--hair-2)}
+
+/* the compact house mark in every inner-page hero: same object as the homepage
+   piece, flattened, answers the pointer. Owned by piece.js; edit around it. */
+.hm{
+  grid-column:2; grid-row:1 / span 4; align-self:center; justify-self:end;
+  width:clamp(120px, 10vw + 60px, 200px); aspect-ratio:1; position:relative;
+  --tx:0; --ty:0;
+  filter:drop-shadow(0 18px 18px var(--shadow));
+  transform:perspective(600px) rotateY(calc(var(--tx) * 9deg)) rotateX(calc(var(--ty) * -6deg));
+  transition:transform .9s cubic-bezier(.2,.7,.2,1), filter .6s ease;
+  will-change:transform;
+}
+.hm svg{width:100%; height:100%; overflow:visible; display:block}
+.hm .hm-house{fill:var(--ink)}
+.hm .hm-b{transform-box:fill-box; transform-origin:center; transition:transform 1.1s cubic-bezier(.2,.7,.2,1), opacity .8s ease}
+.hm .hm-b1{fill:var(--accent)}
+.hm .hm-b2,.hm .hm-b3{fill:var(--ink); opacity:0}
+.hm.awake .hm-b1{transform:translate(calc(var(--tx) * 2.2px + 1px), calc(var(--ty) * 1.6px - 2.4px)) rotate(calc(var(--tx) * 10deg))}
+.hm.awake .hm-b2{opacity:1; transform:translate(calc(var(--tx) * 1.2px + 2.6px), calc(var(--ty) * 1px - 4.6px)) rotate(calc(var(--tx) * -14deg))}
+.hm.awake .hm-b3{opacity:.85; transform:translate(calc(var(--tx) * .8px + 4.4px), calc(var(--ty) * .6px - 7px)) rotate(calc(var(--tx) * 18deg))}
+.hm.awake{filter:drop-shadow(0 24px 22px var(--shadow))}
+.hm img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity .5s ease}
+.hm.still{width:clamp(180px, 14vw + 80px, 340px); aspect-ratio:4 / 3}
+.hm.still img{opacity:1}
+.hm.still svg{opacity:0}
+.hm[data-form="house"].still{aspect-ratio:700 / 654; width:clamp(160px, 12vw + 70px, 300px)}
+@media (prefers-reduced-motion:reduce){
+  .hm,.hm .hm-b{transition:none !important; transform:none !important}
+  .hm.awake .hm-b2,.hm.awake .hm-b3{opacity:0}
+}
+
+/* ---------- callout: the inset aside used in about/blog/services body copy ---------- */
+.callout{background:var(--bg-warm); border:1px solid var(--hair); border-left:3px solid var(--ink); border-radius:0 var(--radius-2) var(--radius-2) 0; padding:18px 22px; margin:1.6rem 0}
+.callout p{margin:0; color:var(--muted)}
+
+/* ---------- card: the blog listing's post cards and the contact quote box ---------- */
+.card{background:var(--bg); border:1px solid var(--hair); border-radius:var(--radius-2); padding:28px 24px}
+.card:hover{border-color:var(--hair-2)}
+.card h3{margin-bottom:.5rem}
+.card p{color:var(--muted); font-size:.97rem; margin-bottom:.6rem}
+.grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:26px; margin-top:2.4rem}
+@media (max-width:620px){ .grid-2{grid-template-columns:1fr} }
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+@media (max-width:620px){ .row2{grid-template-columns:1fr} }
+
+.post-card{display:flex; flex-direction:column}
+.tag{display:inline-block; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:.4rem}
+.post-meta{color:var(--muted); font-size:.9rem; margin-bottom:1.6rem}
+.more{font-weight:700; font-size:.95rem}
+
+/* ---------- article.post: the blog post body ---------- */
+article.post{max-width:760px; margin:0 auto}
+article.post h2{margin:2.2rem 0 .8rem}
+article.post h3{margin:1.6rem 0 .5rem}
+article.post ul,article.post ol{margin:0 0 1rem 1.4rem}
+article.post li{margin-bottom:.4rem}
+
+/* ---------- services hub: the six cities as a quiet list under the photo rows ---------- */
+.by-city{max-width:var(--col-text); margin:3rem auto 0}
+.by-city ul{list-style:none; margin:0; padding:0; border-top:1px solid var(--hair)}
+.by-city li a{display:flex; flex-wrap:wrap; gap:.25rem 1rem; align-items:baseline; min-height:var(--target); padding:.85rem 0; border-bottom:1px solid var(--hair); text-decoration:none; color:var(--ink)}
+.by-city li a b{font-weight:700; flex:0 0 8rem}
+.by-city li a span{color:var(--muted); flex:1 1 20rem; font-size:.97rem}
+.by-city li a:hover b{text-decoration:underline; text-underline-offset:.2em}
+
+/* ---------- contact page: the dispatch list ---------- */
+.why-item{display:flex; gap:16px; align-items:flex-start; margin-bottom:1.4rem}
+.why-item .dot{flex:0 0 42px; height:42px; border-radius:50%; background:var(--ink); display:flex; align-items:center; justify-content:center}
+.why-item h3{margin-bottom:.2rem}
+.why-item p{color:var(--muted); margin:0; font-size:.96rem}
+
+/* ---------- contact form ---------- */
+form.demo{display:grid; gap:16px; margin-top:1.6rem}
+form.demo label{font-weight:700; font-size:.9rem; color:var(--ink); display:block; margin-bottom:6px}
+form.demo input,form.demo select,form.demo textarea{width:100%; padding:12px 14px; border:1.5px solid var(--hair-2); border-radius:var(--radius-2); font-family:inherit; font-size:1rem; background:var(--bg)}
+form.demo input:focus,form.demo select:focus,form.demo textarea:focus{outline:2px solid var(--ink); border-color:var(--ink)}
+/* spam honeypot: parked off-screen, aria-hidden, tabindex -1. The form's own
+   submit handler drops any post that fills this. Do not give it a visible label. */
+form.demo .hp{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden}
+
+/* ---------- about page photos ---------- */
+.about-photo{float:right; width:42%; max-width:330px; border-radius:var(--radius-2); height:auto; border:1px solid var(--hair); margin:.2rem 0 1rem 1.8rem}
+.about-rig{display:block; width:100%; border-radius:var(--radius-2); height:auto; border:1px solid var(--hair); margin:1.4rem 0}
+@media (max-width:640px){ .about-photo{float:none; width:100%; max-width:none; margin:0 0 1.2rem} }
+
+/* ---------- mobile sticky call bar ---------- */
+.call-bar{display:none}
+@media (max-width:768px){
+  body:has(.call-bar){padding-bottom:60px}
+  .call-bar{position:fixed; bottom:0; left:0; right:0; z-index:60; display:flex; height:60px; box-shadow:0 -1px 3px rgba(28,25,23,.18)}
+  .call-bar a{flex:1; display:flex; align-items:center; justify-content:center; gap:9px; font-weight:800; font-size:1rem; color:#fff; text-decoration:none; background:var(--accent)}
+  .call-bar a:hover{text-decoration:none}
+}
+
+.load-progress{display:none}
+
+/* the photo under the contact page hero (was in assets/piece.css) */
+.lede{margin:0 auto; max-width:var(--col-wide); padding:0 var(--gutter)}
+.lede .photo{border-radius:16px; overflow:hidden; background:var(--bg-warm); aspect-ratio:3 / 2}
+.lede .photo img{width:100%; height:100%; object-fit:cover; display:block}
+.lede figcaption{margin-top:.75rem; font-size:.9375rem; color:var(--muted)}
+.lede + section{padding-top:clamp(2.5rem, 2rem + 2vw, 4rem)}
