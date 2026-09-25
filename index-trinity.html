@@ -16,11 +16,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/trinity.css?v=7">
+<link rel="stylesheet" href="assets/trinity.css?v=6">
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"Hero's Junk Removal","url":"https://herosjunkremovaltx.com/","telephone":"+12142779069","email":"herosjunkremovaltx@gmail.com","image":"https://herosjunkremovaltx.com/img/house-hero.webp","areaServed":["Frisco, TX","Plano, TX","McKinney, TX","Prosper, TX","Allen, TX","Little Elm, TX"],"openingHours":"Mo-Su 07:00-20:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","bestRating":"5"}}
 </script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"}}</script>
 </head>
 <body>
 
@@ -151,6 +152,8 @@
 </section>
 
 <!-- Section 4: services -->
+<section id="piece" class="t-piece" aria-label="House, truck, couch and the Hero's H built from the same cubes"></section>
+
 <section class="t-services" id="services">
   <div class="t-wrap t-svc-layout">
     <div class="t-svc-intro">
@@ -338,5 +341,6 @@
 </footer>
 
 <script src="assets/trinity.js?v=7" defer></script>
+<script type="module">import { mount } from './assets/piece2/piece.js'; mount(document.getElementById('piece'));</script>
 </body>
 </html>

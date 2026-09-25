@@ -807,3 +807,5 @@ html.js .t-work-card.t-reveal-img.in{clip-path:inset(-30% -40% -30% -40%);}
   .t-footer{padding:56px 0 28px;}
   .t-footer .t-footer-wordmark{white-space:normal;text-align:left;font-size:17vw;line-height:.9;margin-top:48px;}
 }
+.t-piece{width:100%;max-width:100%;overflow-x:clip;}
+.t-marquee{overflow:hidden;max-width:100%;} html,body{overflow-x:clip;}
