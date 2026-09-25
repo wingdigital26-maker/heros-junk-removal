@@ -40,7 +40,7 @@
 
   // Photos: curtain reveal as they enter.
   // Observe each photo's PARENT: a clipped/translated element reports zero intersection and would never open.
-  var imgs=Array.prototype.slice.call(document.querySelectorAll('.t-hero-photo, .t-coverage-photo, .t-work-card, .t-review-photo'));
+  var imgs=Array.prototype.slice.call(document.querySelectorAll('.t-hero-photo, .t-coverage-photo, .t-work-card, .t-review-photo, .t-rv-feature-photo, .t-rv-photo'));
   imgs.forEach(function(el){ el.classList.add('t-reveal-img'); if(io) io.unobserve(el); });
   if('IntersectionObserver' in window){
     var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.__imgs.forEach(function(i){ i.classList.add('in'); }); io2.unobserve(e.target); } }); },{threshold:0,rootMargin:'0px 0px -12% 0px'});

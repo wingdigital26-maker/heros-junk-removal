@@ -616,3 +616,67 @@ h1.t-headline{margin:0;}
   .t-hero-photo img{height:360px;}
   .t-wordmark-band{margin-top:32px;}
 }
+
+/* ===== Loop round 2: coverage composition + reviews rhythm ===== */
+:root{--grey:#5F6675;}
+.t-coverage-grid{grid-template-columns:7fr 5fr;gap:48px;align-items:stretch;}
+.t-coverage-photo img{height:clamp(480px,62vh,580px);}
+.t-coverage-copy{display:flex;flex-direction:column;justify-content:space-between;gap:48px;}
+.t-coverage-line{font-size:clamp(34px,3.3vw,48px);letter-spacing:-0.035em;line-height:1.04;}
+.t-crew-block{border-top:1px solid var(--hair);padding-top:22px;}
+.t-crew-block .t-eyebrow{margin-top:0;margin-bottom:18px;}
+.t-crew-block .t-crew-row{gap:28px;}
+.t-crew-block .t-crew-member{flex-direction:column;align-items:flex-start;gap:12px;}
+.t-crew-block .t-avatar{width:112px;height:112px;box-shadow:0 0 0 1px var(--hair);}
+.t-crew-block .t-crew-name{font-size:16px;}
+
+.t-reviews{padding:100px 0 110px;}
+.t-reviews-lede{margin-bottom:56px;align-items:flex-end;}
+.t-reviews-lede .t-headline{font-size:clamp(34px,4.2vw,60px);letter-spacing:-0.038em;line-height:1.0;}
+.t-rv-feature{display:grid;grid-template-columns:5fr 7fr;gap:56px;align-items:stretch;padding:0 0 90px;border-bottom:1px solid var(--hair);}
+.t-rv-feature-photo{border-radius:10px;overflow:hidden;}
+.t-rv-feature-photo img{width:100%;height:100%;min-height:560px;max-height:640px;object-fit:cover;}
+.t-rv-feature-body{display:flex;flex-direction:column;justify-content:center;}
+.t-quote-mark{font-size:140px;line-height:.7;height:64px;font-weight:800;color:var(--red);letter-spacing:-0.05em;}
+.t-rv-feature-quote{font-size:clamp(22px,2.2vw,31px);line-height:1.32;letter-spacing:-0.02em;color:var(--navy);font-weight:500;margin:0 0 36px;max-width:720px;}
+.t-rv-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;border-top:1px solid var(--hair);padding-top:16px;margin-top:auto;}
+.t-rv-feature .t-rv-foot{margin-top:0;}
+.t-rv-who{display:flex;flex-direction:column;gap:2px;}
+.t-rv-name{font-size:14px;font-weight:700;color:var(--navy);}
+.t-rv-when{font-size:13px;color:var(--grey);}
+.t-rv-crew{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--grey);}
+.t-avs{display:inline-flex;}
+.t-av{width:32px;height:32px;border-radius:50%;overflow:hidden;border:2px solid #fff;background:#eee;}
+.t-av+.t-av{margin-left:-10px;}
+.t-av img{width:100%;height:100%;object-fit:cover;}
+.t-rv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding:64px 0;}
+.t-rv-card{display:flex;flex-direction:column;}
+.t-rv-photo{border-radius:10px;overflow:hidden;margin-bottom:22px;}
+.t-rv-photo img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1);}
+.t-rv-card:hover .t-rv-photo img{transform:scale(1.04);}
+.t-rv-quote{font-size:16px;line-height:1.6;color:var(--text);margin:0 0 22px;}
+.t-rv-pull{margin:0;padding:80px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);text-align:center;}
+.t-rv-pull blockquote{margin:0 auto 30px;max-width:1080px;font-size:clamp(28px,3.4vw,50px);line-height:1.1;letter-spacing:-0.035em;font-weight:700;color:var(--navy);}
+.t-rv-pull figcaption{display:inline-flex;align-items:center;gap:24px;text-align:left;}
+.t-rv-tiles{padding-top:0;}
+.t-rv-tile{background:var(--warm);border-radius:10px;padding:28px;display:flex;flex-direction:column;min-height:230px;}
+.t-rv-tile .t-rv-quote{font-size:20px;line-height:1.35;letter-spacing:-0.015em;color:var(--navy);font-weight:500;}
+.t-rv-tile .t-av{border-color:var(--warm);}
+@media (max-width:1000px){
+  .t-rv-feature{grid-template-columns:1fr;gap:28px;}
+  .t-rv-feature-photo img{min-height:0;height:420px;}
+  .t-rv-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:760px){
+  .t-coverage-photo img{height:300px;}
+  .t-coverage-copy{gap:32px;}
+  .t-crew-block .t-avatar{width:88px;height:88px;}
+  .t-reviews{padding:64px 0;}
+  .t-rv-feature{padding-bottom:56px;}
+  .t-rv-feature-photo img{height:380px;}
+  .t-quote-mark{font-size:100px;height:44px;}
+  .t-rv-grid{grid-template-columns:1fr;gap:40px;padding:48px 0;}
+  .t-rv-tiles{gap:14px;}
+  .t-rv-pull{padding:56px 0;}
+  .t-rv-pull figcaption{flex-direction:column;align-items:center;gap:12px;text-align:center;}
+}
