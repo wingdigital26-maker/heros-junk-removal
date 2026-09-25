@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Hero's Junk Removal - flat mark, direction 1: couch out the door -->
+  <path fill="#1C1917" fill-rule="evenodd"
+        d="M32,14 L52,30 L50,30 L50,50 L14,50 L14,30 L12,30 Z M30,38 L38,38 L38,50 L30,50 Z"/>
+  <g fill="#B32A25">
+    <rect x="39" y="34" width="4.5" height="16" rx="1"/>
+    <rect x="39" y="36" width="16" height="4.5" rx="1"/>
+    <rect x="39" y="42" width="16" height="7" rx="1"/>
+    <rect x="50.5" y="36" width="4.5" height="13" rx="1"/>
+  </g>
+</svg>

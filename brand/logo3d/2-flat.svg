@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Hero's Junk Removal - flat mark, direction 2: load to the trailer -->
+  <path fill="#1C1917" fill-rule="evenodd"
+        d="M32,14 L52,30 L50,30 L50,50 L14,50 L14,30 L12,30 Z M30,38 L38,38 L38,50 L30,50 Z"/>
+  <g fill="#1C1917">
+    <rect x="46" y="42" width="15" height="7" rx="1"/>
+    <circle cx="49.5" cy="52" r="2.6"/>
+    <circle cx="57.5" cy="52" r="2.6"/>
+  </g>
+  <g fill="#B32A25">
+    <circle cx="40" cy="39" r="1.8"/>
+    <circle cx="43.5" cy="34.5" r="1.6"/>
+    <rect x="47.5" y="43.6" width="9.5" height="3.6" rx="0.8"/>
+  </g>
+</svg>
