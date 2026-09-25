@@ -59,3 +59,6 @@ static folder; gate serves it locally
 index.html alone is on the new style.css. The other 84 pages still load the old
 styles.css + piece.css and carry a different nav, a different CTA label and an
 announcement bar the homepage does not have. Unifying them is this build's job.
+
+## The pick
+- b.png  (Jack 2026-09-25: B in general looks best (Wing-style split name around centered video window, dark ink header bar))
