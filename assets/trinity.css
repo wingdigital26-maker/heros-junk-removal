@@ -1,0 +1,509 @@
+/* Hero's Junk Removal -- Trinity-style rebuild
+   Font: Inter (opsz axis loaded as "Inter Display"). White canvas, ink text, red accent.
+   No gradients, no shadows. Max width 1480px, 24px side padding (16px phones). */
+
+:root{
+  --ink:#141414;
+  --grey:#999;
+  --red:#D62A1E;
+  --white:#fff;
+  --hair:#e6e6e6;
+  --max:1480px;
+  --pad:24px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--white);
+  color:var(--ink);
+  font-family:'Inter','Inter Display',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  font-optical-sizing:auto;
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+
+.t-wrap{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:0 var(--pad);
+}
+
+.t-hair{border:none;border-top:1px solid var(--hair);margin:0;}
+
+/* ---------- Header ---------- */
+.t-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:saturate(180%) blur(6px);
+  border-bottom:1px solid var(--hair);
+}
+.t-header-inner{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:0 var(--pad);
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.t-logo{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  flex:0 0 auto;
+}
+.t-nav{
+  display:flex;
+  gap:26px;
+  flex:1;
+  justify-content:center;
+}
+.t-nav a{
+  font-size:14px;
+  color:var(--ink);
+  opacity:.75;
+}
+.t-nav a:hover{opacity:1;color:var(--red);}
+.t-header-actions{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex:0 0 auto;
+}
+.t-phone{
+  font-size:14px;
+  color:var(--ink);
+  opacity:.8;
+  white-space:nowrap;
+}
+.t-phone:hover{color:var(--red);opacity:1;}
+.t-pill{
+  border:1px solid var(--ink);
+  border-radius:999px;
+  padding:9px 16px;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  transition:border-color .2s,color .2s;
+}
+.t-pill:hover{border-color:var(--red);color:var(--red);}
+.t-burger{
+  display:none;
+  width:32px;height:32px;
+  border:none;background:none;
+  cursor:pointer;
+  flex-direction:column;
+  justify-content:center;
+  gap:5px;
+}
+.t-burger span{display:block;height:2px;background:var(--ink);width:100%;}
+.t-mobile-menu{
+  display:none;
+  flex-direction:column;
+  gap:0;
+  border-bottom:1px solid var(--hair);
+}
+.t-mobile-menu a{
+  padding:14px var(--pad);
+  border-top:1px solid var(--hair);
+  font-size:14px;
+}
+.t-mobile-menu.open{display:flex;}
+
+/* ---------- Reveal / motion ---------- */
+.rise{
+  opacity:1;
+  transform:none;
+}
+html.js .rise{
+  opacity:0;
+  transform:translateY(140px);
+}
+html.js .rise.in{
+  opacity:1;
+  transform:translateY(0);
+  transition:transform .9s cubic-bezier(.2,.7,.2,1), opacity .9s cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-reduced-motion: reduce){
+  html.js .rise{opacity:1;transform:none;}
+}
+
+/* ---------- Section 1: hero ---------- */
+.t-hero{
+  padding:60px 0 0;
+}
+.t-hero-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+}
+.t-headline{
+  font-size:49px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  line-height:1.1;
+  color:var(--ink);
+  max-width:560px;
+}
+.t-hero-photo{
+  border-radius:10px;
+  overflow:hidden;
+}
+.t-hero-photo img{
+  width:100%;
+  height:420px;
+  object-fit:cover;
+}
+
+.t-wordmark-band{
+  margin-top:60px;
+}
+.t-wordmark{
+  font-size:clamp(56px,14vw,208px);
+  font-weight:800;
+  letter-spacing:-0.04em;
+  line-height:.8;
+  color:var(--red);
+  white-space:nowrap;
+  overflow:hidden;
+  padding:20px 0;
+  text-align:center;
+}
+
+/* ---------- Section 2: coverage + crew ---------- */
+.t-coverage{
+  padding:60px 0;
+}
+.t-coverage-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:start;
+}
+.t-coverage-photo{
+  border-radius:10px;
+  overflow:hidden;
+}
+.t-coverage-photo img{
+  width:100%;
+  height:480px;
+  object-fit:cover;
+}
+.t-coverage-line{
+  font-size:49px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  line-height:1.1;
+  color:var(--ink);
+}
+.t-pill-row{
+  display:flex;
+  gap:10px;
+  margin-top:30px;
+  flex-wrap:wrap;
+}
+.t-eyebrow{
+  font-size:14px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--red);
+  font-weight:700;
+  margin-top:60px;
+  margin-bottom:10px;
+}
+.t-crew-row{
+  display:flex;
+  gap:30px;
+  margin-top:10px;
+}
+.t-crew-member{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.t-avatar{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  overflow:hidden;
+  flex:0 0 auto;
+  background:#eee;
+}
+.t-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.t-crew-name{font-size:14px;font-weight:700;color:var(--ink);}
+.t-crew-role{font-size:14px;color:var(--grey);}
+
+/* ---------- Section 3: photo grid ---------- */
+.t-work{
+  padding:60px 0;
+}
+.t-work-intro{
+  font-size:23px;
+  color:var(--red);
+  max-width:600px;
+  line-height:1.4;
+  margin-bottom:20px;
+}
+.t-work-grid{
+  position:relative;
+  margin-top:50px;
+}
+.t-work-card{
+  position:relative;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:60px;
+  display:block;
+}
+.t-work-card img.t-main{
+  width:100%;
+  object-fit:cover;
+  border-radius:10px;
+}
+.t-work-card img.t-inset{
+  position:absolute;
+  border-radius:10px;
+  object-fit:cover;
+  border:4px solid var(--white);
+}
+.t-work-cap{
+  display:flex;
+  justify-content:space-between;
+  margin-top:14px;
+  font-size:16px;
+  color:var(--ink);
+}
+.t-work-cap .t-num{color:var(--grey);}
+
+.t-work-1{width:60%;}
+.t-work-1 img.t-main{height:420px;}
+.t-work-1 img.t-inset{width:44%;height:220px;left:12%;bottom:-40px;}
+
+.t-work-2{width:44%;margin-left:auto;margin-top:-100px;}
+.t-work-2 img.t-main{height:340px;}
+.t-work-2 img.t-inset{width:50%;height:170px;right:8%;bottom:-30px;}
+
+.t-work-3{width:50%;margin:60px auto 60px;}
+.t-work-3 img.t-main{height:380px;}
+.t-work-3 img.t-inset{width:46%;height:200px;left:10%;bottom:-36px;}
+
+/* ---------- Section 4: services ---------- */
+.t-services{
+  padding:60px 0;
+}
+.t-svc-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:baseline;
+  padding:26px 0;
+  border-top:1px solid var(--hair);
+}
+.t-services .t-svc-row:last-child{border-bottom:1px solid var(--hair);}
+.t-svc-name{
+  font-size:23px;
+  color:var(--ink);
+  font-weight:700;
+  letter-spacing:-0.01em;
+}
+.t-svc-desc{
+  font-size:14px;
+  color:var(--red);
+  line-height:1.5;
+}
+
+/* ---------- Section 5: reviews ---------- */
+.t-reviews{
+  padding:60px 0;
+}
+.t-reviews-lede{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:16px;
+  margin-bottom:40px;
+}
+.t-reviews-lede .t-headline{font-size:49px;max-width:700px;}
+.t-google-line{
+  font-size:14px;
+  color:var(--grey);
+}
+.t-google-line a{color:var(--red);}
+.t-google-line strong{color:var(--ink);}
+
+.t-review-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+  padding:50px 0;
+  border-top:1px solid var(--hair);
+}
+.t-review-row:last-child{border-bottom:1px solid var(--hair);}
+.t-review-row.t-flip .t-review-photo{order:2;}
+.t-review-row.t-flip .t-review-content{order:1;}
+.t-review-photo{
+  border-radius:10px;
+  overflow:hidden;
+}
+.t-review-photo img{
+  width:100%;
+  height:340px;
+  object-fit:cover;
+}
+.t-crew-card{
+  border:1px solid var(--hair);
+  border-radius:10px;
+  padding:16px;
+  max-width:320px;
+  margin-bottom:20px;
+}
+.t-crew-card-label{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--grey);
+  margin-bottom:10px;
+}
+.t-review-name{
+  font-size:14px;
+  font-weight:700;
+  color:var(--ink);
+}
+.t-review-when{
+  font-size:14px;
+  color:var(--grey);
+  margin-bottom:12px;
+}
+.t-review-quote{
+  font-size:16px;
+  color:var(--red);
+  line-height:1.5;
+  max-width:420px;
+}
+
+/* ---------- Section 6: FAQ ---------- */
+.t-faq{
+  padding:60px 0;
+}
+.t-faq-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  padding:26px 0;
+  border-top:1px solid var(--hair);
+}
+.t-faq .t-faq-row:last-child{border-bottom:1px solid var(--hair);}
+.t-faq-q{
+  font-size:23px;
+  color:var(--ink);
+  font-weight:700;
+}
+.t-faq-a{
+  font-size:14px;
+  color:var(--grey);
+  line-height:1.6;
+}
+.t-faq-a a{color:var(--red);}
+
+/* ---------- Footer ---------- */
+.t-footer{
+  padding:60px 0 40px;
+  border-top:1px solid var(--hair);
+}
+.t-footer-wordmark{
+  font-size:clamp(48px,10vw,140px);
+  font-weight:800;
+  letter-spacing:-0.04em;
+  line-height:.8;
+  color:var(--red);
+  margin-bottom:50px;
+}
+.t-footer-grid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1fr;
+  gap:30px;
+}
+.t-footer-col{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.t-footer-head{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--grey);
+  margin-bottom:6px;
+}
+.t-footer-col a,.t-footer-col p{
+  font-size:14px;
+  color:var(--ink);
+  margin:0;
+}
+.t-footer-col a:hover{color:var(--red);}
+.t-footer-legal{
+  font-size:13px;
+  color:var(--grey);
+  margin-top:50px;
+  border-top:1px solid var(--hair);
+  padding-top:20px;
+}
+
+/* ---------- Call bar (mobile) ---------- */
+.t-callbar{display:none;}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1000px){
+  .t-nav{display:none;}
+  .t-hero-grid,.t-coverage-grid,.t-svc-row,.t-faq-row,.t-review-row{
+    grid-template-columns:1fr;
+  }
+  .t-work-1,.t-work-2,.t-work-3{width:100%;margin:0 0 60px;}
+  .t-work-2{margin-top:0;}
+  .t-footer-grid{grid-template-columns:1fr 1fr;}
+}
+
+@media (max-width:760px){
+  :root{--pad:16px;}
+  body{font-size:14px;}
+  .t-header-inner{height:60px;}
+  .t-burger{display:flex;}
+  .t-headline{font-size:32px;}
+  .t-wordmark{
+    font-size:clamp(40px,17vw,80px);
+    white-space:normal;
+    overflow:visible;
+    line-height:.95;
+  }
+  .t-coverage-line{font-size:28px;}
+  .t-reviews-lede .t-headline{font-size:28px;}
+  .t-svc-name,.t-faq-q{font-size:18px;}
+  .t-work-intro{font-size:18px;}
+  .t-review-row.t-flip .t-review-photo{order:0;}
+  .t-review-row.t-flip .t-review-content{order:0;}
+  .t-hero-photo img,.t-coverage-photo img{height:280px;}
+  .t-review-photo img{height:220px;}
+  .t-work-card img.t-main{height:260px !important;}
+  .t-work-card img.t-inset{width:50% !important;height:130px !important;}
+  .t-footer-grid{grid-template-columns:1fr 1fr;}
+  .t-footer-wordmark{margin-bottom:30px;}
+  body{padding-bottom:0;}
+}
