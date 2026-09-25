@@ -12,6 +12,9 @@
     });
   }
 
+  // marquee: duplicate the run so the loop is seamless
+  document.querySelectorAll('.t-marquee-track').forEach(function(t){ t.innerHTML += t.innerHTML; });
+
   var els = Array.prototype.slice.call(document.querySelectorAll('.rise'));
 
   function reveal(el){ el.classList.add('in'); }
