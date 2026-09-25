@@ -13,11 +13,10 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://herosjunkremovaltx.com/">
 
-<link rel="preload" as="image" href="img/house-hero.webp?v=7" imagesrcset="img/house-hero-sm.webp?v=7 700w, img/house-hero.webp?v=7 1400w" imagesizes="(max-width:820px) 82vw, 640px" fetchpriority="high">
 <link rel="preload" href="assets/fonts/fraunces-600-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/fonts.css">
-<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="assets/final.css?v=1">
 
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"Hero's Junk Removal","url":"https://herosjunkremovaltx.com/","telephone":"+12142779069","email":"herosjunkremovaltx@gmail.com","image":"https://herosjunkremovaltx.com/img/house-hero.webp","areaServed":["Frisco, TX","Plano, TX","McKinney, TX","Prosper, TX","Allen, TX","Little Elm, TX"],"openingHours":"Mo-Su 07:00-20:00","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","bestRating":"5"}}
@@ -26,321 +25,581 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<nav id="nav" aria-label="Site">
+<header class="site-header" id="site-header">
   <div class="wrap">
-    <a class="brand" href="./" aria-label="Hero's Junk Removal, home">
-      <span class="mark"><img src="assets/logo-mark.svg?v=2" alt="" width="32" height="32"></span>
+    <a href="./" class="brand">
+      <img src="assets/logo-mark.svg?v=2" alt="">
       <span>Hero's Junk Removal</span>
     </a>
-    <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="navlinks"><span></span><span></span><span></span></button>
-    <div class="navlinks" id="navlinks">
-      <a href="services/">Services</a>
-      <a href="areas.html">Areas</a>
-      <a href="blog/">Blog</a>
+
+    <nav class="main-nav" aria-label="Primary">
+      <a href="#services">Services</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#work">Our work</a>
+      <a href="#faq">FAQ</a>
       <a href="about">About</a>
+      <a href="contact">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="phone-link" href="tel:+12142779069">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        (214) 277-9069
+      </a>
+      <a class="phone-icon-btn" href="tel:+12142779069" aria-label="Call (214) 277-9069">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </a>
+      <a class="cta-pill" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo</a>
+      <button class="burger" type="button" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <a class="nav-phone" href="tel:+12142779069" aria-label="Call (214) 277-9069">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7a2 2 0 0 1 1.8 2z"/></svg>
-      <span>(214) 277-9069</span>
-    </a>
-    <a class="btn btn--primary nav-cta" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo</a>
   </div>
+</header>
+
+<nav class="mobile-menu" aria-label="Mobile">
+  <a href="#services">Services</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#work">Our work</a>
+  <a href="#faq">FAQ</a>
+  <a href="about">About</a>
+  <a href="contact">Contact</a>
+  <a class="cta-pill" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo</a>
 </nav>
 
 <main id="main" tabindex="-1">
 
-<header class="hero">
-  <p class="hero-kicker">Junk removal in Frisco, Plano, McKinney and the cities around them.</p>
-  <div class="stage">
-    <h1 class="sr-only">Junk gone. Text a photo of what needs to go and get a price back.</h1>
-    <div class="word word--a" aria-hidden="true">Junk</div>
-    <div class="piece" id="piece" aria-hidden="true">
-      <img src="img/house-hero.webp?v=7" srcset="img/house-hero-sm.webp?v=7 700w, img/house-hero.webp?v=7 1400w" sizes="(max-width:820px) 82vw, 640px" width="1400" height="1309" alt="" fetchpriority="high" decoding="async">
+<section class="hero">
+  <div class="hero-stage">
+    <span class="brand-word left rise d1">Hero's</span>
+
+    <div class="video-window rise d2" id="hero-video-window">
+      <video autoplay muted loop playsinline poster="assets/video/couch-poster.jpg">
+        <source src="assets/video/couch.webm" type="video/webm">
+        <source src="assets/video/couch.mp4" type="video/mp4">
+        <img class="poster-img" src="assets/video/couch-poster.jpg" alt="Two Hero's Junk Removal movers carrying a green couch out through a doorway">
+      </video>
+      <div class="scrim"></div>
     </div>
-    <div class="word word--b" aria-hidden="true">gone.</div>
+
+    <span class="brand-word right rise d3">Junk Removal</span>
   </div>
 
-  <div class="ask">
-    <p class="lead">Send a photo of what needs to go. You get a price back by text before anyone drives out, and that price does not change once the truck is in your driveway.</p>
+  <div class="hero-sub rise d4">
+    <p class="hero-lead">Text a photo of what you need gone. We text back a price before the truck ever drives out, and it does not change in the driveway. Same-day, often.</p>
+
     <div class="cta-row">
-      <a class="btn btn--primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Text a photo, get a price
+      <a class="btn-primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Text a photo
       </a>
-      <a class="btn btn--quiet" href="tel:+12142779069">Call (214) 277-9069</a>
+      <a class="call-quiet" href="tel:+12142779069">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call (214) 277-9069
+      </a>
     </div>
-  </div>
 
-  <p class="hero-line">
-    <span>Frisco, Plano, McKinney, Prosper, Allen, Little Elm</span>
-    <span>7am to 8pm, every day</span>
-    <span><b>4.9</b> on Google</span>
-  </p>
-</header>
-
-<!-- 01 who shows up -->
-<section class="section section--warm owner" id="who">
-  <div class="wrap split split--photo-left">
-    <figure>
-      <div class="photo">
-        <img src="img/p/team-todd-nash-900.webp" srcset="img/p/team-todd-nash-480.webp 480w, img/p/team-todd-nash-900.webp 900w" sizes="(max-width:820px) 92vw, 480px" width="900" height="1125" alt="Todd and Nash of Hero's Junk Removal standing in a driveway in front of their black pickup and trailer" loading="lazy" decoding="async">
-      </div>
-      <figcaption class="cap">Todd and Nash, with the truck and trailer that come to your house.</figcaption>
-    </figure>
-    <div>
-      <h2>The person who texts you back is the person who shows up.</h2>
-      <p class="lead">Hero's is Todd's company. He reads the photo you send, he sends the price, and he is on the truck when it pulls up. Nash works beside him.</p>
-      <p>No call center, no crew you have never heard of. If something is fragile, or the pile is bigger than the photo showed, you talk to the same person who quoted it. Same two guys on every job, 7am to 8pm, every day of the week. If we tell you a time, that is when the truck shows.</p>
-      <a class="tlink" href="about">More about Todd and Nash</a>
+    <div class="rating-line">
+      <span class="stars">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+      </span>
+      <span><strong>4.9</strong> on Google</span>
     </div>
   </div>
 </section>
 
-<!-- 02 how a price happens -->
-<section class="section how" id="how">
-  <div class="wrap split">
-    <div>
-      <h2>A price before the truck, not after.</h2>
-      <p class="lead">The thing people dread about junk removal is the number changing in the driveway. So the number comes first.</p>
-      <div class="steps">
-        <div class="step">
-          <span class="n">1</span>
-          <h3>Text a photo</h3>
-          <p>One picture of the pile, the couch, the garage. Two if it helps. Add the city.</p>
-        </div>
-        <div class="step">
-          <span class="n">2</span>
-          <h3>Get a price back</h3>
-          <p>We look at what is actually there and text back a firm price. That is the number you pay. If the pile is bigger than the photo showed, or there is something we cannot legally haul, we tell you before we touch anything, never after.</p>
-        </div>
-        <div class="step">
-          <span class="n">3</span>
-          <h3>It leaves</h3>
-          <p>The crew loads it, sweeps the spot, and it is gone. Same day when the schedule allows.</p>
-        </div>
-      </div>
-    </div>
-    <figure>
-      <div class="photo">
-        <img src="img/p/job-garage-clearout-900.webp" srcset="img/p/job-garage-clearout-480.webp 480w, img/p/job-garage-clearout-900.webp 900w" sizes="(max-width:820px) 92vw, 480px" width="900" height="1125" alt="A garage before pickup: boxes, a fake tree, kids bikes, a basketball hoop and a pile of metal poles" loading="lazy" decoding="async">
-      </div>
-      <figcaption class="cap">A photo like this is all it takes. Nothing has to be sorted, moved to the curb or measured first.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- 02b proof: the price promise, in customers' words -->
-<section class="section proof" id="proof">
-  <div class="wrap split">
-    <div>
-      <h2>What people say after the truck leaves.</h2>
-      <p class="lead">Recent Google reviews, quoted as written.</p>
-      <div class="rating">
-        <span class="fig">4.9</span>
-        <span class="term">on Google, rated by people whose garages, sheds and estates we cleared</span>
-      </div>
-      <a class="tlink" href="https://www.google.com/maps?cid=276680836995827442" rel="noopener">Read every review on Google</a>
-    </div>
-    <div class="quotes">
-      <blockquote>
-        <p>I contacted them on short notice, and they asked me to send a few pictures. Within three minutes of sending the photos, I received a reasonable estimate. I requested a same-day pickup, and they arrived within two hours.</p>
-        <cite>Hamed A., Google review</cite>
-      </blockquote>
-      <blockquote>
-        <p>Called Hero's and they came later the same day. A great father and son team. Very friendly and professional. Would definitely recommend them to others!</p>
-        <cite>Hayden H., Google review</cite>
-      </blockquote>
-      <blockquote>
-        <p>Amazing experience! Everything that is asked for gets done properly and professionally. Was very quick.</p>
-        <cite>Boo M., Google review</cite>
-      </blockquote>
-    </div>
-  </div>
-</section>
-
-<!-- 03 what we take -->
-<section class="section take" id="services">
-  <div class="wrap split split--photo-left">
-    <figure>
-      <div class="photo">
-        <img src="img/p/job-garage-cleanout-960.webp" srcset="img/p/job-garage-cleanout-480.webp 480w, img/p/job-garage-cleanout-640.webp 640w, img/p/job-garage-cleanout-960.webp 960w" sizes="(max-width:820px) 92vw, 560px" width="960" height="640" alt="A garage stacked with patio cushions, a folding table, boxes, a cooler and a suitcase waiting for pickup" loading="lazy" decoding="async">
-      </div>
-      <figcaption class="cap">A garage the morning we came for it.</figcaption>
-    </figure>
-    <div>
-      <h2>If it is in the way, it goes.</h2>
-      <p class="lead">Single items or a whole property. Inside, outside, garage, attic, yard.</p>
-      <nav class="rows" aria-label="Services">
-        <a href="services/same-day-junk-removal">Junk removal <small>Same day when we can</small></a>
-        <a href="services/furniture-removal">Furniture <small>Couches, dressers, beds</small></a>
-        <a href="services/appliance-removal">Appliances <small>Fridges, washers, dryers</small></a>
-        <a href="services/furniture-removal">Mattresses and box springs <small>Any size</small></a>
-        <a href="services/hot-tub-removal">Hot tubs <small>Broken down and hauled</small></a>
-        <a href="services/estate-cleanouts">Estate cleanouts <small>Whole house</small></a>
-        <a href="services/garage-cleanouts">Garage cleanouts <small>Down to the slab</small></a>
-        <a href="services/construction-debris">Construction debris <small>After the remodel</small></a>
-        <a href="services/yard-debris">Yard debris <small>Limbs, fence, brush</small></a>
-        <a href="services/">Everything else <small>All services</small></a>
-      </nav>
-    </div>
-  </div>
-</section>
-
-<!-- 04 where -->
-<section class="section where" id="areas">
-  <div class="wrap split">
-    <div>
-      <h2>Six cities north of Dallas.</h2>
-      <p class="lead">Tap yours. If you are just outside these, text the address and ask.</p>
-      <div class="cities">
-        <a class="pill" href="services/junk-removal-frisco">Frisco</a>
-        <a class="pill" href="services/junk-removal-plano">Plano</a>
-        <a class="pill" href="services/junk-removal-mckinney">McKinney</a>
-        <a class="pill" href="services/junk-removal-prosper">Prosper</a>
-        <a class="pill" href="services/junk-removal-allen">Allen</a>
-        <a class="pill" href="services/junk-removal-little-elm">Little Elm</a>
-      </div>
-    </div>
-    <figure>
-      <div class="photo">
-        <img src="img/p/real-rig-960.webp" srcset="img/p/real-rig-480.webp 480w, img/p/real-rig-640.webp 640w, img/p/real-rig-960.webp 960w" sizes="(max-width:820px) 92vw, 560px" width="960" height="640" alt="Todd loading the black Hero's trailer in a North Texas driveway" loading="lazy" decoding="async">
-      </div>
-      <figcaption class="cap">The trailer, on a driveway in one of these six cities.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<!-- 05 faq -->
-<section class="section" id="faq">
+<section class="trust-strip">
   <div class="wrap">
-    <div class="grid-2" style="margin-top:0; align-items:start">
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span><strong>Father and son</strong>, owner on every truck</span>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span><strong>Price by text</strong> before we drive out</span>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span><strong>Same-day</strong> most days</span>
+    </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0L12 5.35l-.77-.77a5.4 5.4 0 0 0-7.65 7.65L12 21l8.42-8.77a5.4 5.4 0 0 0 0-7.65z"/></svg>
+      <span><strong>Donate first</strong>, dump last</span>
+    </div>
+  </div>
+</section>
+
+<section class="section services-section" id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>If it is in the way, it goes.</h2>
+      <p>Single items or a whole property. Inside, outside, garage, attic, yard.</p>
+    </div>
+    <div class="svc-grid reveal-group">
+      <a class="svc-tile span2" href="services/furniture-removal.html">
+        <img src="img/p/card-furniture-820.webp" alt="Couch and furniture ready for pickup" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Furniture removal</h3><p>Couches, dressers, beds</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile span2" href="services/appliance-removal.html">
+        <img src="img/p/appliance-820.webp" alt="Appliances ready for pickup" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Appliance removal</h3><p>Fridges, washers, dryers</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile" href="services/garage-cleanouts.html">
+        <img src="img/p/garage-820.webp" alt="Garage cleanout" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Garage cleanouts</h3><p>Down to the slab</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile" href="services/estate-cleanouts.html">
+        <img src="img/p/estate-820.webp" alt="Estate cleanout" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Estate cleanouts</h3><p>Whole house</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile" href="services/hot-tub-removal.html">
+        <img src="img/hottub.jpg" alt="Hot tub removal" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Hot tub removal</h3><p>Broken down and hauled</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile" href="services/yard-debris.html">
+        <img src="img/p/yard-820.webp" alt="Yard debris removal" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Yard debris</h3><p>Limbs, fence, brush</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile span2" href="services/construction-debris.html">
+        <img src="img/debris.jpg" alt="Construction debris removal" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Construction debris</h3><p>After the remodel</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+      <a class="svc-tile span2" href="services/same-day-junk-removal.html">
+        <img src="img/p/card-sameday-820.webp" alt="Same-day junk removal" loading="lazy">
+        <div class="svc-tile-content"><div><h3>Same-day removal</h3><p>Often, when schedule allows</p></div><span class="svc-tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></div>
+      </a>
+    </div>
+    <a class="tlink all-services" href="services/">All services
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<section class="section how-section" id="how">
+  <div class="wrap">
+    <div class="how-grid">
       <div>
-        <h2>Before you text.</h2>
-        <div class="faq">
-          <details>
-            <summary>How do I get a price?</summary>
-            <p>Text a photo of what needs to go to (214) 277-9069 with your city. You get a price back by text. No form, no visit first.</p>
-          </details>
-          <details>
-            <summary>What if I do not have a photo?</summary>
-            <p>Call <a href="tel:+12142779069">(214) 277-9069</a> and describe it. A rough list of what is there is enough to talk it through.</p>
-          </details>
-          <details>
-            <summary>Can it go today?</summary>
-            <p>Often, when the schedule allows. We run 7am to 8pm every day, so text early and ask for the soonest slot.</p>
-          </details>
-          <details>
-            <summary>What do you take?</summary>
-            <p>Furniture, appliances, mattresses, couches, hot tubs, estate and garage cleanouts, construction debris and yard debris. If you are not sure, send the photo anyway.</p>
-          </details>
-          <details>
-            <summary>Where do you go?</summary>
-            <p>Frisco, Plano, McKinney, Prosper, Allen and Little Elm. Nearby addresses are worth a text.</p>
-          </details>
-          <details>
-            <summary>Where does it all end up?</summary>
-            <p>The landfill is the last stop, not the first. Usable furniture and appliances go to local donation partners, and metal, cardboard and electronics go to recyclers. If usable items from your job are donated, we pass the receipt back to you on request.</p>
-          </details>
-          <details>
-            <summary>Is there anything you cannot take?</summary>
-            <p>Hazardous materials cannot legally ride on the trailer. If you are not sure whether something can go, send the photo and ask. We say so before anything is loaded, never after.</p>
-          </details>
+        <div class="section-head reveal" style="margin-bottom:36px;">
+          <h2>A price before the truck, not after.</h2>
+          <p>The thing people dread about junk removal is the number changing in the driveway. So the number comes first.</p>
+        </div>
+        <div class="how-steps reveal-group">
+          <div class="how-step">
+            <span class="n">1</span>
+            <div><h3>Text a photo</h3><p>One picture of the pile, the couch, the garage. Two if it helps. Add the city.</p></div>
+          </div>
+          <div class="how-step">
+            <span class="n">2</span>
+            <div><h3>Get a price back</h3><p>We look at what is actually there and text back a firm price. If the pile is bigger than the photo showed, or there is something we cannot legally haul, we tell you before we touch anything, never after.</p></div>
+          </div>
+          <div class="how-step">
+            <span class="n">3</span>
+            <div><h3>We haul it, sweep up, donate what we can</h3><p>The crew loads it, sweeps the spot, and it is gone. Same day when the schedule allows.</p></div>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <h2 style="font-size:1.4rem">Send the photo now</h2>
-        <p>Open 7am to 8pm, every day. Text a photo and we text back a firm price before anyone drives out.</p>
-        <div class="cta-row" style="justify-content:flex-start; margin-top:1.6rem">
-          <a class="btn btn--primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo, get a price</a>
-          <a class="btn btn--quiet" href="tel:+12142779069">Call (214) 277-9069</a>
-        </div>
+      <div class="how-photo reveal">
+        <img src="img/p/job-garage-cleanout-960.webp" alt="A garage stacked with items waiting for pickup" loading="lazy">
       </div>
     </div>
   </div>
 </section>
 
-<!-- 06 contact -->
-<section class="section section--warm" id="contact">
-  <div class="column contact">
-    <h2>Send the photo now.</h2>
-    <p class="lead">Open 7am to 8pm, every day. Text, call or email, whichever is easier.</p>
-    <div class="cta-row">
-      <a class="btn btn--primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">Text a photo, get a price</a>
-      <a class="btn btn--quiet" href="tel:+12142779069">Call (214) 277-9069</a>
+<section class="section reviews-section" id="reviews">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>What people say after the truck leaves.</h2>
+      <p>Every Google review, quoted as written.</p>
     </div>
-    <p class="meta">
-      <a href="mailto:herosjunkremovaltx@gmail.com">herosjunkremovaltx@gmail.com</a>
-      <span>Frisco, Plano, McKinney, Prosper, Allen, Little Elm</span>
-    </p>
+    <div class="reviews-layout">
+      <aside class="reviews-rail reveal">
+        <div class="fig">4.9</div>
+        <span class="stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+        </span>
+        <div class="on-google">on Google</div>
+        <a class="tlink" href="https://www.google.com/maps?cid=276680836995827442" rel="noopener">Read them on Google
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
+        <div class="chip-row" role="group" aria-label="Filter reviews">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="same day">Same day</button>
+          <button class="chip" data-filter="price">Price</button>
+          <button class="chip" data-filter="Nash">Nash</button>
+          <button class="chip" data-filter="garage">Garage</button>
+          <button class="chip" data-filter="photo quote">Photo quote</button>
+        </div>
+
+        <div class="mentions">
+          <h4>What they mention most</h4>
+          <div class="mention-bar">
+            <div class="lbl"><span>Same day</span></div>
+            <div class="track"><div class="fill" style="width:67%"></div></div>
+          </div>
+          <div class="mention-bar">
+            <div class="lbl"><span>Price</span></div>
+            <div class="track"><div class="fill" style="width:67%"></div></div>
+          </div>
+          <div class="mention-bar">
+            <div class="lbl"><span>Nash by name</span></div>
+            <div class="track"><div class="fill" style="width:50%"></div></div>
+          </div>
+          <div class="mention-bar">
+            <div class="lbl"><span>Professional</span></div>
+            <div class="track"><div class="fill" style="width:100%"></div></div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="review-cards reveal-group">
+        <article class="review-card featured" data-tags="photo quote,same day,fast">
+          <div class="review-top">
+            <span class="avatar" style="background:#B32A25">HA</span>
+            <div class="review-who"><span class="name">Hamed AlAqeel</span><span class="when">4 weeks ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text pullout">"Within three minutes of sending the photos, I received a reasonable estimate."</p>
+          <p class="review-text" style="font-family:'Source Sans 3',sans-serif;font-size:16px;font-weight:400;margin-top:14px;color:#e7e5e4;">I contacted them on short notice, and they asked me to send a few pictures. I requested a <mark>same-day pickup</mark>, and they arrived within two hours. They completed the job incredibly fast. I really appreciate their hard work, God bless them. I will definitely save their contact information and highly recommend their services.</p>
+          <div class="tag-pills"><span class="tag-pill">Photo quote</span><span class="tag-pill">Same day</span><span class="tag-pill">Fast</span></div>
+        </article>
+
+        <article class="review-card" data-tags="same day,Nash">
+          <div class="review-top">
+            <span class="avatar" style="background:#9E241F">SY</span>
+            <div class="review-who"><span class="name">Sophia Yang</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Nash was prompt, professional, and customer focused. He was able to pick up my toilets (one was burned by the intense Texas heat, by the way) <mark>same-day</mark> and was very understanding that I needed a quick turnaround. I will definitely reach out to Nash again when needed and you should too!</p>
+          <div class="tag-pills"><span class="tag-pill">Same day</span><span class="tag-pill">Nash</span></div>
+        </article>
+
+        <article class="review-card" data-tags="garage,same day,Nash">
+          <div class="review-top">
+            <span class="avatar" style="background:#c9736f">CB</span>
+            <div class="review-who"><span class="name">Caden Boyd</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Nash was very professional. I had a bunch of stuff I needed gone in my garage. He came <mark>same day and gave me a free reasonable quote</mark>. Great business man. Would recommend to everyone.</p>
+          <div class="tag-pills"><span class="tag-pill">Garage</span><span class="tag-pill">Same day</span><span class="tag-pill">Nash</span></div>
+        </article>
+
+        <article class="review-card" data-tags="price">
+          <div class="review-top">
+            <span class="avatar" style="background:#B32A25">CM</span>
+            <div class="review-who"><span class="name">Calvin Mullinax Jr.</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Definitely recommend! Fair, fast, and thorough. He did a great job and <mark>left the area cleaned up</mark> after. I'll definitely use him in the future and recommend anyone needing anything to call him first.</p>
+          <div class="tag-pills"><span class="tag-pill">Fair price</span><span class="tag-pill">Cleanup</span></div>
+        </article>
+
+        <article class="review-card" data-tags="same day">
+          <div class="review-top">
+            <span class="avatar" style="background:#9E241F">HH</span>
+            <div class="review-who"><span class="name">Hayden Hudnall</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Called Hero's and they came later <mark>the same day</mark>. Very reasonable pricing and a great father and son team. Very friendly and professional. Would definitely recommend them to others!</p>
+          <div class="tag-pills"><span class="tag-pill">Same day</span><span class="tag-pill">Father and son</span></div>
+        </article>
+
+        <article class="review-card" data-tags="price">
+          <div class="review-top">
+            <span class="avatar" style="background:#c9736f">DC</span>
+            <div class="review-who"><span class="name">Dex. Camerón</span><span class="when">2 weeks ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Young man went above and beyond to get the job done! Who would have thought one refrigerator give such a problem! <mark>The price was definitely right</mark> and the service was top notch. Definitely recommend Hero's junk removal, one hundred percent! Thanks again</p>
+          <div class="tag-pills"><span class="tag-pill">Refrigerator</span><span class="tag-pill">Price</span></div>
+        </article>
+
+        <article class="review-card" data-tags="">
+          <div class="review-top">
+            <span class="avatar" style="background:#B32A25">EW</span>
+            <div class="review-who"><span class="name">Evan Wright</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">This was the best junk removing service I have ever seen. They are so nice and genuine, I love helping out younger men in their business journey. Would recommend!</p>
+          <div class="tag-pills"><span class="tag-pill">Friendly</span></div>
+        </article>
+
+        <article class="review-card" data-tags="Nash">
+          <div class="review-top">
+            <span class="avatar" style="background:#9E241F">P</span>
+            <div class="review-who"><span class="name">p1xylz</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Amazing work young man named Nash was amazing and super professional. Definitely will recommend him to anyone looking for <mark>easy and professional</mark> junk removal</p>
+          <div class="tag-pills"><span class="tag-pill">Nash</span></div>
+        </article>
+
+        <article class="review-card" data-tags="price">
+          <div class="review-top">
+            <span class="avatar" style="background:#c9736f">BM</span>
+            <div class="review-who"><span class="name">Boo Moerschell</span><span class="when">a month ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Amazing experience! Everything that is asked for gets done properly and professionally. Was very quick and <mark>very good pricing</mark>!</p>
+          <div class="tag-pills"><span class="tag-pill">Fast</span><span class="tag-pill">Price</span></div>
+        </article>
+
+        <article class="review-card" data-tags="">
+          <div class="review-top">
+            <span class="avatar" style="background:#B32A25">CM</span>
+            <div class="review-who"><span class="name">charlie mclaren</span><span class="when">2 weeks ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Made pick up and delivery easy, <mark>seamless and right on time</mark>, would definitely hire again.</p>
+          <div class="tag-pills"><span class="tag-pill">On time</span></div>
+        </article>
+
+        <article class="review-card" data-tags="price">
+          <div class="review-top">
+            <span class="avatar" style="background:#9E241F">DT</span>
+            <div class="review-who"><span class="name">Dustin Trott</span><span class="when">3 weeks ago</span></div>
+          </div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>
+          </div>
+          <p class="review-text">Timely, professional, and <mark>great price</mark>! Will definitely use again!</p>
+          <div class="tag-pills"><span class="tag-pill">On time</span><span class="tag-pill">Price</span></div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section work-section" id="work">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Our work.</h2>
+      <p>Real jobs, real trucks, real North Texas driveways.</p>
+    </div>
+    <div class="work-grid reveal-group">
+      <div class="work-item w1">
+        <img src="img/p/rig-loaded-1100.webp" alt="Trailer loaded with junk ready to haul" loading="lazy">
+        <span class="work-cap">The trailer, loaded and ready</span>
+      </div>
+      <div class="work-item w2">
+        <img src="img/p/real-rig-960.webp" alt="Todd loading the trailer in a driveway" loading="lazy">
+        <span class="work-cap">On a driveway north of Dallas</span>
+      </div>
+      <div class="work-item w3">
+        <img src="img/p/job-curbside-pickup-820.webp" alt="Curbside pickup job" loading="lazy">
+        <span class="work-cap">Curbside pickup</span>
+      </div>
+      <div class="work-item w4">
+        <img src="img/p/job-garage-clearout-900.webp" alt="Garage clearout in progress" loading="lazy">
+        <span class="work-cap">Garage, cleared</span>
+      </div>
+      <div class="work-item w5">
+        <img src="img/truck-bed.jpg" alt="Truck bed loaded with items" loading="lazy">
+        <span class="work-cap">Truck bed, full</span>
+      </div>
+      <div class="work-item w6">
+        <img src="img/crew-loading.jpg" alt="Crew loading the truck" loading="lazy">
+        <span class="work-cap">Loading up</span>
+      </div>
+      <div class="work-item w7">
+        <img src="img/p/team-todd-nash-900.webp" alt="Todd and Nash with the truck and trailer" loading="lazy">
+        <span class="work-cap">Todd and Nash</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section owner-section" id="about">
+  <div class="wrap">
+    <div class="owner-grid">
+      <div class="owner-photo reveal">
+        <img src="img/p/team-todd-nash-900.webp" alt="Todd and Nash of Hero's Junk Removal standing in a driveway in front of their black pickup and trailer" loading="lazy">
+      </div>
+      <div class="reveal">
+        <h2>The person who texts you back is the person who shows up.</h2>
+        <p class="lead">Hero's is Todd's company. He reads the photo you send, he sends the price, and he is on the truck when it pulls up. Nash works beside him.</p>
+        <p>No call center, no crew you have never heard of. If something is fragile, or the pile is bigger than the photo showed, you talk to the same person who quoted it. Same two guys on every job, 7am to 8pm, every day of the week. If we tell you a time, that is when the truck shows.</p>
+        <a class="tlink" href="about">More about Todd and Nash
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section faq-section" id="faq">
+  <div class="wrap">
+    <div class="faq-grid">
+      <div class="reveal">
+        <h2 style="font-size:clamp(28px,3.4vw,40px);">Before you text.</h2>
+        <p style="margin-top:12px;color:var(--muted);font-size:17px;line-height:1.55;">Everything people usually ask before they send the photo.</p>
+      </div>
+      <div class="faq-list reveal">
+        <details>
+          <summary>How do I get a price?</summary>
+          <div class="faq-body"><p>Text a photo of what needs to go to (214) 277-9069 with your city. You get a price back by text. No form, no visit first.</p></div>
+        </details>
+        <details>
+          <summary>What if I do not have a photo?</summary>
+          <div class="faq-body"><p>Call <a href="tel:+12142779069">(214) 277-9069</a> and describe it. A rough list of what is there is enough to talk it through.</p></div>
+        </details>
+        <details>
+          <summary>Can it go today?</summary>
+          <div class="faq-body"><p>Often, when the schedule allows. We run 7am to 8pm every day, so text early and ask for the soonest slot.</p></div>
+        </details>
+        <details>
+          <summary>What do you take?</summary>
+          <div class="faq-body"><p>Furniture, appliances, mattresses, couches, hot tubs, estate and garage cleanouts, construction debris and yard debris. If you are not sure, send the photo anyway.</p></div>
+        </details>
+        <details>
+          <summary>Where do you go?</summary>
+          <div class="faq-body"><p>Frisco, Plano, McKinney, Prosper, Allen and Little Elm. Nearby addresses are worth a text.</p></div>
+        </details>
+        <details>
+          <summary>Where does it all end up?</summary>
+          <div class="faq-body"><p>The landfill is the last stop, not the first. Usable furniture and appliances go to local donation partners, and metal, cardboard and electronics go to recyclers. If usable items from your job are donated, we pass the receipt back to you on request.</p></div>
+        </details>
+        <details>
+          <summary>Is there anything you cannot take?</summary>
+          <div class="faq-body"><p>Hazardous materials cannot legally ride on the trailer. If you are not sure whether something can go, send the photo and ask. We say so before anything is loaded, never after.</p></div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-band" id="contact">
+  <div class="wrap">
+    <h2 class="reveal">Send the photo now.</h2>
+    <p class="reveal">Open 7am to 8pm, every day. Text, call or email, whichever is easier.</p>
+    <div class="cta-row reveal">
+      <a class="btn-primary" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone.">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Text a photo
+      </a>
+      <a class="call-quiet" href="tel:+12142779069">Call (214) 277-9069</a>
+    </div>
+    <p class="cities">Frisco, Plano, McKinney, Prosper, Allen, Little Elm &middot; <a href="contact">Or use the contact page</a></p>
   </div>
 </section>
 
 </main>
 
-<footer>
+<footer class="site-footer">
   <div class="wrap">
-    <div class="col">
-      <a class="brand" href="./"><span class="mark"><img src="assets/logo-mark.svg?v=2" alt="" width="32" height="32"></span><span>Hero's Junk Removal</span></a>
-      <a href="tel:+12142779069">(214) 277-9069</a>
-      <a href="mailto:herosjunkremovaltx@gmail.com">herosjunkremovaltx@gmail.com</a>
-      <span>7am to 8pm, every day</span>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a class="brand" href="./"><img src="assets/logo-mark.svg?v=2" alt="" width="32" height="32"><span>Hero's Junk Removal</span></a>
+        <p><a href="tel:+12142779069">(214) 277-9069</a></p>
+        <p><a href="mailto:herosjunkremovaltx@gmail.com">herosjunkremovaltx@gmail.com</a></p>
+        <p>7am to 8pm, every day</p>
+      </div>
+      <div class="footer-col">
+        <span class="fh">Services</span>
+        <a href="services/furniture-removal.html">Furniture removal</a>
+        <a href="services/appliance-removal.html">Appliance removal</a>
+        <a href="services/hot-tub-removal.html">Hot tub removal</a>
+        <a href="services/estate-cleanouts.html">Estate cleanouts</a>
+        <a href="services/garage-cleanouts.html">Garage cleanouts</a>
+        <a href="services/">All services</a>
+      </div>
+      <div class="footer-col">
+        <span class="fh">Cities</span>
+        <a href="services/junk-removal-frisco.html">Frisco</a>
+        <a href="services/junk-removal-plano.html">Plano</a>
+        <a href="services/junk-removal-mckinney.html">McKinney</a>
+        <a href="services/junk-removal-prosper.html">Prosper</a>
+        <a href="services/junk-removal-allen.html">Allen</a>
+        <a href="services/junk-removal-little-elm.html">Little Elm</a>
+      </div>
+      <div class="footer-col">
+        <span class="fh">More</span>
+        <a href="about">About</a>
+        <a href="blog/">Blog</a>
+        <a href="contact">Contact</a>
+        <a href="https://www.google.com/maps?cid=276680836995827442" rel="noopener">Google profile</a>
+      </div>
     </div>
-    <div class="col">
-      <span class="fh">Services</span>
-      <a href="services/furniture-removal">Furniture removal</a>
-      <a href="services/appliance-removal">Appliance removal</a>
-      <a href="services/hot-tub-removal">Hot tub removal</a>
-      <a href="services/estate-cleanouts">Estate cleanouts</a>
-      <a href="services/garage-cleanouts">Garage cleanouts</a>
-      <a href="services/">All services</a>
-    </div>
-    <div class="col">
-      <span class="fh">Cities</span>
-      <a href="services/junk-removal-frisco">Frisco</a>
-      <a href="services/junk-removal-plano">Plano</a>
-      <a href="services/junk-removal-mckinney">McKinney</a>
-      <a href="services/junk-removal-prosper">Prosper</a>
-      <a href="services/junk-removal-allen">Allen</a>
-      <a href="services/junk-removal-little-elm">Little Elm</a>
-    </div>
-    <div class="col">
-      <span class="fh">More</span>
-      <a href="about">About</a>
-      <a href="blog/">Blog</a>
-      <a href="contact">Contact</a>
-      <a href="https://www.google.com/maps?cid=276680836995827442" rel="noopener">Google profile</a>
-    </div>
-    <div class="legal">&copy; 2026 Hero's Junk Removal. Serving Frisco, Plano, McKinney, Prosper, Allen and Little Elm, Texas.</div>
+    <div class="footer-legal">&copy; 2026 Hero's Junk Removal. Serving Frisco, Plano, McKinney, Prosper, Allen and Little Elm, Texas.</div>
   </div>
 </footer>
+
 <div class="call-bar">
   <a class="cb-text" href="sms:+12142779069?&amp;body=Hi%2C%20here%20is%20a%20photo%20of%20what%20I%20need%20gone." aria-label="Text a photo, get a price"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Text a photo</a>
   <a class="cb-call" href="tel:+12142779069" aria-label="Call (214) 277-9069"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.8.7a2 2 0 0 1 1.8 2z"/></svg>Call</a>
 </div>
 
-<script>
-(function(){
-  var nav=document.getElementById('nav'), b=nav.querySelector('.burger');
-  function solid(){ nav.classList.toggle('solid', window.scrollY>8); }
-  addEventListener('scroll', solid, {passive:true}); solid();
-  if(b){ b.addEventListener('click', function(){
-    var open=nav.classList.toggle('menu-open');
-    b.setAttribute('aria-expanded', open?'true':'false');
-    document.body.classList.toggle('menu-locked', open);
-  });
-  addEventListener('keydown', function(e){
-    if(e.key==='Escape' && nav.classList.contains('menu-open')){
-      nav.classList.remove('menu-open');
-      b.setAttribute('aria-expanded','false');
-      document.body.classList.remove('menu-locked');
-      b.focus();
-    }
-  }); }
-})();
-</script>
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
-</script>
-<script type="module" src="assets/house.js?v=5"></script>
+<script src="assets/final.js?v=1" defer></script>
 </body>
 </html>
