@@ -30,10 +30,46 @@
     els.forEach(reveal);
   }
 
-  // Failsafe: nothing should stay hidden forever.
+  // Failsafe only for what is already on screen at load (never pre-reveal what is below the fold).
   setTimeout(function(){
-    els.forEach(reveal);
+    els.forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top<window.innerHeight) reveal(el); });
   }, 2500);
+
+  // Photos: curtain reveal as they enter.
+  // Observe each photo's PARENT: a clipped/translated element reports zero intersection and would never open.
+  var imgs=Array.prototype.slice.call(document.querySelectorAll('.t-hero-photo, .t-coverage-photo, .t-work-card, .t-review-photo'));
+  imgs.forEach(function(el){ el.classList.add('t-reveal-img'); if(io) io.unobserve(el); });
+  if('IntersectionObserver' in window){
+    var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.__imgs.forEach(function(i){ i.classList.add('in'); }); io2.unobserve(e.target); } }); },{threshold:0,rootMargin:'0px 0px -12% 0px'});
+    imgs.forEach(function(el){ var p=el.parentElement; (p.__imgs=p.__imgs||[]).push(el); io2.observe(p); });
+  } else imgs.forEach(function(el){ el.classList.add('in'); });
+
+  // Wordmarks: split into letters, rise one by one when they come into view; apostrophe in red.
+  document.querySelectorAll('.t-wordmark, .t-footer-wordmark').forEach(function(wm){
+    var t=wm.textContent; wm.textContent='';
+    Array.prototype.forEach.call(t,function(c,i){
+      var s=document.createElement('span'); s.className='t-ch'; s.textContent=c===' '?' ':c;
+      s.style.transitionDelay=(i*35)+'ms'; wm.appendChild(s);
+    });
+    wm.setAttribute('aria-label',t);
+    if('IntersectionObserver' in window){
+      var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ wm.classList.add('t-wm-in'); o.disconnect(); } }); },{threshold:0.3});
+      o.observe(wm);
+    } else wm.classList.add('t-wm-in');
+  });
+
+  // Inset photos drift against the scroll (parallax).
+  var insets=Array.prototype.slice.call(document.querySelectorAll('.t-inset'));
+  if(insets.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var tick=false;
+    window.addEventListener('scroll',function(){
+      if(tick) return; tick=true;
+      requestAnimationFrame(function(){
+        insets.forEach(function(el){ var r=el.parentElement.getBoundingClientRect(); var p=(r.top+r.height/2-window.innerHeight/2)/window.innerHeight; el.style.transform='translateY('+(p*-60).toFixed(1)+'px)'; });
+        tick=false;
+      });
+    },{passive:true});
+  }
 })();
 
 /* fit the giant wordmarks to their container width on one line (desktop), like the reference */
