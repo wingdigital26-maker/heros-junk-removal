@@ -80,3 +80,6 @@
 .nf-tiles .svc-tile-content{background:rgba(28,25,23,0.94);}
 @media (max-width:900px){.nf-tiles{grid-template-columns:repeat(2,1fr);grid-auto-rows:200px;}}
 @media (max-width:480px){.nf-tiles{grid-template-columns:1fr;grid-auto-rows:180px;}}
+
+/* about: three Nash reviews in one even row */
+@media (min-width:1025px){.about-page .review-cards,body .review-cards.about-three{grid-template-columns:repeat(3,1fr);}}
