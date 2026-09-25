@@ -1,5 +1,5 @@
 /*
- * Hero's piece2: ONE object of ~1,600 identical navy cubes that takes itself
+ * Hero's piece2: ONE object of 1,600 small cubes, each with a real-world colour and finish per form, that takes itself
  * apart and rebuilds as a house -> truck + trailer -> couch -> the Hero's H,
  * driven by scroll.
  *
@@ -121,7 +121,7 @@ export async function mount(el) {
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 0.95;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;   // lights and ground are static: re-render shadows only while cubes move
@@ -130,13 +130,13 @@ export async function mount(el) {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.32;
+  scene.environmentIntensity = 0.6;   // image-based light: soft realistic reflections on glass, chrome, paint
 
   const camera = new THREE.PerspectiveCamera(26, 1, 1, 1000);
 
   // ---- lights: soft hemisphere, key from upper-left front, warm rim from behind right
-  scene.add(new THREE.HemisphereLight(0xf4f6fb, 0xb8ac98, 1.15));
-  const key = new THREE.DirectionalLight(0xffffff, 3.2);
+  scene.add(new THREE.HemisphereLight(0xf4f6fb, 0xb8ac98, 0.6));
+  const key = new THREE.DirectionalLight(0xfff8ef, 2.6);
   key.position.set(-18, 56, 34);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -144,9 +144,8 @@ export async function mount(el) {
   key.shadow.bias = -0.0006;
   key.shadow.normalBias = 0.04;
   key.shadow.radius = 7;
-  key.shadow.blurSamples = 16;
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffc48c, 1.9);
+  const rim = new THREE.DirectionalLight(0xffc48c, 1.2);
   rim.position.set(34, 22, -36);
   scene.add(rim);
   const fill = new THREE.DirectionalLight(0xcfdcff, 0.45);
@@ -156,30 +155,103 @@ export async function mount(el) {
   // ---- the piece
   const pivot = new THREE.Group();
   scene.add(pivot);
-  const fillK = data.fill || 0.92;
-  const geo = new RoundedBoxGeometry(fillK, fillK, fillK, 2, 0.1);
-  const mat = new THREE.MeshStandardMaterial({ color: NAVY, roughness: 0.45, metalness: 0.08, envMapIntensity: 0.9 });
+  const fillK = data.fill || 0.97;
+  const geo = new RoundedBoxGeometry(fillK, fillK, fillK, 2, (data.bevel || 0.05) * fillK);
+  // one PBR material; colour comes from instanceColor, roughness/metalness from a per-instance attribute
+  const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, metalness: 0 });
+  mat.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nattribute vec2 aPbr;\nvarying vec2 vPbr;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvPbr = aPbr;');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec2 vPbr;')
+      .replace('#include <roughnessmap_fragment>', 'float roughnessFactor = vPbr.x;')
+      .replace('#include <metalnessmap_fragment>', 'float metalnessFactor = vPbr.y;');
+  };
   const mesh = new THREE.InstancedMesh(geo, mat, N);
+  const pbrAttr = new THREE.InstancedBufferAttribute(new Float32Array(N * 2), 2);
+  pbrAttr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('aPbr', pbrAttr);
+  mesh.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(N * 3), 3);
+  mesh.instanceColor.setUsage(THREE.DynamicDrawUsage);
   mesh.castShadow = false;
   mesh.receiveShadow = true;
   mesh.frustumCulled = false;
   pivot.add(mesh);
-  // cheap shadow caster: plain 12-triangle boxes sharing the same instance matrices, invisible in the colour pass
-  const proxyGeo = new THREE.BoxGeometry(fillK, fillK, fillK);
-  const proxyMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
+  // dark core + cheap shadow caster: plain 12-triangle boxes a little smaller than each cube, sharing its
+  // matrix and colour; fills the hairline seams with shade so the surface reads as one solid object
+  const proxyGeo = new THREE.BoxGeometry(fillK * 0.93, fillK * 0.93, fillK * 0.93);
+  const proxyMat = new THREE.MeshBasicMaterial({ color: 0x3a3a3a });
   const proxy = new THREE.InstancedMesh(proxyGeo, proxyMat, N);
   proxy.instanceMatrix = mesh.instanceMatrix;
+  proxy.instanceColor = mesh.instanceColor;
   proxy.castShadow = true;
   proxy.frustumCulled = false;
   pivot.add(proxy);
 
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: 0.09 }));
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: 0.07 }));
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   pivot.add(ground);
 
+  // soft contact shadow: the footprint of the cubes near the floor, blurred by down/up-sampling
+  // (works everywhere, no ctx.filter), redrawn only when the cubes move
+  const CS = 128, EXT = 84;                       // canvas px, world units covered
+  const mk = (w) => { const c = document.createElement('canvas'); c.width = c.height = w; return c; };
+  const raw = mk(CS), small = mk(40), tiny = mk(14), outC = mk(CS);
+  const rx = raw.getContext('2d'), sx = small.getContext('2d'), tx = tiny.getContext('2d'), ox = outC.getContext('2d');
+  const contactTex = new THREE.CanvasTexture(outC);
+  const contact = new THREE.Mesh(
+    new THREE.PlaneGeometry(EXT, EXT),
+    new THREE.MeshBasicMaterial({ alphaMap: contactTex, transparent: true, depthWrite: false, color: 0x0b0d10, toneMapped: false })
+  );
+  contact.rotation.x = -Math.PI / 2;
+  contact.position.y = 0.02;
+  contact.renderOrder = -1;
+  pivot.add(contact);
+  const CUR = new Float32Array(N * 3);
+  function drawContact() {
+    rx.clearRect(0, 0, CS, CS);
+    rx.fillStyle = '#fff';
+    const k2 = CS / EXT, h = CS / 2;
+    for (let k = 0; k < N; k++) {
+      const y = CUR[k * 3 + 1];
+      if (y > 3.2) continue;
+      rx.globalAlpha = 0.6 * (1 - (y - 0.5) / 2.7);
+      rx.fillRect(h + (CUR[k * 3] - 0.5) * k2, h + (CUR[k * 3 + 2] - 0.5) * k2, k2 + 0.4, k2 + 0.4);
+    }
+    rx.globalAlpha = 1;
+    sx.clearRect(0, 0, 40, 40); sx.drawImage(raw, 0, 0, 40, 40);
+    tx.clearRect(0, 0, 14, 14); tx.drawImage(raw, 0, 0, 14, 14);
+    ox.fillStyle = '#000'; ox.fillRect(0, 0, CS, CS);
+    ox.imageSmoothingEnabled = true;
+    ox.globalAlpha = 0.8; ox.drawImage(small, 0, 0, CS, CS);
+    ox.globalAlpha = 0.55; ox.drawImage(tiny, 0, 0, CS, CS);
+    ox.globalAlpha = 1;
+    contactTex.needsUpdate = true;
+  }
+
   // ---- per-form data
   const P = FORMS.map((f) => Float32Array.from(data.forms[f]));
+  // per-form colour (linear RGB) and PBR (roughness, metalness) per cube
+  const tmpC = new THREE.Color();
+  const COL = FORMS.map((f) => {
+    const src = data.colors ? data.colors[f] : null, a = new Float32Array(N * 3);
+    for (let k = 0; k < N; k++) {
+      tmpC.setHex(src ? src[k] : NAVY);            // sRGB hex -> linear working space
+      a[k * 3] = tmpC.r; a[k * 3 + 1] = tmpC.g; a[k * 3 + 2] = tmpC.b;
+    }
+    return a;
+  });
+  const PBR = FORMS.map((f) => {
+    const src = data.pbr ? data.pbr[f] : null, a = new Float32Array(N * 2);
+    for (let k = 0; k < N; k++) {
+      const m = src ? data.mats[src[k]] : [0.45, 0.05];
+      a[k * 2] = m[0]; a[k * 2 + 1] = m[1];
+    }
+    return a;
+  });
+  const colArr = mesh.instanceColor.array, pbrArr = pbrAttr.array;
   const info = P.map((a) => {
     let x0 = 1e9, x1 = -1e9, y1 = -1e9, z0 = 1e9, z1 = -1e9;
     for (let k = 0; k < N; k++) {
@@ -220,6 +292,7 @@ export async function mount(el) {
     const i = Math.min(2, Math.floor(f));
     const u = f - i;
     const A = P[i], B = P[i + 1], dl = DELAY[i];
+    const CA = COL[i], CB = COL[i + 1], QA = PBR[i], QB = PBR[i + 1];
     const ca = info[i], cb = info[i + 1];
     const cy = ca.cy + (cb.cy - ca.cy) * u;
     for (let k = 0; k < N; k++) {
@@ -249,8 +322,19 @@ export async function mount(el) {
       v.set(x, y, z);
       m4.compose(v, q, s3);
       mesh.setMatrixAt(k, m4);
+      CUR[j] = x; CUR[j + 1] = y; CUR[j + 2] = z;
+      // colour + finish travel with the cube (written straight into the instanceColor buffer)
+      colArr[j] = CA[j] + (CB[j] - CA[j]) * e;
+      colArr[j + 1] = CA[j + 1] + (CB[j + 1] - CA[j + 1]) * e;
+      colArr[j + 2] = CA[j + 2] + (CB[j + 2] - CA[j + 2]) * e;
+      const p2 = k * 2;
+      pbrArr[p2] = QA[p2] + (QB[p2] - QA[p2]) * e;
+      pbrArr[p2 + 1] = QA[p2 + 1] + (QB[p2 + 1] - QA[p2 + 1]) * e;
     }
     mesh.instanceMatrix.needsUpdate = true;
+    mesh.instanceColor.needsUpdate = true;
+    pbrAttr.needsUpdate = true;
+    drawContact();
     renderer.shadowMap.needsUpdate = true;
   }
 
@@ -339,7 +423,7 @@ export async function mount(el) {
     destroy() {
       cancelAnimationFrame(raf); ro.disconnect();
       window.removeEventListener('scroll', readScroll);
-      renderer.dispose(); geo.dispose(); mat.dispose(); proxyGeo.dispose(); proxyMat.dispose();
+      renderer.dispose(); geo.dispose(); mat.dispose(); proxyGeo.dispose(); proxyMat.dispose(); contactTex.dispose();
     },
   };
 }

@@ -1,23 +1,29 @@
 """
-Hero's Junk Removal - morph2: ONE object of ~1,600 identical navy cubes that
-rearranges into a HOUSE, a PICKUP + TRAILER, a COUCH and a slab-serif H.
+Hero's Junk Removal - morph2: ONE object of 1,600 small cubes that rearranges
+into a HOUSE, a PICKUP + TRAILER, a COUCH and a slab-serif H. Every cube also
+carries a real-world colour + PBR finish per formation (brick, shingle, glass,
+paint, rubber, chrome, linen, walnut...), so each form reads as a real object.
 
-Each target is modelled in Blender as a small stack of clean closed solids
-(boxes, prisms, cylinders) combined with ordered add/subtract ops. The solid is
-voxel-sampled on a unit grid, only SURFACE voxels are kept, the scale of each
-shape is searched so every form has as close to N surface cubes as possible,
-and the few spare cubes are tucked inside (hidden). Point sets are then
-matched form-to-form (greedy nearest) so the morph flows.
+Each target is modelled in Blender as a stack of clean convex solids (boxes,
+extruded convex polygons, cylinders) combined with ordered add / subtract ops,
+plus "paint" volumes that colour whatever surface cubes fall inside them.
+The solid is voxel-sampled on a unit grid and only the VISIBLE surface is kept
+(cubes that face the front, top or sides; the back and underside are never seen
+from the 3/4 camera, so their budget goes to finer detail). The scale of each
+shape is searched so every form has as close to N cubes as possible, spare
+cubes hide inside, and point sets are matched form-to-form (greedy nearest).
 
 Run (from repo root):
   "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup \
-      -P brand/morph2/build.py -- [--n 1600] [--stage all|shapes|posters] [--forms house,truck]
+      -P brand/morph2/build.py -- [--n 1600] [--stage all|shapes|posters] [--forms house,truck] [--samples 64]
 
 Outputs:
-  assets/piece2/shapes.json          {n, cube, forms:{house:[x,y,z,...],...}}  (three.js Y-up)
-  assets/piece2/poster-<form>.webp   1600x1200 transparent Eevee stills
+  assets/piece2/shapes.json   {n, cube, fill, mats:[[rough,metal],..],
+                               forms:{house:[x,y,z,...]}, colors:{house:[0xRRGGBB,...]},
+                               pbr:{house:[matIndex,...]}}      (three.js Y-up, sRGB ints)
+  assets/piece2/poster-<form>.webp   1600x1200 transparent Eevee stills (fallback)
 """
-import bpy, bmesh, sys, os, json, math
+import bpy, bmesh, sys, os, json, math, colorsys
 import numpy as np
 from mathutils import Vector, Matrix
 
@@ -40,13 +46,45 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(ROOT, "assets", "piece2")
 os.makedirs(OUT, exist_ok=True)
 FORMS = ["house", "truck", "couch", "h"]
-YAW = {"house": 30, "truck": 14, "couch": 24, "h": 24}   # poster camera yaw (deg, from front towards +X)
-NAVY = "#14284B"
+YAW = {"house": 30, "truck": 22, "couch": 24, "h": 20}   # poster camera yaw (deg, from front towards +X)
 CUBE = 1.0          # voxel pitch in output units
-CUBE_FILL = 0.92    # rendered cube edge relative to pitch (seams give definition)
+CUBE_FILL = 0.97    # rendered cube edge relative to pitch: hairline seams, reads as a solid object
+BEVEL = 0.05        # bevel radius (fraction of the edge)
+
+# --------------------------------------------------------------- finishes ----
+# name: (sRGB hex, roughness, metalness, per-cube tone jitter)
+MATS = {
+    "brick":    ("#8E4331", 0.88, 0.0, 0.10),
+    "mortar":   ("#B9AFA3", 0.9, 0.0, 0.03),
+    "shingle":  ("#3A3D42", 0.8, 0.0, 0.06),
+    "trim":     ("#F3F1EC", 0.5, 0.0, 0.01),
+    "siding":   ("#E6E1D6", 0.6, 0.0, 0.02),
+    "glass":    ("#7FA3BD", 0.06, 0.35, 0.03),
+    "door":     ("#8C1C1E", 0.32, 0.0, 0.0),
+    "concrete": ("#C4C0B8", 0.92, 0.0, 0.04),
+    "paint":    ("#AFB5BD", 0.28, 0.55, 0.0),     # silver pickup
+    "tyre":     ("#1E1F21", 0.92, 0.0, 0.02),
+    "hub":      ("#9EA3A9", 0.3, 0.85, 0.0),
+    "chrome":   ("#B9BEC4", 0.14, 0.95, 0.0),
+    "grille":   ("#3C4046", 0.35, 0.7, 0.0),
+    "tint":     ("#1F2A33", 0.05, 0.4, 0.0),
+    "lamp":     ("#E9EEF2", 0.08, 0.3, 0.0),
+    "tail":     ("#C0231C", 0.25, 0.0, 0.0),
+    "rocker":   ("#34373C", 0.6, 0.2, 0.0),
+    "liner":    ("#2A2C2F", 0.9, 0.0, 0.02),
+    "steel":    ("#4A5058", 0.5, 0.55, 0.03),
+    "wood":     ("#8A6240", 0.82, 0.0, 0.09),
+    "linen":    ("#7C8A6B", 0.95, 0.0, 0.025),    # sage upholstery
+    "seam":     ("#5F6B53", 0.95, 0.0, 0.02),
+    "walnut":   ("#4A3222", 0.5, 0.0, 0.03),
+    "navy":     ("#14284B", 0.42, 0.05, 0.0),
+    "red":      ("#D62A1E", 0.38, 0.0, 0.0),
+}
+MAT_NAMES = list(MATS)
 
 # --------------------------------------------------------- mesh helpers ----
 def _obj_from_bm(bm, name):
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     me = bpy.data.meshes.new(name)
     bm.to_mesh(me)
     bm.free()
@@ -67,195 +105,258 @@ def cyl_y(cx, cz, r, y0, y1, name="cyl", seg=48):
     bmesh.ops.create_cone(bm, cap_ends=True, segments=seg, radius1=r, radius2=r, depth=y1 - y0)
     bmesh.ops.rotate(bm, verts=bm.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, 'X'))
     bmesh.ops.translate(bm, vec=(cx, (y0 + y1) / 2, cz), verts=bm.verts)
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return _obj_from_bm(bm, name)
+
+def prism_xz(poly, y0, y1, name="prism"):
+    """Convex polygon in X-Z (profile view), extruded along Y."""
+    bm = bmesh.new()
+    a = [bm.verts.new((x, y0, z)) for x, z in poly]
+    b = [bm.verts.new((x, y1, z)) for x, z in poly]
+    bm.faces.new(a); bm.faces.new(b[::-1])
+    n = len(poly)
+    for i in range(n):
+        j = (i + 1) % n
+        bm.faces.new((a[i], a[j], b[j], b[i]))
     return _obj_from_bm(bm, name)
 
 def gable(x0, x1, z0, zapex, y0, y1, name="roof"):
-    """Triangular prism: triangle in X-Z (base x0..x1 at z0, apex at centre), extruded along Y."""
-    bm = bmesh.new()
-    xm = (x0 + x1) / 2
-    tri0 = [bm.verts.new((x0, y0, z0)), bm.verts.new((x1, y0, z0)), bm.verts.new((xm, y0, zapex))]
-    tri1 = [bm.verts.new((x0, y1, z0)), bm.verts.new((x1, y1, z0)), bm.verts.new((xm, y1, zapex))]
-    bm.faces.new(tri0[::-1]); bm.faces.new(tri1)
-    for a, b in ((0, 1), (1, 2), (2, 0)):
-        bm.faces.new((tri0[a], tri0[b], tri1[b], tri1[a]))
-    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-    return _obj_from_bm(bm, name)
+    return prism_xz([(x0, z0), (x1, z0), ((x0 + x1) / 2, zapex)], y0, y1, name)
 
 # --------------------------------------------------------- the 4 models ----
 # Blender units, Z up, front of every object faces -Y (towards the camera),
-# ground at z=0. Roughly 1 unit ~ 1 cube before the scale search.
+# ground at z=0. ops: ("+", obj, material) | ("-", obj) | ("p", obj, material)
+class Ops(list):
+    def A(self, o, m): self.append(("+", o, m))
+    def S(self, o): self.append(("-", o, None))
+    def P(self, o, m): self.append(("p", o, m))
+
 def model_house():
-    ops = []
-    A = lambda o: ops.append(("+", o)); S = lambda o: ops.append(("-", o))
-    A(box(-9, 9, -7, 7, 0, 11, "walls"))
-    A(gable(-10.5, 10.5, 10.5, 20.5, -8, 8, "roof"))
-    A(box(4.2, 7.0, -1.0, 2.0, 14, 22, "chimney"))
-    A(box(-3.0, 3.0, -8.0, -7.0, 0, 0.9, "step"))
-    # openings cut into the front (-Y) face: door + two windows + gable window
-    S(box(-2.0, 2.0, -9, -5.4, 0.9, 8.0, "door"))
-    S(box(-7.2, -3.8, -9, -5.4, 4.0, 7.8, "winL"))
-    S(box(3.8, 7.2, -9, -5.4, 4.0, 7.8, "winR"))
-    S(box(-1.6, 1.6, -9, -6.4, 13.0, 16.2, "gableWin"))
-    # side (+X) face windows
-    S(box(7.4, 10, -4.6, -1.2, 4.0, 7.8, "sideWin1"))
-    S(box(7.4, 10, 1.2, 4.6, 4.0, 7.8, "sideWin2"))
-    return ops
+    o = Ops()
+    o.A(box(-9, 9, -7, 7, 0, 11, "walls"), "brick")
+    o.A(gable(-10.5, 10.5, 10.5, 20.5, -8, 8, "roof"), "shingle")
+    o.A(box(4.2, 7.0, -1.0, 2.0, 14, 22, "chimney"), "brick")
+    o.A(box(-3.0, 3.0, -8.2, -7.0, 0, 0.9, "step"), "concrete")
+    wins = [(-7.2, -3.8, 4.0, 7.8), (3.8, 7.2, 4.0, 7.8)]
+    o.S(box(-2.0, 2.0, -9, -5.6, 0.9, 8.0, "door"))
+    for x0, x1, z0, z1 in wins:
+        o.S(box(x0, x1, -9, -5.6, z0, z1, "win"))
+    o.S(box(-1.6, 1.6, -9, -6.6, 13.0, 16.2, "gableWin"))
+    side = [(-4.6, -1.2), (1.2, 4.6)]
+    for y0, y1 in side:
+        o.S(box(7.4, 10, y0, y1, 4.0, 7.8, "sideWin"))
+    # paint: foundation course, siding in the gable, white trim, glass, red door
+    o.P(box(-9.6, 9.6, -8.5, 8.5, 0, 0.95), "concrete")
+    o.P(box(4.0, 7.2, -1.2, 2.2, 21.1, 22.5), "shingle")                 # chimney cap
+    for x0, x1, z0, z1 in wins:
+        o.P(box(x0 - 0.6, x1 + 0.6, -9, -6.2, z0 - 0.6, z1 + 0.6), "trim")
+        o.P(box(x0, x1, -9, -4.0, z0, z1), "glass")
+    o.P(box(-2.6, 2.6, -9, -6.2, 0.9, 8.6), "trim")
+    o.P(box(-2.0, 2.0, -9, -4.0, 0.9, 8.0), "door")
+    o.P(gable(-9.3, 9.3, 10.4, 19.3, -9, -6.9, "gableBrick"), "brick")
+    o.P(box(-2.2, 2.2, -9, -7.4, 12.4, 16.8), "trim")
+    o.P(box(-1.6, 1.6, -9, -5.0, 13.0, 16.2), "glass")
+    for y0, y1 in side:
+        o.P(box(8.2, 10, y0 - 0.6, y1 + 0.6, 3.4, 8.4), "trim")
+        o.P(box(6.4, 10, y0, y1, 4.0, 7.8), "glass")
+    return o
 
 def model_truck():
-    ops = []
-    A = lambda o: ops.append(("+", o)); S = lambda o: ops.append(("-", o))
-    W = 4.2
-    WR, WZ = 3.35, 3.35          # wheel radius / hub height
-    B = 4.0                    # body underside
-    # pickup: nose points +X. Bed and cab are split by a one-cube groove above the chassis.
-    A(box(0, 22.2, -W, W, B, 6.0, "chassis"))
-    A(box(0, 8.0, -W, W, B, 10.6, "bed"))
-    A(box(8.9, 14.8, -W, W, B, 16.0, "cab"))
-    A(box(14.4, 22.2, -W, W, B, 10.4, "hood"))
-    S(box(1.3, 6.8, -W + 1.3, W - 1.3, 6.4, 12, "bedHollow"))         # open bed
-    S(box(9.9, 13.8, -W - 1, -W + 1.1, 11.6, 15.0, "cabWinNear"))     # side glass
-    S(box(9.9, 13.8, W - 1.1, W + 1, 11.6, 15.0, "cabWinFar"))
-    S(box(13.7, 16, -W + 1.0, W - 1.0, 11.4, 15.0, "windshield"))
-    S(box(21.2, 24, -W + 1.2, W - 1.2, 7.6, 9.2, "grille"))
-    # wheel arches then wheels (wheels stand one cube proud of the body so they read round)
-    for cx in (4.0, 18.2):
-        S(cyl_y(cx, WZ, WR + 0.8, -W - 1, W + 1, "arch"))
-    for cx in (4.0, 18.2):
-        A(cyl_y(cx, WZ, WR, -W - 1.0, W + 1.0, "wheel"))
-        S(cyl_y(cx, WZ, 1.5, -W - 2.0, -W - 0.1, "hub"))             # hub recess reads "wheel"
-        S(cyl_y(cx, WZ, 1.5, W + 0.1, W + 2.0, "hubFar"))
-    # hitch + small open trailer
-    A(box(-4.4, 0.2, -0.8, 0.8, 4.6, 6.0, "hitch"))
-    A(box(-16.0, -4.2, -W + 0.3, W - 0.3, 3.8, 8.8, "trailer"))
-    S(box(-14.7, -5.5, -W + 1.6, W - 1.6, 5.2, 12, "trailerHollow"))
-    S(cyl_y(-10.1, 3.0, 3.8, -W - 1, W + 1, "tArch"))
-    A(cyl_y(-10.1, 3.0, 3.0, -W - 0.8, W + 0.8, "tWheel"))
-    S(cyl_y(-10.1, 3.0, 1.3, -W - 2.0, -W + 0.1, "tHub"))
-    return ops
+    """Full-size pickup (nose +X) towing a small open utility trailer. ~1 unit = 20 cm."""
+    o = Ops()
+    W = 5.0
+    WR, WZ = 2.35, 2.35
+    FX, RX = 24.8, 6.2                 # front / rear axle
+    # body
+    o.A(box(10.4, 20.6, -W, W, 2.0, 7.2, "cabLow"), "paint")
+    o.A(prism_xz([(20.4, 2.0), (29.8, 2.0), (29.8, 6.2), (29.0, 7.0), (20.4, 7.3)], -W, W, "hood"), "paint")
+    o.A(prism_xz([(10.6, 7.0), (20.6, 7.0), (17.2, 10.6), (11.0, 10.6)], -W + 0.35, W - 0.35, "cabTop"), "paint")
+    o.A(box(0, 10.0, -W, W, 2.2, 7.3, "bed"), "paint")
+    o.S(box(0.95, 9.1, -W + 0.95, W - 0.95, 3.6, 12, "bedHollow"))
+    o.A(box(-0.8, 0.4, -W + 0.3, W - 0.3, 1.7, 3.2, "rearBumper"), "chrome")
+    o.A(box(29.4, 30.8, -W + 0.2, W - 0.2, 1.5, 3.7, "frontBumper"), "chrome")
+    for y0, y1 in ((-W - 0.95, -W), (W, W + 0.95)):
+        o.A(box(18.4, 19.6, y0, y1, 7.4, 8.5, "mirror"), "paint")
+    # wheel arches, then tyres on each side (not a solid axle)
+    for cx in (RX, FX):
+        o.S(cyl_y(cx, WZ, WR + 0.8, -W - 2, W + 2, "arch"))
+    for cx in (RX, FX):
+        o.A(cyl_y(cx, WZ, WR, -W - 0.35, -W + 2.4, "tyre"), "tyre")
+        o.A(cyl_y(cx, WZ, WR, W - 2.4, W + 0.35, "tyre"), "tyre")
+    # trailer on a hitch
+    o.A(box(-5.2, -0.6, -0.5, 0.5, 2.5, 3.3, "tongue"), "steel")
+    o.A(box(-17.2, -5.0, -4.3, 4.3, 2.6, 6.6, "trailer"), "steel")
+    o.S(box(-16.25, -5.95, -3.35, 3.35, 3.6, 12, "trailerHollow"))
+    # outboard wheels under fenders (no arch into the bed)
+    o.A(cyl_y(-11.1, 1.8, 1.8, -6.1, -4.4, "tTyre"), "tyre")
+    o.A(cyl_y(-11.1, 1.8, 1.8, 4.4, 6.1, "tTyre"), "tyre")
+    o.A(box(-13.5, -8.7, -6.2, -4.3, 3.9, 4.6, "fender"), "steel")
+    o.A(box(-13.5, -8.7, 4.3, 6.2, 3.9, 4.6, "fender"), "steel")
+    # paint: glasshouse with pillars and roof, lamps, grille, rocker, bed liner, hubs
+    o.P(prism_xz([(10.4, 7.35), (20.8, 7.35), (17.3, 10.9), (10.8, 10.9)], -W - 1, W + 1, "glassArea"), "tint")
+    o.P(box(10.0, 17.4, -W - 1, W + 1, 9.75, 11.5), "paint")              # roof skin
+    o.P(box(14.5, 15.3, -W - 1, W + 1, 7.0, 11.5), "paint")               # B-pillar
+    o.P(box(10.0, 11.6, -W - 1, W + 1, 7.0, 11.5), "paint")               # C-pillar
+    o.P(box(29.0, 31.5, -3.1, 3.1, 3.7, 6.1), "grille")
+    for y0, y1 in ((-W - 1, -3.3), (3.3, W + 1)):
+        o.P(box(29.0, 31.5, y0, y1, 4.6, 6.1), "lamp")
+        o.P(box(-1.2, 0.7, y0 if y0 < 0 else 3.9, -3.9 if y0 < 0 else y1, 4.2, 6.9), "tail")
+    o.P(box(10.4, 20.6, -W - 1, W + 1, 1.9, 2.85), "rocker")
+    o.P(box(0.95, 9.1, -W + 0.95, W - 0.95, 1.5, 3.65), "liner")
+    for cx in (RX, FX):
+        o.P(cyl_y(cx, WZ, 1.15, -W - 2, -W + 0.5, "hub"), "hub")
+        o.P(cyl_y(cx, WZ, 1.15, W - 0.5, W + 2, "hub"), "hub")
+    o.P(cyl_y(-11.1, 1.8, 0.85, -7, -5.6, "tHub"), "hub")
+    o.P(box(-16.25, -5.95, -3.35, 3.35, 3.0, 3.65), "wood")               # bed boards
+    for y0, y1 in ((-4.9, -3.4), (3.4, 4.9)):
+        o.P(box(-17.9, -16.5, y0, y1, 4.7, 5.8), "tail")
+    return o
 
 def model_couch():
-    ops = []
-    A = lambda o: ops.append(("+", o)); S = lambda o: ops.append(("-", o))
-    A(box(-14.5, 14.5, -6.0, 5.5, 1.8, 6.2, "base"))
-    A(box(-17.6, -14.0, -6.6, 5.5, 1.8, 11.0, "armL"))
-    A(box(14.0, 17.6, -6.6, 5.5, 1.8, 11.0, "armR"))
-    A(box(-14.5, 14.5, 2.4, 5.5, 6.0, 16.0, "back"))
-    for x0, x1 in ((-14.0, -5.3), (-4.3, 4.3), (5.3, 14.0)):
-        A(box(x0, x1, -6.4, 2.6, 6.0, 9.0, "seat"))       # seat cushions, grooves between
-        A(box(x0, x1, 0.4, 2.8, 8.9, 15.2, "pillow"))     # back cushions
+    o = Ops()
+    o.A(box(-14.5, 14.5, -6.0, 5.5, 1.8, 6.2, "base"), "linen")
+    o.A(box(-17.6, -14.0, -6.6, 5.5, 1.8, 11.0, "armL"), "linen")
+    o.A(box(14.0, 17.6, -6.6, 5.5, 1.8, 11.0, "armR"), "linen")
+    o.A(box(-14.5, 14.5, 2.4, 5.5, 6.0, 16.0, "back"), "linen")
+    splits = ((-14.0, -5.3), (-4.3, 4.3), (5.3, 14.0))
+    for x0, x1 in splits:
+        o.A(box(x0, x1, -6.4, 2.6, 6.0, 9.0, "seat"), "linen")
+        o.A(box(x0, x1, 0.4, 2.8, 8.9, 15.2, "pillow"), "linen")
     for x in (-16.6, 14.6):
         for y in (-5.8, 3.4):
-            A(box(x, x + 2.0, y, y + 2.0, 0, 1.9, "leg"))
-    return ops
+            o.A(box(x, x + 2.0, y, y + 2.0, 0, 1.9, "leg"), "walnut")
+    # seams: between cushions, along the seat front and the arm tops
+    for xs in (-5.3, 4.3):
+        o.P(box(xs - 0.55, xs + 1.55, -8, 3.2, 5.5, 16), "seam")
+    o.P(box(-14.6, 14.6, -8, -5.5, 5.6, 6.5), "seam")
+    for x0, x1 in ((-17.7, -13.9), (13.9, 17.7)):
+        o.P(box(x0, x1, -7.5, 6, 10.2, 11.2), "seam")
+    return o
 
 def model_h():
-    ops = []
-    A = lambda o: ops.append(("+", o)); S = lambda o: ops.append(("-", o))
+    o = Ops()
     D = 3.2
-    A(box(-10.5, -4.5, -D, D, 0, 25, "stemL"))
-    A(box(4.5, 10.5, -D, D, 0, 25, "stemR"))
-    A(box(-4.6, 4.6, -D, D, 10.4, 15.0, "bar"))
+    o.A(box(-10.5, -4.5, -D, D, 0, 25, "stemL"), "navy")
+    o.A(box(4.5, 10.5, -D, D, 0, 25, "stemR"), "navy")
+    o.A(box(-4.6, 4.6, -D, D, 10.4, 15.0, "bar"), "navy")
     for x0, x1 in ((-14.0, -1.8), (1.8, 14.0)):
-        A(box(x0, x1, -D, D, 0, 3.4, "serifB"))
-        A(box(x0, x1, -D, D, 21.6, 25, "serifT"))
-    return ops
+        o.A(box(x0, x1, -D, D, 0, 3.4, "serifB"), "navy")
+        o.A(box(x0, x1, -D, D, 21.6, 25, "serifT"), "navy")
+    # red inline down each stem and across the bar, on the front face only
+    F = (-D - 1, -D + 0.9)
+    o.P(box(-8.05, -6.95, F[0], F[1], 2.2, 22.8), "red")
+    o.P(box(6.95, 8.05, F[0], F[1], 2.2, 22.8), "red")
+    o.P(box(-8.05, 8.05, F[0], F[1], 12.15, 13.25), "red")
+    return o
 
 MODELS = {"house": model_house, "truck": model_truck, "couch": model_couch, "h": model_h}
 
 # ------------------------------------------------------------ voxeliser ----
 def make_testers(ops):
-    """Every primitive is convex, so a point is inside iff it is behind every face plane.
-    (Exact and fast; nearest-face sign tests misfire at sharp roof eaves.)"""
+    """Every primitive is convex, so a point is inside iff it is behind every face plane."""
     out = []
-    for sign, ob in ops:
+    for sign, ob, mat in ops:
         me = ob.data
         C = np.array([p.center[:] for p in me.polygons])
         Nn = np.array([p.normal[:] for p in me.polygons])
         V = np.array([v.co[:] for v in me.vertices])
-        # make sure normals point outward (away from the centroid)
         cen = V.mean(0)
         flip = ((C - cen) * Nn).sum(1) < 0
         Nn[flip] *= -1
-        out.append((sign, (C, Nn), V.min(0), V.max(0)))
+        out.append((sign, (C, Nn), V.min(0), V.max(0), mat))
     return out
 
-def inside_one(planes, mn, mx, pts):
+def inside_one(planes, pts):
     C, Nn = planes
-    d = (pts[:, None, :] - C[None, :, :]) * Nn[None, :, :]
-    return np.all(d.sum(-1) < 0, axis=1)
+    d = ((pts[:, None, :] - C[None, :, :]) * Nn[None, :, :]).sum(-1)
+    return np.all(d < 0, axis=1)
 
 def voxelise(testers, s):
-    """Occupancy on a unit grid of the model scaled by s. Returns (grid bool[X,Y,Z], origin)."""
     mn = np.min([t[2] for t in testers if t[0] == "+"], axis=0) * s
     mx = np.max([t[3] for t in testers if t[0] == "+"], axis=0) * s
     lo = np.floor(mn) - 1
     hi = np.ceil(mx) + 1
     xs, ys, zs = [np.arange(lo[k] + 0.5, hi[k], 1.0) for k in range(3)]
     G = np.stack(np.meshgrid(xs, ys, zs, indexing="ij"), -1)
-    pts_world = G.reshape(-1, 3)
-    pts_model = pts_world / s + 1.3e-4     # tiny offset so no sample sits exactly on a face
-    occ = np.zeros(len(pts_model), bool)
-    for sign, bvh, a, b in testers:
-        ins = inside_one(bvh, a, b, pts_model)
+    pm = G.reshape(-1, 3) / s + 1.3e-4
+    occ = np.zeros(len(pm), bool)
+    for sign, planes, a, b, _ in testers:
+        if sign == "p":
+            continue
+        ins = inside_one(planes, pm)
         occ = (occ | ins) if sign == "+" else (occ & ~ins)
     return occ.reshape(G.shape[:3]), G
 
-def surface_of(occ):
-    """Occupied voxels touching empty space through a face, edge or corner (26-nbhd).
-    The edge/corner cases fill the inner corners of stair-steps so the hollow
-    shell never shows see-through gaps at grazing angles."""
+def visible_surface(occ):
+    """Occupied voxels touching empty space towards the front (-Y), the top (+Z) or
+    the sides (+-X), including edge/corner contacts so stair-steps never gap.
+    Back (+Y) and underside (-Z) faces are never seen from the 3/4 camera."""
     pad = np.pad(occ, 1)
     X, Y, Z = occ.shape
-    nb_empty = np.zeros_like(occ)
+    nb = np.zeros_like(occ)
     for dx in (-1, 0, 1):
-        for dy in (-1, 0, 1):
-            for dz in (-1, 0, 1):
+        for dy in (-1, 0):
+            for dz in (0, 1):
                 if dx == dy == dz == 0:
                     continue
-                nb_empty |= ~pad[1 + dx:1 + dx + X, 1 + dy:1 + dy + Y, 1 + dz:1 + dz + Z]
-    return occ & nb_empty
+                nb |= ~pad[1 + dx:1 + dx + X, 1 + dy:1 + dy + Y, 1 + dz:1 + dz + Z]
+    return occ & nb
+
+def paint(testers, s, pts, seed):
+    """Material per point: last add-op containing it, then paint volumes in order."""
+    pm = pts / s + 1.3e-4
+    mat = np.full(len(pts), -1)
+    for sign, planes, a, b, m in testers:
+        if sign in ("+", "p"):
+            ins = inside_one(planes, pm)
+            mat[ins] = MAT_NAMES.index(m)
+    mat[mat < 0] = MAT_NAMES.index(testers[0][4])
+    rng = np.random.default_rng(seed)
+    cols = []
+    for k, mi in enumerate(mat):
+        hexv, _, _, jit = MATS[MAT_NAMES[mi]]
+        r, g, b = (int(hexv[i:i + 2], 16) / 255 for i in (1, 3, 5))
+        if jit:
+            h, l, sat = colorsys.rgb_to_hls(r, g, b)
+            l = min(1, max(0, l * (1 + rng.uniform(-jit, jit))))
+            r, g, b = colorsys.hls_to_rgb(h, l, sat)
+        cols.append((int(round(r * 255)) << 16) | (int(round(g * 255)) << 8) | int(round(b * 255)))
+    return mat, np.array(cols)
 
 def sample_form(name):
     ops = MODELS[name]()
     testers = make_testers(ops)
-    # search scale so the surface count is the largest value <= N
-    lo, hi = 0.4, 2.5
+    lo, hi = 0.4, 3.0
     best = None
     for _ in range(22):
         s = (lo + hi) / 2
         occ, G = voxelise(testers, s)
-        cnt = int(surface_of(occ).sum())
+        cnt = int(visible_surface(occ).sum())
         if cnt <= N:
             best = (s, occ, G, cnt); lo = s
         else:
             hi = s
     s, occ, G, cnt = best
-    surf = surface_of(occ)
+    surf = visible_surface(occ)
     pts = G[surf]
-    interior = G[occ & ~surf]
+    hidden = G[occ & ~surf]
     need = N - len(pts)
     if need > 0:
-        # hide spare cubes inside, nearest the centroid so they never peek out
+        # spare cubes hide inside the solid, nearest the centroid so they never peek out
         c = pts.mean(0)
-        if len(interior):
-            order = np.argsort(np.linalg.norm(interior - c, axis=1))
-            extra = interior[order[:need]]
-        else:
-            extra = np.zeros((0, 3))
-        while len(extra) < need:                 # thin shape: stack duplicates
+        extra = hidden[np.argsort(np.linalg.norm(hidden - c, axis=1))[:need]] if len(hidden) else np.zeros((0, 3))
+        while len(extra) < need:
             extra = np.vstack([extra, pts[: need - len(extra)]])
         pts = np.vstack([pts, extra[:need]])
-    print(f"[morph2] {name}: scale={s:.3f} surface={cnt} padded={need} total={len(pts)}")
-    for _, ob in ops:
+    mat, cols = paint(testers, s, pts, seed=FORMS.index(name) + 11)
+    print(f"[morph2] {name}: scale={s:.3f} visible={cnt} padded={need} total={len(pts)}")
+    for _, ob, _ in ops:
         bpy.data.objects.remove(ob, do_unlink=True)
-    return pts, cnt
+    return pts, mat, cols
 
 # ------------------------------------------------------------- matching ----
 def greedy_match(src, dst):
     """Return perm so dst[perm[i]] is paired with src[i]; greedy global nearest."""
     a = src - src.mean(0); b = dst - dst.mean(0)
-    # compare shapes at similar size
     a = a / (np.abs(a).max() + 1e-9); b = b / (np.abs(b).max() + 1e-9)
     D = ((a[:, None, :] - b[None, :, :]) ** 2).sum(-1).astype(np.float32)
     order = np.argsort(D, axis=None)
@@ -278,55 +379,58 @@ def to_three(p):
     q = np.stack([p[:, 0], p[:, 2], -p[:, 1]], 1)
     q[:, 0] -= (q[:, 0].min() + q[:, 0].max()) / 2
     q[:, 2] -= (q[:, 2].min() + q[:, 2].max()) / 2
-    q[:, 1] -= q[:, 1].min() - 0.5      # bottom cube centre at 0.5 -> sits on y=0
+    q[:, 1] -= q[:, 1].min() - 0.5
     return q
 
 def build_shapes():
     raw = {}
     for f in FORMS:
-        pts, _ = sample_form(f)
-        raw[f] = to_three(pts)
-    # base order: house sorted bottom->top, left->right; each next form matched to the previous
-    h = raw["house"]
+        pts, mat, cols = sample_form(f)
+        raw[f] = (to_three(pts), mat, cols)
+    h, hm, hc = raw["house"]
     order = np.lexsort((h[:, 2], h[:, 0], h[:, 1]))
-    ordered = {"house": h[order]}
-    prev = ordered["house"]
+    ordered = {"house": (h[order], hm[order], hc[order])}
+    prev = ordered["house"][0]
     for f in FORMS[1:]:
-        perm = greedy_match(prev, raw[f])
-        ordered[f] = raw[f][perm]
-        prev = ordered[f]
-    data = {"n": N, "cube": CUBE, "fill": CUBE_FILL,
-            "forms": {f: [round(float(v), 2) for v in ordered[f].reshape(-1)] for f in FORMS}}
+        p, m, c = raw[f]
+        perm = greedy_match(prev, p)
+        ordered[f] = (p[perm], m[perm], c[perm])
+        prev = ordered[f][0]
+    data = {"n": N, "cube": CUBE, "fill": CUBE_FILL, "bevel": BEVEL,
+            "mats": [[MATS[m][1], MATS[m][2]] for m in MAT_NAMES],
+            "forms": {f: [round(float(v), 2) for v in ordered[f][0].reshape(-1)] for f in FORMS},
+            "colors": {f: [int(v) for v in ordered[f][2]] for f in FORMS},
+            "pbr": {f: [int(v) for v in ordered[f][1]] for f in FORMS}}
     with open(os.path.join(OUT, "shapes.json"), "w") as fh:
         json.dump(data, fh, separators=(",", ":"))
     print("[morph2] wrote shapes.json")
-    return ordered
+    return data
 
 # -------------------------------------------------------------- posters ----
-def hex_lin(h):
-    h = h.lstrip("#")
-    c = [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
-    return tuple((x / 12.92 if x <= 0.04045 else ((x + 0.055) / 1.055) ** 2.4) for x in c) + (1.0,)
+def srgb_lin(c):
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 
 def clear_scene():
     for ob in list(bpy.data.objects):
         bpy.data.objects.remove(ob, do_unlink=True)
 
-def satin_material():
-    m = bpy.data.materials.new("navy_satin")
+def cube_material():
+    """One material; colour from the object's colour, roughness/metal from object properties."""
+    m = bpy.data.materials.new("cube")
     m.use_nodes = True
-    bsdf = m.node_tree.nodes.get("Principled BSDF")
-    bsdf.inputs["Base Color"].default_value = hex_lin(NAVY)
-    bsdf.inputs["Roughness"].default_value = 0.42
-    for key, val in (("Coat Weight", 0.25), ("Coat Roughness", 0.3), ("Specular IOR Level", 0.5)):
-        if key in bsdf.inputs:
-            bsdf.inputs[key].default_value = val
+    nt = m.node_tree
+    bsdf = nt.nodes.get("Principled BSDF")
+    info = nt.nodes.new("ShaderNodeObjectInfo")
+    nt.links.new(info.outputs["Color"], bsdf.inputs["Base Color"])
+    for prop, sock in (("rough", "Roughness"), ("metal", "Metallic")):
+        at = nt.nodes.new("ShaderNodeAttribute"); at.attribute_type = "OBJECT"; at.attribute_name = prop
+        nt.links.new(at.outputs["Fac"], bsdf.inputs[sock])
     return m
 
 def rounded_cube_mesh(edge):
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=edge)
-    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=edge * 0.11, segments=3, affect='EDGES', profile=0.5)
+    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=edge * BEVEL, segments=2, affect='EDGES', profile=0.5)
     me = bpy.data.meshes.new("rcube")
     bm.to_mesh(me); bm.free()
     for p in me.polygons:
@@ -352,17 +456,14 @@ def contact_shadow_image(P, name, px=12, margin=14):
         h = int(px * 0.5)
         acc[max(cz - h, 0):cz + h, max(cx - h, 0):cx + h] += w
     acc = np.clip(acc, 0, 1)
-    tight = blur2d(acc, px * 0.6)
-    wide = blur2d(acc, px * 3.5)
-    a = np.clip(0.55 * tight + 0.45 * wide * 1.4, 0, 1) ** 0.9
+    a = np.clip(0.55 * blur2d(acc, px * 0.6) + 0.45 * blur2d(acc, px * 3.5) * 1.4, 0, 1) ** 0.9
     img = bpy.data.images.new(f"shadow_{name}", W, H, alpha=True)
     rgba = np.zeros((H, W, 4), np.float32); rgba[..., 3] = a
-    # image rows run bottom->top in Blender = +z(three) towards -y(blender) ... flip so front is front
     img.pixels.foreach_set(rgba[::-1].reshape(-1))
     img.pack()
     return img, (x0, x1, z0, z1)
 
-def shadow_plane(img, ext, strength=0.6):
+def shadow_plane(img, ext, strength=0.55):
     x0, x1, z0, z1 = ext
     bpy.ops.mesh.primitive_plane_add(size=1, location=((x0 + x1) / 2, -(z0 + z1) / 2, 0.001))
     g = bpy.context.active_object
@@ -375,7 +476,7 @@ def shadow_plane(img, ext, strength=0.6):
     tex = nt.nodes.new("ShaderNodeTexImage"); tex.image = img; tex.extension = "CLIP"
     mul = nt.nodes.new("ShaderNodeMath"); mul.operation = "MULTIPLY"; mul.inputs[1].default_value = strength
     tr = nt.nodes.new("ShaderNodeBsdfTransparent")
-    em = nt.nodes.new("ShaderNodeEmission"); em.inputs[0].default_value = (0.006, 0.01, 0.02, 1)
+    em = nt.nodes.new("ShaderNodeEmission"); em.inputs[0].default_value = (0.01, 0.01, 0.012, 1)
     mix = nt.nodes.new("ShaderNodeMixShader")
     nt.links.new(tex.outputs["Alpha"], mul.inputs[0])
     nt.links.new(mul.outputs[0], mix.inputs[0])
@@ -385,7 +486,7 @@ def shadow_plane(img, ext, strength=0.6):
     g.visible_shadow = False
     return g
 
-def render_posters(shapes):
+def render_posters(data):
     sc = bpy.context.scene
     sc.render.engine = "BLENDER_EEVEE"
     sc.render.resolution_x, sc.render.resolution_y = 1600, 1200
@@ -398,14 +499,11 @@ def render_posters(shapes):
         sc.view_settings.view_transform = "AgX"
         sc.view_settings.look = "AgX - Base Contrast"
     except Exception:
-        try:
-            sc.view_settings.look = "None"
-        except Exception:
-            pass
+        pass
     ee = sc.eevee
     ee.taa_render_samples = SAMPLES
     for k, v in (("use_raytracing", True), ("use_shadows", True), ("shadow_ray_count", 3),
-                 ("shadow_step_count", 12), ("use_gtao", True), ("fast_gi_method", "GLOBAL_ILLUMINATION")):
+                 ("shadow_step_count", 12), ("fast_gi_method", "GLOBAL_ILLUMINATION")):
         if hasattr(ee, k):
             try:
                 setattr(ee, k, v)
@@ -413,30 +511,34 @@ def render_posters(shapes):
                 pass
     w = bpy.data.worlds.new("w"); sc.world = w; w.use_nodes = True
     bg = w.node_tree.nodes["Background"]
-    bg.inputs[0].default_value = (0.86, 0.88, 0.92, 1); bg.inputs[1].default_value = 0.25
+    bg.inputs[0].default_value = (0.9, 0.91, 0.93, 1); bg.inputs[1].default_value = 0.45
 
-    mat = satin_material()
+    mat = cube_material()
     mesh = rounded_cube_mesh(CUBE * CUBE_FILL)
     mesh.materials.append(mat)
+    mats = data["mats"]
 
-    for f in shapes:
+    for f in FORMS:
         if ONLY and f not in ONLY:
             continue
         clear_scene()
-        P = shapes[f]
+        P = np.array(data["forms"][f]).reshape(-1, 3)
+        C = data["colors"][f]; M = data["pbr"][f]
         for i, (x, y, z) in enumerate(P):            # three (x, y-up, z-front) -> blender (x, -z, y)
             ob = bpy.data.objects.new(f"c{i}", mesh)
             ob.location = (x, -z, y)
+            c = C[i]
+            ob.color = (srgb_lin(((c >> 16) & 255) / 255), srgb_lin(((c >> 8) & 255) / 255), srgb_lin((c & 255) / 255), 1)
+            ob["rough"], ob["metal"] = mats[M[i]]
             sc.collection.objects.link(ob)
         mn = P.min(0) - 0.5; mx = P.max(0) + 0.5
         size = mx - mn
         ctr = Vector(((mn[0] + mx[0]) / 2, -(mn[2] + mx[2]) / 2, (mn[1] + mx[1]) / 2))
         img, ext = contact_shadow_image(P, f)
         shadow_plane(img, ext)
-        # camera: 3/4 from front-right, slightly above; fit the bbox then add margin
         cam_d = bpy.data.cameras.new("cam"); cam_d.lens = 85
         cam = bpy.data.objects.new("cam", cam_d); sc.collection.objects.link(cam); sc.camera = cam
-        yaw, pitch = math.radians(YAW.get(f, 26)), math.radians(12 if f == "truck" else 17)
+        yaw, pitch = math.radians(YAW.get(f, 26)), math.radians(13 if f == "truck" else 17)
         dirv = Vector((math.sin(yaw) * math.cos(pitch), -math.cos(yaw) * math.cos(pitch), math.sin(pitch)))
         cam.location = ctr + dirv * 200
         cam.rotation_euler = (-dirv).to_track_quat('-Z', 'Y').to_euler()
@@ -449,7 +551,6 @@ def render_posters(shapes):
         loc, _ = cam.camera_fit_coords(bpy.context.evaluated_depsgraph_get(), corners)
         loc = Vector(loc)
         cam.location = loc + (loc - ctr).normalized() * (loc - ctr).length * 0.30
-        # lights scale with the object
         R = max(size) * 0.5
         def area(name, off, energy, size_, color):
             L = bpy.data.lights.new(name, "AREA"); L.energy = energy; L.size = size_; L.color = color
@@ -458,10 +559,10 @@ def render_posters(shapes):
             o.rotation_euler = (ctr - o.location).to_track_quat('-Z', 'Y').to_euler()
             return o
         k = R * R          # inverse-square: keep irradiance constant whatever the object size
-        area("top", (-0.4 * R, -0.6 * R, 3.6 * R), 250 * k, 3.0 * R, (1.0, 0.98, 0.95))
-        area("key", (-2.6 * R, -2.8 * R, 1.6 * R), 170 * k, 2.0 * R, (1.0, 0.97, 0.93))
-        area("rim", (2.4 * R, 3.2 * R, 1.8 * R), 520 * k, 1.0 * R, (1.0, 0.76, 0.52))
-        area("fill", (3.4 * R, -1.2 * R, 0.6 * R), 60 * k, 2.4 * R, (0.80, 0.87, 1.0))
+        area("top", (-0.4 * R, -0.6 * R, 3.6 * R), 115 * k, 3.0 * R, (1.0, 0.98, 0.95))
+        area("key", (-2.6 * R, -2.8 * R, 1.6 * R), 85 * k, 2.0 * R, (1.0, 0.97, 0.93))
+        area("rim", (2.4 * R, 3.2 * R, 1.8 * R), 260 * k, 1.0 * R, (1.0, 0.82, 0.64))
+        area("fill", (3.4 * R, -1.2 * R, 0.6 * R), 40 * k, 2.4 * R, (0.84, 0.89, 1.0))
         sc.render.filepath = os.path.join(OUT, f"poster-{f}.webp")
         bpy.ops.render.render(write_still=True)
         print(f"[morph2] rendered poster-{f}.webp")
@@ -470,9 +571,8 @@ def render_posters(shapes):
 if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     if STAGE in ("all", "shapes"):
-        shapes = build_shapes()
+        data = build_shapes()
     else:
-        d = json.load(open(os.path.join(OUT, "shapes.json")))
-        shapes = {f: np.array(d["forms"][f]).reshape(-1, 3) for f in FORMS}
+        data = json.load(open(os.path.join(OUT, "shapes.json")))
     if STAGE in ("all", "posters"):
-        render_posters(shapes)
+        render_posters(data)
