@@ -17,7 +17,12 @@
 
   var els = Array.prototype.slice.call(document.querySelectorAll('.rise'));
 
-  function reveal(el){ el.classList.add('in'); }
+  // cards in a sideways rail (phones) sit off-screen horizontally, so the rail reveals as one
+  function reveal(el){
+    el.classList.add('in');
+    var rail=el.closest && el.closest('.t-rv-grid');
+    if(rail) rail.querySelectorAll('.rise, .t-reveal-img').forEach(function(x){ x.classList.add('in'); });
+  }
 
   if('IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
@@ -43,7 +48,7 @@
   var imgs=Array.prototype.slice.call(document.querySelectorAll('.t-hero-photo, .t-coverage-photo, .t-work-card, .t-review-photo, .t-rv-feature-photo, .t-rv-photo, .t-close-photo'));
   imgs.forEach(function(el){ el.classList.add('t-reveal-img'); if(io) io.unobserve(el); });
   if('IntersectionObserver' in window){
-    var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.__imgs.forEach(function(i){ i.classList.add('in'); }); io2.unobserve(e.target); } }); },{threshold:0,rootMargin:'0px 0px -12% 0px'});
+    var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.__imgs.forEach(function(i){ reveal(i); }); io2.unobserve(e.target); } }); },{threshold:0,rootMargin:'0px 0px -12% 0px'});
     imgs.forEach(function(el){ var p=el.parentElement; (p.__imgs=p.__imgs||[]).push(el); io2.observe(p); });
   } else imgs.forEach(function(el){ el.classList.add('in'); });
 

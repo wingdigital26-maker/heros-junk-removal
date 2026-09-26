@@ -851,3 +851,19 @@ html.js .t-work-card.t-reveal-img.in{clip-path:inset(-30% -40% -30% -40%);}
 .t-google-line a{display:inline-flex;align-items:center;min-height:44px;}
 .t-footer .t-footer-col a.t-footer-phone,.t-footer .t-footer-col a.t-footer-mail{display:inline-flex;align-items:center;min-height:44px;}
 .t-footer-contact{gap:0;}
+
+/* ===== Rollout round 3: art-director pass ===== */
+.t-google-line a{gap:5px;}
+@media (max-width:760px){
+  /* reviews: sideways rails instead of six full-width photo cards stacked (was ~6 screens of scroll) */
+  .t-rv-grid{display:flex;grid-template-columns:none;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(-1 * var(--pad));padding:40px var(--pad);scroll-padding:0 var(--pad);scrollbar-width:none;overscroll-behavior-x:contain;}
+  .t-rv-grid::-webkit-scrollbar{display:none;}
+  .t-rv-grid > article{flex:0 0 84%;scroll-snap-align:start;}
+  .t-rv-tiles{padding-top:0;}
+  .t-rv-tile{min-height:0;}
+  .t-rv-photo img{aspect-ratio:3/2;}
+  /* coverage actions match the hero: two equal pills */
+  .t-coverage .t-pill-row .t-pill{flex:1;justify-content:center;}
+  /* the cube piece: objects are smaller on a phone, so less scroll per form */
+  .t-piece.p2{height:300vh;height:300svh;}
+}
