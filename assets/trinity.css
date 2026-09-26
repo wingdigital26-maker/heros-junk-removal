@@ -1014,3 +1014,22 @@ html.js .t-sec-head.rise{transform:none;}
 /* hero dock: clear of the lead sentence (the cubes spread a little past the dock box) */
 .t-hero-copy > .dock{margin-right:0;margin-bottom:22px;}
 .t-hero-lead{max-width:400px;}
+
+/* ===== Site6 round 4: guided scroll. Each story section ends with a "Next" row pointing at the next one. ===== */
+.t-next{display:flex;align-items:center;gap:14px;margin-top:64px;padding:22px 0 0;border-top:1px solid var(--hair);min-height:44px;color:var(--navy);width:100%;}
+.t-services .t-next,.t-faq .t-next{border-top-color:#DEDAD2;grid-column:1 / -1;}
+.t-next-k{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);}
+.t-next-l{font-size:15px;font-weight:600;letter-spacing:-0.01em;}
+.t-next-l b{color:var(--red);font-weight:600;font-variant-numeric:tabular-nums;margin-right:6px;}
+.t-next i{margin-left:auto;width:40px;height:40px;border-radius:50%;border:1px solid #CFCAC0;position:relative;flex:0 0 auto;transition:background .3s,border-color .3s,transform .45s cubic-bezier(.2,.7,.2,1);}
+.t-next i::before{content:"";position:absolute;left:19px;top:12px;width:1.5px;height:15px;background:var(--navy);}
+.t-next i::after{content:"";position:absolute;left:15px;top:19px;width:8px;height:8px;border-right:1.5px solid var(--navy);border-bottom:1.5px solid var(--navy);transform:rotate(45deg);}
+.t-next:hover i{background:var(--red);border-color:var(--red);transform:translateY(4px);}
+.t-next:hover i::before{background:#fff;}
+.t-next:hover i::after{border-color:#fff;}
+.t-reviews .t-next{margin-top:0;}
+.t-work .t-next{margin-top:24px;}
+@media (max-width:760px){.t-next{margin-top:44px;}}
+.t-services .t-next,.t-faq .t-next{grid-column:2;margin-top:40px;}
+.t-work{padding-bottom:96px;}
+@media (max-width:1000px){.t-services .t-next,.t-faq .t-next{grid-column:1;}}
