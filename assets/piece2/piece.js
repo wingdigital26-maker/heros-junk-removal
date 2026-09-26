@@ -29,7 +29,7 @@ const CSS = `
 .p2-cap{position:absolute;left:clamp(20px,4vw,56px);bottom:clamp(24px,6vh,64px);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;pointer-events:none}
 .p2-cap span{position:absolute;left:0;bottom:0;white-space:nowrap;opacity:0;transition:none}
 .p2-cap b{display:block;font-weight:600;font-size:clamp(22px,2.4vw,34px);letter-spacing:-.02em;color:#14284B;line-height:1.1}
-.p2-cap i{display:block;font-style:normal;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7A8394;margin-bottom:8px}
+.p2-cap i{display:block;font-style:normal;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5F6675;margin-bottom:8px}
 .p2-rail{position:absolute;right:clamp(20px,4vw,56px);bottom:clamp(30px,6vh,70px);display:flex;gap:6px;pointer-events:none}
 .p2-rail u{display:block;width:22px;height:2px;background:#D5D9E0;text-decoration:none}
 .p2-rail u>s{display:block;height:100%;width:0;background:#14284B}

@@ -815,3 +815,39 @@ html.js .t-work-card.t-reveal-img.in{clip-path:inset(-30% -40% -30% -40%);}
   .t-coverage-grid{grid-template-columns:1fr;gap:32px;}
   .t-coverage-photo img{height:clamp(300px,56vw,480px);}
 }
+
+/* ===== Rollout round 2: photos never shown larger than their pixels; a composed footer ===== */
+.t-work-f1 img.t-main{object-position:50% 58%;}
+.t-work-f3{grid-column:4 / span 5;}
+.t-work-f3 img.t-main{height:clamp(340px,27vw,400px);}
+
+.t-footer-contact{gap:6px;}
+.t-footer-contact .t-footer-head{margin-bottom:10px;}
+.t-footer .t-footer-phone{font-size:clamp(26px,2.4vw,34px);font-weight:700;letter-spacing:-0.03em;line-height:1.1;color:#fff;}
+.t-footer .t-footer-phone:hover{transform:none;text-decoration:none;color:#fff;}
+.t-footer-mail{word-break:break-all;}
+.t-footer-contact p{color:#A9B7CF !important;}
+.t-footer-contact .t-pill-row{margin-top:18px;}
+.t-footer .t-pill{min-height:44px;}
+.t-footer .t-pill.t-primary{color:#fff;}
+.t-footer .t-pill-ghost{border-color:rgba(255,255,255,.5);color:#fff;}
+.t-footer .t-pill-ghost:hover{border-color:#fff;color:#fff;transform:none;text-decoration:none;}
+.t-footer .t-pill:hover{transform:none;text-decoration:none;}
+@media (max-width:760px){
+  .t-footer-grid{grid-template-columns:1fr 1fr;gap:0 20px;}
+  .t-footer-contact{grid-column:1 / -1;padding-bottom:32px;margin-bottom:28px;border-bottom:1px solid rgba(255,255,255,.16);}
+  .t-footer-contact .t-pill-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .t-footer-contact .t-pill{justify-content:center;}
+  .t-footer-col:not(.t-footer-contact){gap:0;}
+  .t-footer-col:not(.t-footer-contact) a{display:flex;align-items:center;min-height:44px;border-bottom:1px solid rgba(255,255,255,.1);}
+  .t-footer-col:not(.t-footer-contact) a:hover{transform:none;}
+  .t-footer-more{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;column-gap:20px;margin-top:32px;}
+  .t-footer-more .t-footer-head{grid-column:1 / -1;}
+  .t-footer-head{margin-bottom:4px;}
+}
+.t-footer .t-footer-col a.t-pill{display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;}
+.t-footer .t-footer-col a.t-footer-phone{font-size:clamp(26px,2.4vw,34px);font-weight:700;}
+.t-logo{min-width:44px;}
+.t-google-line a{display:inline-flex;align-items:center;min-height:44px;}
+.t-footer .t-footer-col a.t-footer-phone,.t-footer .t-footer-col a.t-footer-mail{display:inline-flex;align-items:center;min-height:44px;}
+.t-footer-contact{gap:0;}
