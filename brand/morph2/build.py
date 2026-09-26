@@ -54,7 +54,7 @@ BEVEL = 0.05        # bevel radius (fraction of the edge)
 # --------------------------------------------------------------- finishes ----
 # name: (sRGB hex, roughness, metalness, per-cube tone jitter)
 MATS = {
-    "brick":    ("#8E4331", 0.88, 0.0, 0.10),
+    "brick":    ("#6A3024", 0.88, 0.0, 0.08),     # true red-brown (ACES lifts it, keep it deep)
     "mortar":   ("#B9AFA3", 0.9, 0.0, 0.03),
     "shingle":  ("#3A3D42", 0.8, 0.0, 0.06),
     "trim":     ("#F3F1EC", 0.5, 0.0, 0.01),
@@ -136,27 +136,21 @@ def model_house():
     o.A(gable(-10.5, 10.5, 10.5, 20.5, -8, 8, "roof"), "shingle")
     o.A(box(4.2, 7.0, -1.0, 2.0, 14, 22, "chimney"), "brick")
     o.A(box(-3.0, 3.0, -8.2, -7.0, 0, 0.9, "step"), "concrete")
-    wins = [(-7.2, -3.8, 4.0, 7.8), (3.8, 7.2, 4.0, 7.8)]
-    o.S(box(-2.0, 2.0, -9, -5.6, 0.9, 8.0, "door"))
-    for x0, x1, z0, z1 in wins:
-        o.S(box(x0, x1, -9, -5.6, z0, z1, "win"))
-    o.S(box(-1.6, 1.6, -9, -6.6, 13.0, 16.2, "gableWin"))
+    wins = [(-7.4, -4.2, 4.0, 7.8), (4.2, 7.4, 4.0, 7.8)]
     side = [(-4.6, -1.2), (1.2, 4.6)]
-    for y0, y1 in side:
-        o.S(box(7.4, 10, y0, y1, 4.0, 7.8, "sideWin"))
-    # paint: foundation course, siding in the gable, white trim, glass, red door
+    # openings sit flush in the wall (no recess): a recess lands 1 or 2 cubes deep depending on
+    # the grid, which made the reveals and frames uneven
+    # paint: foundation course, brick gable, glass, red door. White trim is NOT painted here:
+    # trim_ring() adds an exact one-cube frame around every opening after voxelising, so
+    # every window gets the same even, symmetric trim whatever the grid scale.
     o.P(box(-9.6, 9.6, -8.5, 8.5, 0, 0.95), "concrete")
     o.P(box(4.0, 7.2, -1.2, 2.2, 21.1, 22.5), "shingle")                 # chimney cap
     for x0, x1, z0, z1 in wins:
-        o.P(box(x0 - 0.6, x1 + 0.6, -9, -6.2, z0 - 0.6, z1 + 0.6), "trim")
         o.P(box(x0, x1, -9, -4.0, z0, z1), "glass")
-    o.P(box(-2.6, 2.6, -9, -6.2, 0.9, 8.6), "trim")
-    o.P(box(-2.0, 2.0, -9, -4.0, 0.9, 8.0), "door")
+    o.P(box(-1.8, 1.8, -9, -4.0, 0.9, 8.0), "door")
     o.P(gable(-9.3, 9.3, 10.4, 19.3, -9, -6.9, "gableBrick"), "brick")
-    o.P(box(-2.2, 2.2, -9, -7.4, 12.4, 16.8), "trim")
     o.P(box(-1.6, 1.6, -9, -5.0, 13.0, 16.2), "glass")
     for y0, y1 in side:
-        o.P(box(8.2, 10, y0 - 0.6, y1 + 0.6, 3.4, 8.4), "trim")
         o.P(box(6.4, 10, y0, y1, 4.0, 7.8), "glass")
     return o
 
@@ -275,6 +269,8 @@ def voxelise(testers, s):
     mx = np.max([t[3] for t in testers if t[0] == "+"], axis=0) * s
     lo = np.floor(mn) - 1
     hi = np.ceil(mx) + 1
+    m = math.ceil(max(abs(mn[0]), abs(mx[0])))          # X grid symmetric about 0: mirrored openings
+    lo[0], hi[0] = -m - 1, m + 1                          # land on mirrored cubes (even trim both sides)
     xs, ys, zs = [np.arange(lo[k] + 0.5, hi[k], 1.0) for k in range(3)]
     G = np.stack(np.meshgrid(xs, ys, zs, indexing="ij"), -1)
     pm = G.reshape(-1, 3) / s + 1.3e-4
@@ -322,6 +318,28 @@ def paint(testers, s, pts, seed):
         cols.append((int(round(r * 255)) << 16) | (int(round(g * 255)) << 8) | int(round(b * 255)))
     return mat, np.array(cols)
 
+def trim_ring(pts, mat, cols, seed):
+    """Every brick cube touching a window or door (1 cube around, in the face plane)
+    becomes white trim: an exact, even one-cube frame on all openings."""
+    gi, di, bi, ti = (MAT_NAMES.index(m) for m in ("glass", "door", "brick", "trim"))
+    key = {tuple(np.round(p * 2).astype(int)): i for i, p in enumerate(pts)}
+    # only the face-plane ring: front openings look forward (-Y), side openings look out (+X);
+    # the reveals stay brick so the glass reads full size
+    offs = [(dx, 0, dz) for dx in (-1, 0, 1) for dz in (-1, 0, 1)]        # front face plane
+    offs += [(0, dy, dz) for dy in (-1, 0, 1) for dz in (-1, 0, 1)]       # side face plane
+    hit = set()
+    for i in np.where((mat == gi) | (mat == di))[0]:
+        p = np.round(pts[i] * 2).astype(int)
+        for dx, dy, dz in offs:
+            j = key.get((p[0] + 2 * dx, p[1] + 2 * dy, p[2] + 2 * dz))
+            if j is not None and mat[j] == bi:
+                hit.add(j)
+    hexv = MATS["trim"][0]
+    tc = (int(hexv[1:3], 16) << 16) | (int(hexv[3:5], 16) << 8) | int(hexv[5:7], 16)
+    for j in hit:
+        mat[j] = ti; cols[j] = tc
+    return mat, cols
+
 def sample_form(name):
     ops = MODELS[name]()
     testers = make_testers(ops)
@@ -348,6 +366,8 @@ def sample_form(name):
             extra = np.vstack([extra, pts[: need - len(extra)]])
         pts = np.vstack([pts, extra[:need]])
     mat, cols = paint(testers, s, pts, seed=FORMS.index(name) + 11)
+    if name == "house":
+        mat, cols = trim_ring(pts, mat, cols, 0)
     print(f"[morph2] {name}: scale={s:.3f} visible={cnt} padded={need} total={len(pts)}")
     for _, ob, _ in ops:
         bpy.data.objects.remove(ob, do_unlink=True)

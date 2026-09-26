@@ -81,7 +81,7 @@ export async function mount(el) {
 
   let data;
   try {
-    data = await (await fetch(HERE('shapes.json'))).json();
+    data = await (await fetch(HERE('shapes.json?v=2'))).json();
   } catch (e) { mountStill(el); return; }
   const N = data.n;
 
@@ -371,7 +371,7 @@ export async function mount(el) {
   new IntersectionObserver((ents) => { visible = ents[0].isIntersecting; if (visible) loopStart(); }, { rootMargin: '100px' }).observe(el);
 
   // ---- camera: 3/4 view from front-right, distance fitted per form
-  const YAWS = [0.5, 0.36, 0.42, 0.2], PITCH = 0.28, FOV = THREE.MathUtils.degToRad(26);
+  const YAWS = [0.5, 0.36, 0.42, 0.2], ZOOM = [1, 0.72, 1, 1], PITCH = 0.28, FOV = THREE.MathUtils.degToRad(26);
   function place(f, orbit, lift) {
     const i = Math.min(2, Math.floor(f)), u = f - i;
     const a = info[i], b = info[i + 1];
@@ -383,7 +383,9 @@ export async function mount(el) {
     const fit = Math.max(rh / th * (phone ? 1.22 : 1.5), (rv + rh * Math.sin(PITCH) * 0.6) / tv * 1.3) + rh * 0.5;
     const YAW = YAWS[i] + (YAWS[i + 1] - YAWS[i]) * smooth(u) + orbit;
     const PIT = PITCH + lift;
-    const dist = fit * (1 + 0.3 * Math.sin(Math.PI * u));
+    const Z = phone ? [1, 1, 1, 1] : ZOOM;                      // phones already fit the width edge to edge
+    const zoom = Z[i] + (Z[i + 1] - Z[i]) * smooth(u);   // long, low truck: frame it closer so it fills the stage
+    const dist = fit * zoom * (1 + 0.3 * Math.sin(Math.PI * u));
     camera.position.set(Math.sin(YAW) * Math.cos(PIT) * dist, cy + Math.sin(PIT) * dist, Math.cos(YAW) * Math.cos(PIT) * dist);
     camera.lookAt(0, cy * 0.92, 0);
   }
