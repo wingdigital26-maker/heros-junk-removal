@@ -43,18 +43,22 @@ LOGO = [
     "...NNNN...NNNN...",
 ]
 
-# ---- truck: box truck facing right, red band, warm-white cab window and headlamp
+# ---- truck: tall box truck facing right. Box body with a proud red stripe, a separate cab with a
+# slanted warm-white windshield, headlamp, red bumper, and big round wheels with white hubs.
 TRUCK = [
-    "NNNNNNNNNNNN........",
-    "NNNNNNNNNNNN.NNNNN..",
-    "NNNNNNNNNNNN.NWWWNN.",
-    "NNNNNNNNNNNN.NWWWNNN",
-    "NNNNNNNNNNNN.NNNNNNN",
-    "rrrrrrrrrrrrrrrrrrrr",
-    "NNNNNNNNNNNNNNNNNNNW",
-    "NN.DDD.NNNNNN.DDD.NN",
-    "..DDWDD......DDWDD..",
-    "...DDD........DDD...",
+    "NNNNNNNNNNNNNN........",
+    "NNNNNNNNNNNNNN........",
+    "NNNNNNNNNNNNNN.NNNN...",
+    "NNNNNNNNNNNNNN.NWWWN..",
+    "rrrrrrrrrrrrrr.NWWWWN.",
+    "NNNNNNNNNNNNNN.NNNNNNN",
+    "NNNNNNNNNNNNNN.NNNNNNW",
+    "NNNNNNNNNNNNNNNNNNNNNr",
+    "NN.DDD.NNNNNNNN.DDD.Nr",
+    "..DDDDD........DDDDD..",
+    "..DDWDD........DDWDD..",
+    "..DDDDD........DDDDD..",
+    "...DDD..........DDD...",
 ]
 
 # ---- couch: deep-navy back set behind, navy arms stand proud, two red seat cushions
@@ -106,23 +110,24 @@ def _pin():
     return out
 
 
+# ---- star: hand laid, broad arms, legs taper to points, proud red core
 STAR = [
     "........R........",
     ".......RRR.......",
     ".......RRR.......",
     "......RRRRR......",
-    "......RRrRR......",
-    "RRRRRRRrrrRRRRRRR",
-    ".RRRRRrrrrrRRRRR.",
+    "......RRRRR......",
+    "RRRRRRRRRRRRRRRRR",
+    ".RRRRRRrrrRRRRRR.",
     "..RRRRrrrrrRRRR..",
     "...RRRrrrrrRRR...",
-    "....RRrrrrrRR....",
     "....RRRrrrRRR....",
+    "....RRRRRRRRR....",
     "...RRRRRRRRRRR...",
     "...RRRRR.RRRRR...",
     "..RRRR.....RRRR..",
-    "..RRRR.....RRRR..",
-    ".RRR.........RRR.",
+    "..RRR.......RRR..",
+    ".RR...........RR.",
 ]
 
 
@@ -153,15 +158,48 @@ def _camera():
     return ["".join(r) for r in rows]
 
 
+# ---- moving box: navy carton, proud lid band, red tape down the middle, warm-white label
+BOX = [
+    "FFFFFFFrrFFFFFFF",
+    "FFFFFFFrrFFFFFFF",
+    ".NNNNNNrrNNNNNN.",
+    ".NNNNNNrrNNNNNN.",
+    ".NNNNNNrrNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".NNNNNNNNNNNNNN.",
+    ".DDDDDDDDDDDDDD.",
+]
+
+# ---- H: the Hero's letter, bold posts, proud red crossbar
+H = [
+    "FFFF.....FFFF",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "NNNNrrrrrNNNN",
+    "NNNNrrrrrNNNN",
+    "NNNNrrrrrNNNN",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "NNNN.....NNNN",
+    "DDDD.....DDDD",
+]
+
 PIN, CAMERA = _pin(), _camera()
 
 GLYPHS = {
-    "logo": LOGO, "truck": TRUCK, "couch": COUCH,
-    "pin": PIN, "star": STAR, "camera": CAMERA,
+    "house": LOGO, "truck": TRUCK, "couch": COUCH, "pin": PIN,
+    "star": STAR, "camera": CAMERA, "h": H, "box": BOX,
 }
-# the footer sits on navy: same house, reversed (warm-white body, red roof, navy window)
-REVERSE = {"logo_rev": ("logo", {"navy": "white", "white": "navy"})}
-FORMS = ["logo", "pin", "truck", "couch", "star", "camera", "logo_rev"]
+# forms the engine can dock as (dock API data-form). Dark docks are recoloured at runtime.
+REVERSE = {}
+FORMS = ["house", "pin", "truck", "couch", "star", "camera", "h", "box"]
 
 
 def cells(name):

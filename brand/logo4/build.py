@@ -36,7 +36,8 @@ SAMPLES = int(arg("--samples", "64"))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 OUT = os.path.join(ROOT, "assets", "logo-piece")
 os.makedirs(OUT, exist_ok=True)
-FILL, BEVEL = 0.92, 0.14      # cube edge vs pitch, bevel radius vs edge: crisp seams, soft satin edges
+FILL, BEVEL = 0.86, 0.22      # piece5: slightly smaller cubes (wider seams), softer rounder bevel
+DARK = {0x14284B: 0xF3EEE4, 0x0C1A33: 0xC9CED8, 0xF3EEE4: 0x14284B}   # navy docks: recolour, red stays
 
 
 # ------------------------------------------------------------------ shapes ----
@@ -84,20 +85,26 @@ def match(A, CA, B, CB):
 
 
 def build_shapes():
+    """piece5: every form in its own order + a nearest-cube matching for every pair of forms.
+    The engine chains the docks of a page in scroll order and uses perms["a|b"][i] = the index in b
+    that cube i of a flies to (the b->a direction is the inverse)."""
     n = max(len(glyphs.cells(f)[0]) for f in glyphs.FORMS)
-    base, bc, _, _ = padded("logo", n)
-    data = {"n": n, "fill": FILL, "bevel": BEVEL, "forms": {}, "colors": {}, "dims": {}}
+    data = {"n": n, "fill": FILL, "bevel": BEVEL, "forms": {}, "colors": {}, "dims": {}, "perms": {},
+            "dark": {hex(k): v for k, v in DARK.items()}}
+    arr = {}
     for f in glyphs.FORMS:
         P, C, w, h = padded(f, n)
-        if f != "logo":
-            perm = match(base, bc, P, C)
-            P = P[perm]; C = [C[j] for j in perm]
+        arr[f] = (P, C)
         data["forms"][f] = [round(float(v), 2) for v in P.reshape(-1)]
         data["colors"][f] = [int(c) for c in C]
         data["dims"][f] = [w, h]
+    F = glyphs.FORMS
+    for i, a in enumerate(F):
+        for b in F[i + 1:]:
+            data["perms"][f"{a}|{b}"] = [int(x) for x in match(arr[a][0], arr[a][1], arr[b][0], arr[b][1])]
     with open(os.path.join(OUT, "shapes.json"), "w") as fh:
         json.dump(data, fh, separators=(",", ":"))
-    print(f"[logo4] shapes.json n={n} forms={glyphs.FORMS}")
+    print(f"[logo4] shapes.json n={n} forms={F}")
     return data
 
 
@@ -110,7 +117,7 @@ def cube_mesh():
     e = FILL
     bm = bmesh.new()
     bmesh.ops.create_cube(bm, size=e)
-    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=e * BEVEL, segments=3, affect='EDGES', profile=0.5)
+    bmesh.ops.bevel(bm, geom=list(bm.edges), offset=e * BEVEL, segments=4, affect='EDGES', profile=0.5)
     me = bpy.data.meshes.new("rcube"); bm.to_mesh(me); bm.free()
     for p in me.polygons:
         p.use_smooth = True
@@ -118,8 +125,8 @@ def cube_mesh():
     nt = m.node_tree; bsdf = nt.nodes.get("Principled BSDF")
     info = nt.nodes.new("ShaderNodeObjectInfo")
     nt.links.new(info.outputs["Color"], bsdf.inputs["Base Color"])
-    bsdf.inputs["Roughness"].default_value = 0.34
-    for k, v in (("Coat Weight", 0.35), ("Coat Roughness", 0.12)):
+    bsdf.inputs["Roughness"].default_value = 0.46
+    for k, v in (("Coat Weight", 0.2), ("Coat Roughness", 0.3), ("Sheen Weight", 0.35), ("Sheen Roughness", 0.55)):
         if k in bsdf.inputs:
             bsdf.inputs[k].default_value = v
     me.materials.append(m)
@@ -227,7 +234,7 @@ def downsample(src, dst, size, pad=0.04, bg=None):
     print(f"[logo4] wrote {os.path.basename(dst)}")
 
 
-def render_all(data):
+def render_brand(data):  # legacy header/favicons (logo4); not run by default any more
     setup_scene()
     big = os.path.join(OUT, "logo.png")
     render_form(data, "logo", big, 512, yaw=12, pitch=6, margin=1.0)
@@ -246,8 +253,22 @@ def render_all(data):
         render_form(data, f, os.path.join(ROOT, ".visual", "logo-piece", f"blender-{f}.png"), 320)
 
 
+def render_stills(data):
+    """Reduced motion / no WebGL: one still per form, light and dark, 360px (docks are at most 180 CSS px)."""
+    setup_scene()
+    for f in glyphs.FORMS:
+        render_form(data, f, os.path.join(OUT, f"still-{f}.png"), 360, yaw=14, pitch=8, margin=1.02)
+        dk = dict(data); dk["colors"] = dict(data["colors"])
+        dk["colors"][f] = [DARK.get(c, c) for c in data["colors"][f]]
+        render_form(dk, f, os.path.join(OUT, f"still-{f}-dark.png"), 360, yaw=14, pitch=8, margin=1.02)
+    for f in glyphs.FORMS:
+        render_form(data, f, os.path.join(ROOT, ".visual", "piece5", f"blender-{f}.png"), 320)
+
+
 if __name__ == "__main__":
     bpy.ops.wm.read_factory_settings(use_empty=True)
     data = build_shapes() if STAGE in ("all", "shapes") else json.load(open(os.path.join(OUT, "shapes.json")))
     if STAGE in ("all", "renders"):
-        render_all(data)
+        render_stills(data)
+    if STAGE == "brand":
+        render_brand(data)
