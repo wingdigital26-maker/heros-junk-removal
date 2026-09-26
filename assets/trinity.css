@@ -911,10 +911,9 @@ h2.t-coverage-line{max-width:520px;}
 .t-close .t-sec-head{margin-bottom:26px;}
 .t-close .t-pill-row{align-items:center;}
 
-/* docks: empty stations the cube piece visits. They hold nothing, never take clicks, never sit on text. */
-.dock{display:block;flex:0 0 auto;pointer-events:none;width:132px;height:132px;}
-.dock[data-size="S"]{width:88px;height:88px;}
-.dock[data-size="L"]{width:200px;height:200px;}
+/* docks: empty stations the cube piece visits. The piece engine (assets/logo-piece) sizes them;
+   this file only places them, and hides all but the [data-phone] ones on phones (max 2). */
+.dock{display:block;flex:0 0 auto;pointer-events:none;}
 .t-pill-row .dock{margin-left:auto;}
 .t-hero-copy > .dock{align-self:flex-end;margin-right:8%;}
 .t-svc-intro .dock{margin-top:44px;}
@@ -923,13 +922,12 @@ h2.t-coverage-line{max-width:520px;}
   .t-work-head > .dock{margin-left:0;}
 }
 @media (max-width:760px){
-  .dock{display:none;}
-  .dock[data-phone]{display:block;width:96px;height:96px;}
+  html .dock:not([data-phone]){display:none;}
   .t-pill-row .dock[data-phone]{margin-left:0;flex:0 0 100%;}
 }
 
 /* scroll cue under the hero: the story continues below */
-.t-scroll-cue{display:inline-flex;align-items:center;gap:12px;margin-top:8px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);opacity:.75;min-height:44px;transition:opacity .2s;}
+.t-scroll-cue{display:flex;width:max-content;align-items:center;gap:12px;margin-top:6px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);opacity:.75;min-height:44px;transition:opacity .2s;}
 .t-scroll-cue:hover{opacity:1;}
 .t-scroll-cue i{display:block;width:9px;height:9px;border-right:1.5px solid var(--red);border-bottom:1.5px solid var(--red);transform:rotate(45deg);margin-top:-5px;animation:t-cue 1.7s ease-in-out infinite;}
 @keyframes t-cue{0%,100%{transform:translateY(0) rotate(45deg);}50%{transform:translateY(6px) rotate(45deg);}}
@@ -937,8 +935,8 @@ h2.t-coverage-line{max-width:520px;}
 @media (prefers-reduced-motion: reduce){.t-scroll-cue i{animation:none;}}
 
 /* section rail: six dots down the right edge, the current one filled red, labels on hover */
-.t-rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:2px;}
-.t-rail a{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-height:30px;font-size:12px;font-weight:500;color:var(--navy);padding:0 4px;}
+.t-rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:0;}
+.t-rail a{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-height:44px;font-size:12px;font-weight:500;color:var(--navy);padding:0 4px;}
 .t-rail a span{opacity:0;transform:translateX(6px);transition:opacity .25s,transform .35s cubic-bezier(.2,.7,.2,1);white-space:nowrap;}
 .t-rail:hover a span,.t-rail a:focus-visible span{opacity:1;transform:none;}
 .t-rail a::after{content:"";width:6px;height:6px;border-radius:999px;background:#C3C8D2;transition:width .35s cubic-bezier(.2,.7,.2,1),background .3s;flex:0 0 auto;}
@@ -967,4 +965,13 @@ html.js .t-sec-head.rise{transform:none;}
 @media (max-width:760px){
   .t-footer-brand{flex-direction:column;align-items:flex-start;gap:20px;margin-top:48px;}
   .t-footer .t-footer-brand .t-footer-wordmark{white-space:normal;font-size:17vw;line-height:.9;margin:0;}
+}
+
+/* ===== Site5 round 3: nav follows the section rail; phone work grid closes up ===== */
+.t-nav a.cur{opacity:1;}
+.t-nav a.cur::after{transform:scaleX(1);}
+@media (max-width:760px){
+  .t-work{padding-bottom:48px;}
+  .t-work-fig:last-child{margin-bottom:0 !important;}
+  .t-services{padding-top:56px;}
 }

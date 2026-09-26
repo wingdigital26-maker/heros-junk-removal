@@ -116,6 +116,7 @@
   links.forEach(function(a){ var t=a.textContent; a.textContent=''; var s=document.createElement('span'); s.textContent=t; a.appendChild(s); });
   var secs=links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
   var footer=document.querySelector('.t-footer');
+  var navs=Array.prototype.slice.call(document.querySelectorAll('.t-nav a[href^="#"]'));
   var tick=false;
   function update(){
     tick=false;
@@ -125,6 +126,8 @@
     var line=window.innerHeight*0.45, cur=-1;
     secs.forEach(function(s,i){ if(s && s.getBoundingClientRect().top<=line) cur=i; });
     links.forEach(function(a,i){ a.classList.toggle('cur',i===cur); });
+    var id=cur>=0&&secs[cur]?secs[cur].id:'';
+    navs.forEach(function(a){ a.classList.toggle('cur', !!id && a.getAttribute('href')==='#'+id); });
     if(footer) rail.classList.toggle('on-dark', footer.getBoundingClientRect().top<window.innerHeight*0.5);
   }
   window.addEventListener('scroll',function(){ if(!tick){ tick=true; requestAnimationFrame(update); } },{passive:true});
