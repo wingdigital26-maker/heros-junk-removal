@@ -277,7 +277,7 @@ async function boot() {
     const hdr = document.querySelector("header");
     for (let i = 0; i < els.length && rects.length < 3200; i++) {
       const e = els[i];
-      if (hdr && hdr.contains(e)) continue;
+      if ((hdr && hdr.contains(e)) || e.closest('.t-rail,[data-fixed]')) continue;
       const r = e.getBoundingClientRect();
       if (r.width < 2 || r.height < 2) continue;
       rects.push(r.left, r.top + sy, r.right, r.bottom + sy);
@@ -357,8 +357,9 @@ async function boot() {
       for (let j = 0; j < n; j++) if (docks[j].y <= F) i = j;
       if (i < 0) { seg = 0; s = 0; } else if (i >= n - 1) { seg = n - 2; s = 1; } else {
         seg = i;
-        const u = (F - docks[i].y) / Math.max(1, docks[i + 1].y - docks[i].y);
-        s = smoother(clamp01((u - 0.2) / 0.6));
+        const gap = Math.max(1, docks[i + 1].y - docks[i].y), u = (F - docks[i].y) / gap;
+        const hb = Math.min(0.2, (VH * 0.3) / gap);               // hold in the dock while it is well in view
+        s = smoother(clamp01((u - hb) / (1 - 2 * hb)));
       }
     }
     const A = docks[seg], B = docks[Math.min(seg + 1, n - 1)];
@@ -405,7 +406,7 @@ async function boot() {
     const calm = inStream ? 0 : 1 - stc * 2;
 
     // ---- hover: cubes scatter and re-pop
-    const vxp = inStream ? VW - Math.max(9, Math.min(22, VW * 0.012)) : px;
+    const vxp = inStream ? Math.max(8, Math.min(12, VW * 0.008)) : px;   // left gutter (the right edge holds the section rail)
     const vyp = inStream ? VH * (0.22 + 0.56 * s) : py - sy;
     const reach = Math.max(40, kS * (Math.max(dimW, dimH) * 0.55 + 1));
     const over = !inStream && stc < 0.1 && mid < 0.2 && Math.hypot(mx - vxp, my - vyp) < reach ? 1 : 0;
@@ -451,7 +452,7 @@ async function boot() {
       if (inStream) {                                   // kinematic thread, flowing down, tapered ends
         let f = RANK[k] + flow; f -= Math.floor(f);
         const yy = (f - 0.5) * streamH;
-        x = (R1[k] - 0.5) * 2.2 + 0.8 * Math.sin(yy * 0.4 - time * 2.2);
+        x = (R1[k] - 0.5) * 1.3 + 0.45 * Math.sin(yy * 0.4 - time * 2.2);
         y = -yy; z = (R2[k] - 0.5) * 1.5;
         sc = vis * Math.sin(Math.PI * f) * 0.9;
         ang = time * (R2[k] - 0.5) * 2;
@@ -533,7 +534,8 @@ async function boot() {
 
   // test / debug handle
   window.__logoPiece = {
-    state: () => ({ docks: docks.map((d) => d.form), G: +lastG.toFixed(3), s: +lastS.toFixed(3), stream: +st.toFixed(3),
+    segs: () => docks.map((d, i) => i),
+    state: () => ({ free: !streamSeg, docks: docks.map((d) => d.form), G: +lastG.toFixed(3), s: +lastS.toFixed(3), stream: +st.toFixed(3),
       x: Math.round(lastX), y: Math.round(lastY), k: +lastPk.toFixed(2), phase: streamPhase ? 'stream' : 'form' }),
     slow: (n) => { slow = Math.max(1, Math.min(20, +n || 1)); },
     layout,
