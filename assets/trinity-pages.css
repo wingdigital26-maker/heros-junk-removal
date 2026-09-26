@@ -384,3 +384,36 @@ form.demo button{align-self:flex-start;}
 .svc-content h3{font-size:20px;line-height:1.25;letter-spacing:-0.02em;margin:32px 0 10px;}
 .svc-content h2 + h3{margin-top:8px;}
 .by-city li{border:none;padding:0;margin:0;}
+
+/* ===== Site6 round 2: inner pages get the homepage's grounds and direction. Jack: "too much just white".
+   A navy marquee strip under every service hero, a (01).. story index, the cube piece in the sticky aside,
+   "Other services" on the warm canvas, and a composed close: copy left, a real job photo right. ===== */
+.t-strip{background:var(--navy);}
+.t-strip .t-marquee{padding:17px 0;}
+.t-strip + .svc-body > .wrap{border-top:none;padding-top:96px;}
+.svc-hero{padding-bottom:64px;}
+.svc-body .t-sec-head{margin-bottom:18px;}
+.section-head .t-sec-head{margin-bottom:20px;}
+.svc-aside-card .dock{margin:-6px auto 10px;}
+.svc-other{background:var(--warm);}
+.svc-other .svc-tile-content{border-top-color:var(--hair-warm);}
+.svc-other + .contact-band{border-top:none;}
+
+.contact-band{border-top:none;padding:120px 0;}
+.contact-band > .wrap{display:grid;grid-template-columns:7fr 5fr;gap:56px;align-items:end;}
+.contact-band .t-sec-head{margin-bottom:26px;}
+.contact-band .cta-row{align-items:center;}
+.contact-band .cta-row .dock{margin-left:auto;}
+.cb-photo{border-radius:10px;overflow:hidden;}
+.cb-photo img{width:100%;height:clamp(340px,34vw,480px);object-fit:cover;display:block;}
+@media (max-width:1000px){
+  .contact-band > .wrap{grid-template-columns:1fr;gap:32px;}
+}
+@media (max-width:760px){
+  .contact-band{padding:64px 0;}
+  .cb-photo img{height:260px;}
+  .contact-band .cta-row .dock[data-phone]{margin-left:0;flex:0 0 100%;}
+  .t-strip .t-marquee{padding:13px 0;}
+  .svc-hero{padding-bottom:40px;}
+  .t-strip + .svc-body > .wrap{padding-top:56px;}
+}
