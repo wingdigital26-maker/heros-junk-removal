@@ -9,7 +9,7 @@
 :root{
   --muted:#5F6675;
   --hair-warm:#DEDAD2;
-  --col-text:68ch;
+  --col-text:62ch;
   --red-hover:#B32A25;
 }
 body{background:#fff;color:var(--text);font-size:16px;line-height:1.6;}
@@ -349,8 +349,10 @@ form.demo button{align-self:flex-start;}
 @media (max-width:1100px){.mini-review-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:640px){.mini-review-grid{grid-template-columns:1fr;}}
 /* hero photos are 820px sources: keep the frame at or under their width so they stay sharp */
-.svc-hero-grid{grid-template-columns:1fr 1fr;}
-.svc-hero-photo .video-window{max-width:680px;margin-left:auto;min-height:clamp(340px,34vw,480px);}
+@media (min-width:901px){
+  .svc-hero-grid{grid-template-columns:1fr 1fr;}
+  .svc-hero-photo .video-window{max-width:680px;margin-left:auto;min-height:clamp(340px,34vw,480px);}
+}
 @media (max-width:760px){
   /* reviews: sideways rails on phones, same as the homepage */
   .svc-review-grid,.review-cards,.mini-review-grid,.post-reviews-section .review-cards{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 calc(-1 * var(--pad));padding:4px var(--pad) 8px;scroll-padding:0 var(--pad);scrollbar-width:none;overscroll-behavior-x:contain;}
@@ -377,3 +379,8 @@ form.demo button{align-self:flex-start;}
 }
 .svc-breadcrumbs a,.post-header .breadcrumbs a{min-width:44px;justify-content:center;}
 .blog-grid .card-body > h2 a{display:inline-block;min-height:44px;padding:2px 0;}
+.mini-head p{max-width:60ch;margin-left:auto;margin-right:auto;}
+.post-col{max-width:64ch;}
+.svc-content h3{font-size:20px;line-height:1.25;letter-spacing:-0.02em;margin:32px 0 10px;}
+.svc-content h2 + h3{margin-top:8px;}
+.by-city li{border:none;padding:0;margin:0;}

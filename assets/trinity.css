@@ -867,3 +867,7 @@ html.js .t-work-card.t-reveal-img.in{clip-path:inset(-30% -40% -30% -40%);}
   /* the cube piece: objects are smaller on a phone, so less scroll per form */
   .t-piece.p2{height:300vh;height:300svh;}
 }
+
+/* ===== Rollout round 6: photo reveal slides instead of zooming (a zoomed image reported past the right edge) ===== */
+html.js .t-reveal-img img{transform:translateY(8%);}
+html.js .t-reveal-img.in img{transform:none;}
