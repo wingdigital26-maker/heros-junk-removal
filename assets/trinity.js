@@ -26,11 +26,13 @@
 
   if('IntersectionObserver' in window){
     var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){
-          reveal(entry.target);
-          io.unobserve(entry.target);
-        }
+      // stagger: everything that arrives in one batch reveals in reading order (top to bottom, left to right)
+      var batch=entries.filter(function(e){ return e.isIntersecting; }).map(function(e){ return e.target; });
+      batch.sort(function(a,b){ var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(); return (ra.top-rb.top) || (ra.left-rb.left); });
+      batch.forEach(function(el,i){
+        el.style.transitionDelay=Math.min(i*90,450)+'ms';
+        reveal(el);
+        io.unobserve(el);
       });
     }, {threshold:0.15, rootMargin:'0px 0px -60px 0px'});
     els.forEach(function(el){ io.observe(el); });
@@ -104,4 +106,28 @@
   }
   if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
   window.addEventListener('resize',fit); fit();
+})();
+
+/* direction: header progress line, section rail (current section, dark over the footer) */
+(function(){
+  var bar=document.querySelector('.t-progress');
+  var rail=document.querySelector('.t-rail');
+  var links=rail?Array.prototype.slice.call(rail.querySelectorAll('a')):[];
+  links.forEach(function(a){ var t=a.textContent; a.textContent=''; var s=document.createElement('span'); s.textContent=t; a.appendChild(s); });
+  var secs=links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  var footer=document.querySelector('.t-footer');
+  var tick=false;
+  function update(){
+    tick=false;
+    var max=document.documentElement.scrollHeight-window.innerHeight;
+    if(bar) bar.style.transform='scaleX('+(max>0?Math.min(1,window.scrollY/max):0).toFixed(4)+')';
+    if(!links.length) return;
+    var line=window.innerHeight*0.45, cur=-1;
+    secs.forEach(function(s,i){ if(s && s.getBoundingClientRect().top<=line) cur=i; });
+    links.forEach(function(a,i){ a.classList.toggle('cur',i===cur); });
+    if(footer) rail.classList.toggle('on-dark', footer.getBoundingClientRect().top<window.innerHeight*0.5);
+  }
+  window.addEventListener('scroll',function(){ if(!tick){ tick=true; requestAnimationFrame(update); } },{passive:true});
+  window.addEventListener('resize',update);
+  update();
 })();
