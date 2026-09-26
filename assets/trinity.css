@@ -981,3 +981,36 @@ html.js .t-sec-head.rise{transform:none;}
 @media (max-width:760px){
   .t-coverage .t-pill-row .dock[data-phone]{margin-top:6px;}
 }
+
+/* ===== Site6 round 1: grounds with rhythm. Jack: "too much just white". The marquee becomes a navy strip under the
+   wordmark, (01) sits on the warm canvas, the mid-page pull quote becomes a full-width navy band. ===== */
+.t-wordmark-band .t-hair:last-of-type{display:none;}
+.t-marquee{background:var(--navy);padding:17px 0;}
+.t-marquee span{color:#fff;}
+.t-marquee span::after{background:var(--red);}
+
+.t-coverage{background:var(--warm);padding:104px 0;}
+.t-coverage .t-sec-rule{background:#CFCAC0;}
+.t-crew-block{border-top-color:#DEDAD2;}
+.t-crew-block .t-avatar{box-shadow:0 0 0 1px #DEDAD2;}
+.t-work > .t-hair{display:none;}
+
+.t-rv-pull-band{background:linear-gradient(180deg,#14284B 0%,#10213F 100%);}
+.t-rv-pull-band .t-rv-pull{max-width:var(--max);margin:0 auto;padding:110px var(--pad);border:none;}
+.t-rv-pull-band .t-rv-pull blockquote{color:#fff;}
+.t-rv-pull-band .t-rv-name{color:#fff;}
+.t-rv-pull-band .t-rv-when,.t-rv-pull-band .t-rv-crew{color:#A9B7CF;}
+.t-rv-pull-band .t-av{border-color:#14284B;}
+.t-reviews > .t-wrap + .t-rv-pull-band{margin-top:0;}
+.t-reviews .t-wrap:first-child .t-rv-grid:last-child{padding-bottom:96px;}
+.t-reviews .t-rv-pull-band + .t-wrap > .t-rv-grid:first-child{padding-top:96px;}
+.t-reviews{padding-bottom:110px;}
+@media (max-width:760px){
+  .t-coverage{padding:64px 0;}
+  .t-rv-pull-band .t-rv-pull{padding:64px var(--pad);}
+  .t-reviews .t-wrap:first-child .t-rv-grid:last-child{padding-bottom:48px;}
+  .t-reviews .t-rv-pull-band + .t-wrap > .t-rv-grid:first-child{padding-top:48px;}
+}
+/* hero dock: clear of the lead sentence (the cubes spread a little past the dock box) */
+.t-hero-copy > .dock{margin-right:0;margin-bottom:22px;}
+.t-hero-lead{max-width:400px;}
