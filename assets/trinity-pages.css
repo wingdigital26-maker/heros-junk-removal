@@ -417,3 +417,49 @@ form.demo button{align-self:flex-start;}
   .svc-hero{padding-bottom:40px;}
   .t-strip + .svc-body > .wrap{padding-top:56px;}
 }
+
+/* ===== Site6 round 3: about + blog. A navy crew band on the about page, "What we believe" as a sticky-head split,
+   a warm editorial header on posts with the photo pulled up over the edge, a navy review band in the blog index. ===== */
+.about-page .mini-head{text-align:left;margin:0 0 40px;max-width:none;}
+.about-page .mini-head p{margin-left:0;}
+.about-split{display:grid;grid-template-columns:4fr 8fr;gap:48px;align-items:start;}
+.about-split .mini-head{position:sticky;top:112px;margin:0;}
+.about-split .value-steps{margin:0;max-width:none;border-top-color:var(--hair-warm);}
+.about-split .value-step{border-bottom-color:var(--hair-warm);}
+.about-band{background:linear-gradient(180deg,#14284B 0%,#10213F 100%);color:#fff;padding:110px 0;}
+.about-band-grid{display:grid;grid-template-columns:7fr 5fr;gap:56px;align-items:center;}
+.about-band .prose{margin:0;max-width:none;}
+.about-band h2{color:#fff;}
+.about-band .prose > p{color:#C9D2E3;max-width:56ch;}
+.about-band .t-sec-rule{background:rgba(255,255,255,.3);}
+.about-crew{display:flex;flex-direction:column;gap:22px;border-left:1px solid rgba(255,255,255,.16);padding-left:40px;}
+.about-crew .t-crew-row{display:flex;gap:28px;margin:0;}
+.about-crew .t-crew-member{display:flex;align-items:center;gap:14px;}
+.about-crew .t-avatar{width:72px;height:72px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.25);flex:none;}
+.about-crew .t-avatar img{width:100%;height:100%;object-fit:cover;}
+.about-crew .t-crew-name{color:#fff;font-weight:700;font-size:16px;}
+.about-crew .t-crew-role{color:#A9B7CF;font-size:14px;}
+.about-band .about-band-phone{font-size:clamp(28px,2.6vw,38px);font-weight:700;letter-spacing:-0.03em;color:#fff;line-height:1.1;display:inline-flex;align-items:center;min-height:44px;}
+.about-band-hours{color:#A9B7CF;font-size:14px;margin-top:-12px;}
+.about-page .photo-strip figure{aspect-ratio:4/5;}
+
+.post-header{background:var(--warm);padding:48px 0 200px;}
+.post-header + .wrap .post-hero-media{margin-top:-160px;}
+body.blog-index .post-header{padding-bottom:64px;}
+body.blog-index .post-header + section{padding-top:48px;}
+.blog-band{grid-column:1 / -1;background:linear-gradient(180deg,#14284B 0%,#10213F 100%);border-radius:10px;padding:56px 64px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:40px;align-items:center;color:#fff;margin:8px 0;}
+.blog-band blockquote{margin:0;font-size:clamp(22px,2.3vw,32px);line-height:1.15;letter-spacing:-0.03em;font-weight:700;color:#fff;max-width:30ch;}
+.blog-band .who{margin-top:14px;font-size:14px;color:#A9B7CF;}
+@media (max-width:1000px){
+  .about-split,.about-band-grid{grid-template-columns:1fr;gap:32px;}
+  .about-split .mini-head{position:static;}
+  .about-crew{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.16);padding-top:28px;}
+}
+@media (max-width:760px){
+  .about-band{padding:64px 0;}
+  .post-header{padding:24px 0 140px;}
+  .post-header + .wrap .post-hero-media{margin-top:-110px;}
+  .blog-band{grid-template-columns:1fr;padding:32px 24px;margin:24px 0;}
+  .blog-band .btn-primary{width:100%;}
+}
+.contact-band .cities{margin-top:44px;}
