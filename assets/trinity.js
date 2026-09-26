@@ -43,6 +43,16 @@
     els.forEach(function(el){ var r=el.getBoundingClientRect(); if(r.top<window.innerHeight) reveal(el); });
   }, 2500);
 
+  // Inner pages: .reveal / .reveal-group fade up as they enter (never pre-revealed below the fold)
+  var olds=Array.prototype.slice.call(document.querySelectorAll('.reveal, .reveal-group'));
+  if(olds.length){
+    if('IntersectionObserver' in window){
+      var io3=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in-view'); io3.unobserve(e.target); } }); },{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+      olds.forEach(function(el){ io3.observe(el); });
+      setTimeout(function(){ olds.forEach(function(el){ if(el.getBoundingClientRect().top<window.innerHeight) el.classList.add('in-view'); }); }, 2500);
+    } else olds.forEach(function(el){ el.classList.add('in-view'); });
+  }
+
   // Photos: curtain reveal as they enter.
   // Observe each photo's PARENT: a clipped/translated element reports zero intersection and would never open.
   var imgs=Array.prototype.slice.call(document.querySelectorAll('.t-hero-photo, .t-coverage-photo, .t-work-card, .t-review-photo, .t-rv-feature-photo, .t-rv-photo, .t-close-photo'));
