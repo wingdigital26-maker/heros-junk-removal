@@ -1,0 +1,26 @@
+/* Hero's travelling logo piece: header slot, dock spots, the moving canvas. See logo-piece.js. */
+.t-logo .lp-slot{display:block!important;position:relative;flex:0 0 auto;width:40px;height:40px;}
+.t-logo .lp-slot img{display:block;width:40px;height:40px;transition:opacity .35s ease;}
+html.lp-live.lp-home .lp-slot img{opacity:0;}
+
+.lp-canvas{position:fixed;left:0;top:0;z-index:60;pointer-events:none;display:block;will-change:transform;
+  filter:drop-shadow(0 8px 12px rgba(20,40,75,.16));}
+
+/* dock spots: deliberate empty space the piece visits; they hold nothing and never take clicks */
+.lp-dock{display:block;flex:0 0 auto;width:var(--d,140px);height:var(--d,140px);pointer-events:none;}
+.t-pill-row .lp-dock{margin-left:auto;align-self:center;margin-block:calc((44px - var(--d,140px)) / 2);}
+.t-work-head .lp-dock{margin:0 auto;align-self:center;}
+.t-reviews-lede .lp-dock{margin:0 auto;align-self:center;}
+.t-svc-intro .lp-dock{margin-top:44px;}
+.t-footer-more .lp-dock{margin-top:18px;}
+
+html.lp-off .lp-dock{display:none;}
+@media (prefers-reduced-motion: reduce){ .lp-dock{display:none;} .lp-canvas{display:none;} }
+@media (max-width:759px){
+  .t-logo .lp-slot,.t-logo .lp-slot img{width:36px;height:36px;}
+  .lp-dock:not([data-m]){display:none;}
+  .lp-dock[data-m]{width:var(--dm,96px);height:var(--dm,96px);}
+  .t-pill-row .lp-dock[data-m]{margin-block:calc((40px - var(--dm,96px)) / 2);}
+}
+/* docked in the header the shadow stays tight, so the mark has no grey halo on the white bar */
+html.lp-home .lp-canvas{filter:drop-shadow(0 2px 2px rgba(20,40,75,.14));}

@@ -5,20 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Page not found | Hero’s Junk Removal</title>
 <meta name="robots" content="noindex">
-<link rel="icon" href="assets/logo-mark.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="assets/logo-piece/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/logo-piece/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="assets/logo-piece/apple-touch-icon.png">
 <!-- trinity:head -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/trinity.css?v=13">
 <link rel="stylesheet" href="assets/trinity-pages.css?v=13">
+<link rel="stylesheet" href="assets/logo-piece/logo-piece.css?v=1">
 <!-- /trinity:head -->
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
 <header class="t-header">
   <div class="t-header-inner">
-    <a href="./" class="t-logo" aria-label="Hero's Junk Removal home"><img src="assets/logo-mark.svg?v=2" alt="" width="28" height="28"><span>Hero's Junk Removal</span></a>
+    <a href="./" class="t-logo" aria-label="Hero's Junk Removal home"><span class="lp-slot" data-lp-home><img src="assets/logo-piece/logo-88.png" alt="" width="40" height="40"></span><span>Hero's Junk Removal</span></a>
     <nav class="t-nav" aria-label="Primary">
       <a href="/#services">Services</a>
       <a href="/#reviews">Reviews</a>
@@ -139,5 +142,6 @@
 var stats=document.querySelectorAll('[data-count]');if(stats.length){var run=function(el){var t=+el.getAttribute('data-count'),suf=el.getAttribute('data-suffix')||'',s=0,d=1100,st=null;function f(ts){st=st||ts;var p=Math.min((ts-st)/d,1);el.textContent=Math.floor(p*t).toLocaleString()+suf;if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)};if('IntersectionObserver'in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run(e.target);io.unobserve(e.target)}})},{threshold:.5});stats.forEach(function(s){io.observe(s)})}else stats.forEach(run)}})();
 </script>
 <script src="assets/trinity.js?v=9" defer></script>
+<script type="module" src="assets/logo-piece/logo-piece.js?v=1"></script>
 </body>
 </html>
