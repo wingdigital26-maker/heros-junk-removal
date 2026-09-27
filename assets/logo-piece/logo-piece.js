@@ -364,7 +364,7 @@ async function boot() {
       if (i < 0) { seg = 0; s = 0; } else if (i >= n - 1) { seg = n - 2; s = 1; } else {
         seg = i;
         const gap = Math.max(1, docks[i + 1].y - docks[i].y), u = (F - docks[i].y) / gap;
-        const hb = Math.min(0.2, (VH * 0.3) / gap);               // hold in the dock while it is well in view
+        const hb = Math.min(0.26, (VH * 0.36) / gap);               // hold in the dock while it is well in view
         s = smoother(clamp01((u - hb) / (1 - 2 * hb)));
       }
     }
@@ -397,7 +397,7 @@ async function boot() {
     for (let sI = 0; sI < steps; sI++) {
       stV += (36 * (stT - st) - 12 * stV) * dt; st += stV * dt;
       if (!placed) { px = tx; py = ty; kS = tk; placed = true; }
-      const w = 6.5;
+      const w = 5.4;                                                // a touch slower between docks
       vx += (w * w * (tx - px) - 2 * w * vx) * dt; px += vx * dt;
       vy += (w * w * (ty - py) - 2 * w * vy) * dt; py += vy * dt;
       kV += (81 * (tk - kS) - 18 * kV) * dt; kS += kV * dt;

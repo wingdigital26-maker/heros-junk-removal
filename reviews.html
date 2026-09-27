@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/trinity.css?v=20">
+<link rel="stylesheet" href="assets/trinity.css?v=21">
 <link rel="stylesheet" href="assets/trinity-pages.css?v=21">
 <link rel="stylesheet" href="assets/logo-piece/logo-piece.css?v=1">
 <!-- /trinity:head -->
@@ -350,7 +350,8 @@
 bs.forEach(function(b){b.addEventListener('click',function(){var k=b.dataset.filter;bs.forEach(function(x){x.setAttribute('aria-pressed',String(x===b))});var n=0;
 g.querySelectorAll('article').forEach(function(a){var on=k==='all'||(' '+a.dataset.tags+' ').indexOf(' '+k+' ')>=0;a.hidden=!on;if(on)n++;});empty.classList.toggle('show',n===0);});});})();
 </script>
-<script type="module" src="assets/logo-piece/logo-piece.js?v=3"></script>
+<script type="module" src="assets/logo-piece/logo-piece.js?v=4"></script>
 <script src="assets/trinity.js?v=12" defer></script>
+<script src="assets/scroll.js?v=1" defer></script>
 </body>
 </html>
