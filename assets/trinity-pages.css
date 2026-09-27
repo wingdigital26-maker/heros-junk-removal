@@ -719,3 +719,19 @@ body.blog-index .post-header + section{padding-top:48px;}
 .about-hero-grid{align-items:start;}
 .about-hero .owner-photo{align-self:start;}
 .about-hero .owner-photo img{max-height:560px;object-fit:cover;width:100%;border-radius:12px;}
+
+/* ===== Site7 round 2: colour blocks. Review bands go navy on service, city, blog and contact pages; the about story splits into a sticky head and the text ===== */
+.svc-reviews,.post-reviews-section,.contact-reviews{background:var(--navy);}
+.svc-reviews h2,.post-reviews-section h2,.contact-reviews h2{color:#fff;}
+.svc-reviews .section-head p,.post-reviews-section .section-head p,.contact-reviews .section-head p,.svc-reviews .t-sec-n,.post-reviews-section .t-sec-n,.contact-reviews .t-sec-n{color:#C9D2E3;}
+.svc-reviews .t-sec-rule,.post-reviews-section .t-sec-rule,.contact-reviews .t-sec-rule{background:rgba(255,255,255,.3);}
+.svc-reviews .review-card,.post-reviews-section .review-card,.contact-reviews .mini-review,.contact-reviews .review-card{background:#fff;border-color:transparent;}
+.svc-reviews .reviews-link,.post-reviews-section .reviews-link,.contact-reviews .reviews-link,.svc-reviews > .wrap > p a,.post-reviews-section > .wrap > p a{color:#fff;}
+.svc-reviews > .wrap > p,.post-reviews-section > .wrap > p,.contact-reviews > .wrap > p{color:#C9D2E3;}
+.contact-band{border-top:1px solid var(--hair);}
+.svc-other + .contact-band{border-top:none;}
+.about-story .prose{max-width:none;display:grid;grid-template-columns:4fr 8fr;column-gap:64px;align-items:start;}
+.about-story .prose > .t-sec-head,.about-story .prose > h2{grid-column:1;}
+.about-story .prose > h2{position:sticky;top:120px;font-size:clamp(32px,3.6vw,48px);max-width:10ch;}
+.about-story .prose > p,.about-story .prose > .callout{grid-column:2;}
+@media (max-width:900px){.about-story .prose{display:block;max-width:var(--col-text);}.about-story .prose > h2{position:static;max-width:none;}}

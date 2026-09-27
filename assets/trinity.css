@@ -1133,3 +1133,15 @@ body.t-menu-open{overflow:hidden;}
   .t-topbar-hours{flex:1;}
   .t-mobile-menu{max-height:calc(100vh - 92px);max-height:calc(100dvh - 92px);}
 }
+
+/* mega menu: compact rows; under 1180px it spans the header instead of hanging off the nav */
+.t-menu-inner .t-mega-city > a{min-height:30px;}
+.t-mega-services{min-width:236px;}
+.t-mega-services > a{white-space:nowrap;}
+@media (max-width:1180px){
+  .t-header-inner{position:relative;}
+  .t-nav-item.t-has-menu:first-child{position:static;}
+  .t-menu-mega{left:var(--pad);right:var(--pad);}
+  .t-menu-inner.t-mega{grid-template-columns:236px 1fr;}
+  .t-menu-inner .t-mega-city-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
