@@ -760,3 +760,27 @@ body.blog-index .post-header + section{padding-top:48px;}
 .s7-crumb a,.svc-breadcrumbs a,.post-header .breadcrumbs a{min-width:44px;}
 .blog-grid .card.post-card:not(.featured) .card-body > p{flex:none;}
 .blog-grid .card.post-card:not(.featured) .card-body .more{margin-top:auto;padding-top:10px;}
+
+/* ===== Site8 round 2: work and reviews heroes carry a real photo in the side column (the right half was
+   empty navy / warm with a lone piece); the piece docks on the photo's corner. FAQ topics sit in white
+   panels on the warm canvas like the index. The full-width photo band is capped at its pixels. ===== */
+@media (min-width:1025px){.s7-hero-grid:has(.s7-hero-side--photo){grid-template-columns:7fr 5fr;align-items:end;}}
+.s7-hero-side--photo{align-items:stretch;gap:18px;}
+.s7-hero-photo{position:relative;margin:0;border-radius:10px;}
+.s7-hero-photo img{display:block;width:100%;height:clamp(300px,28vw,400px);object-fit:cover;border-radius:10px;}
+.s7-hero-photo .dock{position:absolute;left:-28px;bottom:-30px;}
+.s7-hero-side--photo .t-hero-rating,.s7-hero-side--photo .s7-google{align-self:flex-end;margin-top:8px;}
+@media (max-width:1024px){
+  .s7-hero-side--photo{margin-top:8px;}
+  .s7-hero-photo img{height:clamp(240px,46vw,400px);}
+  .s7-hero-photo .dock{left:-8px;bottom:-24px;}
+}
+.s7-topic{background:#fff;border-radius:10px;padding:32px 32px 6px;}
+.s7-topic + .s7-topic{margin-top:24px;}
+.s7-topic .t-faq-item:last-child{border-bottom:none;}
+@media (max-width:760px){.s7-topic{padding:22px 20px 2px;}}
+.s7-band img,.s7-band--tall img{height:clamp(320px,40vw,560px);}
+/* AA on navy: the red label and the giant quote mark read at 2.9:1 on navy, so they go white there */
+.s7-navy .t-sec-n{color:#fff;}
+.s7-navy .t-quote-mark,.s7-feature .t-quote-mark{color:#fff;}
+.s7-search input{min-height:44px;}
