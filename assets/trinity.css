@@ -1197,3 +1197,11 @@ p a[href^="tel:"],div.t-svc-lead a[href^="tel:"],.t-mm-meta a[href^="tel:"]{disp
 .t-crew-block .t-avatar.t-avatar-photo{width:120px;height:160px;}
 .t-avatar.t-avatar-photo img{width:100%;height:100%;object-fit:contain;display:block;}
 @media (max-width:760px){.t-crew-block .t-avatar.t-avatar-photo{width:96px;height:128px;}}
+
+/* footer wordmark and crew member are links to home and the about page */
+a.t-footer-brand{color:inherit;text-decoration:none;}
+.t-footer-brand .t-footer-wordmark{display:block;}
+a.t-footer-brand:hover .t-footer-wordmark{color:#fff;opacity:.92;}
+a.t-crew-member{color:inherit;text-decoration:none;}
+a.t-crew-member:hover .t-crew-name{color:var(--red);}
+.photo-strip figure a{display:block;height:100%;}
