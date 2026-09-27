@@ -1191,3 +1191,9 @@ p a[href^="tel:"],div.t-svc-lead a[href^="tel:"],.t-mm-meta a[href^="tel:"]{disp
 .t-work-f3{grid-column:3 / span 7;}
 .t-work-f3 img.t-main{height:clamp(360px,30vw,460px);}
 @media (max-width:1000px){.t-work-f3{grid-column:auto;}}
+
+/* crew photo in the homepage crew block: whole photo, 3:4, no round crop */
+.t-avatar.t-avatar-photo{border-radius:8px;}
+.t-crew-block .t-avatar.t-avatar-photo{width:120px;height:160px;}
+.t-avatar.t-avatar-photo img{width:100%;height:100%;object-fit:contain;display:block;}
+@media (max-width:760px){.t-crew-block .t-avatar.t-avatar-photo{width:96px;height:128px;}}

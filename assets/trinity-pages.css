@@ -787,7 +787,7 @@ body.blog-index .post-header + section{padding-top:48px;}
 
 .about-hero .owner-photo{max-width:410px;margin-left:auto;}
 @media (max-width:900px){.about-hero .owner-photo{margin-left:0;}}
-.s7-fig img.s7-main[width="410"]{max-width:410px;height:auto;margin-left:auto;}
+.s7-fig img.s7-main[src*="crew-truck"]{max-width:410px;height:auto;margin-left:auto;object-fit:contain;}
 
 /* ===== Site8 round 3: the blog index opens with the latest guide beside the title (the header's right half was
    empty and the featured card repeated the same image below); page titles share one scale ===== */
@@ -814,3 +814,9 @@ body.blog-index .post-header{padding-bottom:72px;}
 @media (max-width:900px){.post-header-grid{grid-template-columns:1fr;gap:28px;}}
 .s7-h1{font-size:clamp(40px,5vw,72px);font-weight:750;letter-spacing:-0.04em;line-height:.98;}
 @media (max-width:1024px){.s7-hero-side--photo .t-hero-rating,.s7-hero-side--photo .s7-google{margin-top:56px;}}
+
+/* the crew photo is shown whole, at its own 3:4 ratio, wherever it appears: no crop, no zoom */
+.svc-tile img[src*="crew-truck"],.blog-grid .card-img img[src*="crew-truck"]{object-fit:contain;background:var(--warm);}
+.about-hero .owner-photo img[src*="crew-truck"]{height:auto;object-fit:contain;}
+.about-crew .t-avatar.t-avatar-photo{width:96px;height:128px;border-radius:8px;}
+.about-crew .t-avatar.t-avatar-photo img{object-fit:contain;}
