@@ -26,7 +26,7 @@ Dry by default: prints what it would change and writes nothing.
 import argparse, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '18'
+CSS_V = '19'
 JS_V = '12'
 
 OLD_HEADER_RE = re.compile(r'<header class="site-header" id="site-header">.*?</header>\s*(<nav class="mobile-menu" aria-label="Mobile">.*?</nav>\s*)?', re.S)
