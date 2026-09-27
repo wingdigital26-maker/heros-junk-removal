@@ -699,3 +699,23 @@ body.blog-index .post-header + section{padding-top:48px;}
   .s7-note{grid-template-columns:1fr;margin-top:40px;}
   .s7-map-head,.s7-svc-head,.s7-cities-head{margin-bottom:32px;gap:16px;}
 }
+
+/* ===== Site7 round 2: one page header on every inner page (crumb, title, lead, primary action) on the warm canvas ===== */
+.svc-hero,.about-hero,.contact-hero,.nf-hero,.s7-hero:not(.s7-navy),.post-header{background:var(--warm);}
+.svc-hero{padding:32px 0 72px;}
+.about-hero{padding:32px 0 72px;}
+.contact-hero{padding:32px 0 88px;}
+.nf-hero{padding:32px 0 72px;}
+.s7-hero{padding:32px 0 80px;}
+.svc-breadcrumbs,.breadcrumbs,.s7-crumb,.about-hero .s7-crumb,.contact-hero .s7-crumb,.nf-hero .s7-crumb{font-size:13px;color:var(--grey);margin:0 0 22px;display:flex;align-items:center;gap:8px;min-height:44px;flex-wrap:wrap;}
+.svc-breadcrumbs a,.breadcrumbs a,.s7-crumb a{color:var(--navy);opacity:.75;}
+.svc-breadcrumbs a:hover,.breadcrumbs a:hover,.s7-crumb a:hover{color:var(--red);opacity:1;}
+.svc-hero .svc-hero-photo .video-window{background:#E5E1D8;}
+.about-hero .owner-photo img,.svc-hero .video-window{box-shadow:0 30px 60px -30px rgba(20,40,75,.35);}
+.contact-hero .contact-card{background:#fff;}
+.post-header{padding:32px 0 200px;}
+@media (max-width:760px){.svc-hero,.about-hero,.contact-hero,.nf-hero,.s7-hero{padding-top:12px;}.post-header{padding-top:12px;}}
+.svc-breadcrumbs a,.breadcrumbs a,.s7-crumb a{text-decoration:none;min-width:0;justify-content:flex-start;}
+.about-hero-grid{align-items:start;}
+.about-hero .owner-photo{align-self:start;}
+.about-hero .owner-photo img{max-height:560px;object-fit:cover;width:100%;border-radius:12px;}
