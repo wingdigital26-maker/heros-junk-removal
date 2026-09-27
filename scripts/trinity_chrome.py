@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Put every inner page on the homepage's (Trinity) chrome and design language.
 
-Pages: 404.html, about.html, areas.html, contact.html, services/*.html, blog/*.html.
+Pages: 404.html, about.html, areas.html, work.html, reviews.html, faq.html, contact.html, services/*.html, blog/*.html.
 
 What it does to each page (re-runnable: a page already on the Trinity chrome gets
 its header/footer refreshed from index.html, nothing else changes twice):
@@ -26,7 +26,7 @@ Dry by default: prints what it would change and writes nothing.
 import argparse, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '14'
+CSS_V = '17'
 JS_V = '10'
 
 OLD_HEADER_RE = re.compile(r'<header class="site-header" id="site-header">.*?</header>\s*(<nav class="mobile-menu" aria-label="Mobile">.*?</nav>\s*)?', re.S)
@@ -49,6 +49,7 @@ FAVICONS = ('<link rel="icon" href="%sassets/logo5/mark.svg" type="image/svg+xml
             '<link rel="icon" href="%sassets/logo5/favicon-32.png" sizes="32x32" type="image/png">\n'
             '<link rel="icon" href="%sassets/logo5/favicon-16.png" sizes="16x16" type="image/png">\n'
             '<link rel="apple-touch-icon" href="%sassets/logo5/apple-touch-icon.png">\n')
+TOP_PAGES = ('about.html', 'contact.html', 'areas.html', 'work.html', 'reviews.html', 'faq.html')
 TRINITY_JS_RE = re.compile(r'<script src="(?:\.\./)?assets/trinity\.js[^"]*" defer></script>\s*')
 
 
@@ -60,7 +61,7 @@ def grab(text, pattern):
 
 
 def pages():
-    out = [ROOT / r for r in ('404.html', 'about.html', 'areas.html', 'contact.html') if (ROOT / r).exists()]
+    out = [ROOT / r for r in ('404.html', 'about.html', 'areas.html', 'work.html', 'reviews.html', 'faq.html', 'contact.html') if (ROOT / r).exists()]
     out += sorted((ROOT / 'services').glob('*.html'))
     out += sorted((ROOT / 'blog').glob('*.html'))
     return out
@@ -80,15 +81,17 @@ def chrome_urls(tpl, pre):
             return '%s="/%s"' % (attr, url)            # homepage sections: /#services, /#reviews ...
         if url == './':
             return '%s="%s"' % (attr, pre or './')
-        if url.startswith(('assets/', 'services/', 'blog/', 'img/')) or url in ('about.html', 'contact.html'):
+        if url.startswith(('assets/', 'services/', 'blog/', 'img/')) or url in TOP_PAGES:
             return '%s="%s%s"' % (attr, pre, url)
         return m.group(0)
     return re.sub(r'(href|src)="([^"]*)"', fix, tpl)
 
 
 def mark_current(html, p):
+    """aria-current on the header link for this page (the top pages and the services index)."""
     rel = p.relative_to(ROOT).as_posix()
-    target = {'about.html': 'about.html', 'contact.html': 'contact.html'}.get(rel)
+    pre = prefix(p)
+    target = {'services/index.html': pre + 'services/'}.get(rel) or (pre + rel if rel in TOP_PAGES else None)
     if not target:
         return html
     for nav in ('t-nav', 't-mobile-menu'):
@@ -162,7 +165,8 @@ def main():
                       '<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" rel="stylesheet">\n'
                       '<link rel="stylesheet" href="%sassets/trinity.css?v=%s">\n'
                       '<link rel="stylesheet" href="%sassets/trinity-pages.css?v=%s">\n'
-                      '<!-- /trinity:head -->\n') % (pre, CSS_V, pre, CSS_V)
+                      '<link rel="stylesheet" href="%sassets/logo-piece/logo-piece.css?v=1">\n'
+                      '<!-- /trinity:head -->\n') % (pre, CSS_V, pre, CSS_V, pre)
         s = s.replace('</head>', head_block + '</head>', 1)
 
         # favicons: the logo5 set (brand/logo5/build.py), same on every page

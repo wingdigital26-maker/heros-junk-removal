@@ -1033,3 +1033,18 @@ html.js .t-sec-head.rise{transform:none;}
 .t-services .t-next,.t-faq .t-next{grid-column:2;margin-top:40px;}
 .t-work{padding-bottom:96px;}
 @media (max-width:1000px){.t-services .t-next,.t-faq .t-next{grid-column:1;}}
+
+/* ===== Site7 round 1: header links go to real pages; "See all" rows under each homepage preview ===== */
+/* homepage: "See all" rows that point at the real pages */
+.t-seeall{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:15px;font-weight:600;color:var(--navy);letter-spacing:-0.01em;}
+.t-seeall i{width:40px;height:40px;border-radius:50%;border:1px solid #CFCAC0;position:relative;flex:0 0 auto;transition:background .3s,border-color .3s,transform .45s cubic-bezier(.2,.7,.2,1);}
+.t-seeall i::before{content:"";position:absolute;left:12px;top:19px;width:15px;height:1.5px;background:var(--navy);}
+.t-seeall i::after{content:"";position:absolute;left:19px;top:15px;width:8px;height:8px;border-top:1.5px solid var(--navy);border-right:1.5px solid var(--navy);transform:rotate(45deg);}
+.t-seeall:hover i{background:var(--red);border-color:var(--red);transform:translateX(4px);}
+.t-seeall:hover i::before{background:#fff;}
+.t-seeall:hover i::after{border-color:#fff;}
+
+/* header: the current page is underlined */
+.t-nav a[aria-current="page"]{opacity:1;}
+.t-nav a[aria-current="page"]::after{transform:scaleX(1);}
+.t-mobile-menu a[aria-current="page"]{color:var(--red);font-weight:600;}
