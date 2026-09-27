@@ -27,7 +27,7 @@ import argparse, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CSS_V = '17'
-JS_V = '10'
+JS_V = '11'
 
 OLD_HEADER_RE = re.compile(r'<header class="site-header" id="site-header">.*?</header>\s*(<nav class="mobile-menu" aria-label="Mobile">.*?</nav>\s*)?', re.S)
 NEW_HEADER_RE = re.compile(r'<header class="t-header">.*?</header>\s*', re.S)
@@ -92,11 +92,16 @@ def mark_current(html, p):
     rel = p.relative_to(ROOT).as_posix()
     pre = prefix(p)
     target = {'services/index.html': pre + 'services/'}.get(rel) or (pre + rel if rel in TOP_PAGES else None)
+    value = 'page'
+    if not target and rel.startswith('services/'):
+        # a service or city page belongs to a section: underline its parent in the header
+        value = 'true'
+        target = pre + ('areas.html' if p.stem.startswith('junk-removal-') else 'services/')
     if not target:
         return html
-    for nav in ('t-nav', 't-mobile-menu'):
+    for nav in (('t-nav', 't-mobile-menu') if value == 'page' else ('t-nav',)):
         html = re.sub(r'(<nav class="%s"[^>]*>.*?)<a href="%s">' % (nav, re.escape(target)),
-                      lambda m: m.group(1) + '<a href="%s" aria-current="page">' % target, html, count=1, flags=re.S)
+                      lambda m: m.group(1) + '<a href="%s" aria-current="%s">' % (target, value), html, count=1, flags=re.S)
     return html
 
 

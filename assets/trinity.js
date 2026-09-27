@@ -12,6 +12,17 @@
     });
   }
 
+  // header panels (Where we go, What we haul): the caret toggles them for touch and keyboard; hover opens them in CSS
+  var items = Array.prototype.slice.call(document.querySelectorAll('.t-has-menu'));
+  function closeMenus(except){ items.forEach(function(it){ if(it!==except){ it.classList.remove('open'); var b=it.querySelector('.t-nav-caret'); if(b) b.setAttribute('aria-expanded','false'); } }); }
+  items.forEach(function(it){
+    var b=it.querySelector('.t-nav-caret'); if(!b) return;
+    b.addEventListener('click', function(e){ e.stopPropagation(); var open=!it.classList.contains('open'); closeMenus(it); it.classList.toggle('open',open); b.setAttribute('aria-expanded',String(open)); });
+    it.addEventListener('mouseleave', function(){ it.classList.remove('open'); b.setAttribute('aria-expanded','false'); });
+  });
+  document.addEventListener('click', function(e){ if(!e.target.closest || !e.target.closest('.t-has-menu')) closeMenus(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeMenus(); });
+
   // marquee: duplicate the run so the loop is seamless
   document.querySelectorAll('.t-marquee-track').forEach(function(t){ t.innerHTML += t.innerHTML; });
 

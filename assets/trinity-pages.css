@@ -486,7 +486,7 @@ body.blog-index .post-header + section{padding-top:48px;}
 .s7-h1{font-size:clamp(44px,5.6vw,88px);font-weight:800;letter-spacing:-0.048em;line-height:.94;color:var(--navy);margin:0 0 26px;max-width:14ch;}
 .s7-lead{font-size:clamp(18px,1.5vw,22px);line-height:1.45;color:var(--text);max-width:560px;margin:0 0 30px;}
 .s7-hero .t-pill-row{align-items:center;}
-.s7-hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:24px;}
+.s7-hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:56px;}
 .s7-hero-side .dock{margin:0;}
 .s7-hero-side .t-hero-rating{margin:0;}
 .s7-crumb{font-size:13px;color:var(--grey);margin:0 0 26px;display:flex;align-items:center;gap:8px;min-height:44px;}
@@ -523,8 +523,8 @@ body.blog-index .post-header + section{padding-top:48px;}
 .s7-fig-card:hover img.s7-main{filter:brightness(.92);}
 .s7-fig-card img.s7-inset{position:absolute;width:44%;height:42%;object-fit:cover;border:6px solid #fff;border-radius:12px;right:-8%;bottom:-44px;}
 .s7-warm .s7-fig-card img.s7-inset{border-color:var(--warm);}
-.s7-fig--inset .t-work-cap{margin-top:64px;}
 .s7-fig .t-work-cap{margin-top:18px;}
+.s7-fig.s7-fig--inset .t-work-cap{margin-top:64px;}
 .s7-warm .t-work-cap{border-top-color:#DEDAD2;}
 
 /* stars, drawn per review (a 4 star review shows 4) */
