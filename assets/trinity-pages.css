@@ -785,3 +785,6 @@ body.blog-index .post-header + section{padding-top:48px;}
 .s7-navy .t-quote-mark,.s7-feature .t-quote-mark{color:#fff;}
 .s7-search input{min-height:44px;}
 
+.about-hero .owner-photo{max-width:410px;margin-left:auto;}
+@media (max-width:900px){.about-hero .owner-photo{margin-left:0;}}
+.s7-fig img.s7-main[width="410"]{max-width:410px;height:auto;margin-left:auto;}
