@@ -250,7 +250,12 @@ async function boot() {
       if (r.width < 4 || r.height < 4) return;       // hidden at this breakpoint
       const d = DIM[f];
       const k = Math.min(r.width / (d[0] + 1), r.height / (d[1] + 1.8));
-      list.push({ el, form: f, dark: isDark(el), x: 0, y: 0, k, pos: null, col: null });
+      let stk = null, stkTop = 0;                     // nearest sticky ancestor: the dock is pinned while it is stuck
+      for (let e = el.parentElement; e && e !== document.body; e = e.parentElement) {
+        const cs = getComputedStyle(e);
+        if (cs.position === 'sticky') { stk = e; stkTop = parseFloat(cs.top) || 0; break; }
+      }
+      list.push({ el, form: f, dark: isDark(el), x: 0, y: 0, ox: 0, oy: 0, k, pos: null, col: null, stk, stkTop });
       place(list[list.length - 1], sy);
     });
     list.sort((a, b) => a.y - b.y || a.x - b.x);
@@ -287,6 +292,7 @@ async function boot() {
   }
   function place(D, sy) {                           // live: docks inside sticky columns move with the page
     const r = D.el.getBoundingClientRect();
+    D.ox = D.x; D.oy = D.y;                          // where it was last frame (sticky docks travel with the scroll)
     D.x = r.left + r.width / 2; D.y = r.top + sy + r.height / 2 - D.k * 0.35;
   }
   // ---- state (all preallocated)
@@ -363,7 +369,15 @@ async function boot() {
       }
     }
     const A = docks[seg], B = docks[Math.min(seg + 1, n - 1)];
+    // a dock in a pinned sticky card travels with the scroll: the focus line is always past it, so hold the
+    // piece in the card instead of letting it creep down the card's copy toward the next dock
+    if (s > 0 && s < 1 && A.stk && Math.abs(A.stk.getBoundingClientRect().top - A.stkTop) < 1.5) s = 0;
     if (seg !== segI) { segI = seg; planSegment(A, B); }
+    if (placed) {                                                    // a sticky dock moved since last frame: carry the
+      const ddx = (A.x - A.ox) * (1 - s) + (B.x - B.ox) * s;         // piece with it at once so it never drags across
+      const ddy = (A.y - A.oy) * (1 - s) + (B.y - B.oy) * s;         // the card's text; the spring only flies real hops
+      if (Math.abs(ddx) < VW && Math.abs(ddy) < VH * 3) { px += ddx; py += ddy; }
+    }
     lastG = seg + s; lastS = s;
 
     let tk = A.k + (B.k - A.k) * s;

@@ -1154,3 +1154,21 @@ body.t-menu-open{overflow:hidden;}
 .t-mega-col > a.t-menu-all:hover i{background:var(--red);border-color:var(--red);transform:translateX(4px);}
 .t-mega-col > a.t-menu-all:hover i::before{background:#fff;}
 .t-mega-col > a.t-menu-all:hover i::after{border-color:#fff;}
+
+/* ===== Site8 round 1: hero photo fills the copy column (the rating line used to hang under the fold with
+   dead space under the photo); less white under the homepage gallery ===== */
+@media (min-width:1001px){
+  .t-hero-grid{align-items:stretch;}
+  .t-hero-photo{position:relative;min-height:480px;}
+  .t-hero-photo img{position:absolute;inset:0;width:100%;height:100%;max-height:none;}
+  .t-hero-copy{gap:22px;}
+  .t-hero-copy > .dock{--dock:150px;margin-bottom:12px;}
+  .t-hero-lead{margin-bottom:18px;}
+  .t-hero-rating{margin-top:10px;}
+}
+.t-work{padding-bottom:56px;}
+@media (max-width:760px){.t-work{padding-bottom:40px;}}
+
+/* site8 r1: phone tap targets. The 4.9 link in the 32px top bar reaches 44px through negative margins;
+   breadcrumb links are never narrower than 44px */
+.t-topbar-rating{min-height:44px;margin:-4px 0;position:relative;z-index:1;}
