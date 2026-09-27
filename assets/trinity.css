@@ -1187,3 +1187,8 @@ body.t-menu-open{overflow:hidden;}
 .t-hero-photo img{object-position:50% 62%;}
 /* inline phone links reach a 44px tap target without moving the text */
 p a[href^="tel:"],div.t-svc-lead a[href^="tel:"],.t-mm-meta a[href^="tel:"]{display:inline-block;padding:12px 0;margin:-12px 0;}
+
+/* site8 r3: the third gallery figure sat on a 5-column island with white either side */
+.t-work-f3{grid-column:3 / span 7;}
+.t-work-f3 img.t-main{height:clamp(360px,30vw,460px);}
+@media (max-width:1000px){.t-work-f3{grid-column:auto;}}

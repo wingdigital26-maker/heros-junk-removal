@@ -788,3 +788,29 @@ body.blog-index .post-header + section{padding-top:48px;}
 .about-hero .owner-photo{max-width:410px;margin-left:auto;}
 @media (max-width:900px){.about-hero .owner-photo{margin-left:0;}}
 .s7-fig img.s7-main[width="410"]{max-width:410px;height:auto;margin-left:auto;}
+
+/* ===== Site8 round 3: the blog index opens with the latest guide beside the title (the header's right half was
+   empty and the featured card repeated the same image below); page titles share one scale ===== */
+.post-header-grid{display:grid;grid-template-columns:6fr 6fr;gap:48px;align-items:end;}
+.post-latest{display:grid;grid-template-columns:1fr;background:#fff;border-radius:10px;overflow:hidden;color:var(--navy);box-shadow:0 1px 0 var(--hair),0 30px 60px -40px rgba(20,40,75,.3);transition:transform .45s cubic-bezier(.2,.7,.2,1);}
+.post-latest:hover{transform:translateY(-3px);}
+.post-latest-img{display:block;aspect-ratio:16/9;overflow:hidden;background:#EEF0F3;}
+.post-latest-img img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .5s ease;}
+.post-latest:hover .post-latest-img img{filter:brightness(.92);}
+.post-latest-body{display:flex;flex-direction:column;gap:8px;padding:22px 26px 20px;}
+.post-latest-k{font-size:13px;color:var(--grey);}
+.post-latest-k b{color:var(--red);font-weight:600;margin-right:8px;}
+.post-latest-h{font-size:clamp(20px,1.8vw,25px);font-weight:700;letter-spacing:-0.03em;line-height:1.15;color:var(--navy);}
+.post-latest-p{font-size:15px;line-height:1.5;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.post-latest-m{font-size:13px;color:var(--grey);}
+.post-latest-go{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:15px;font-weight:600;color:var(--navy);margin-top:2px;}
+.post-latest-go i{width:36px;height:36px;border-radius:50%;border:1px solid #CFCAC0;position:relative;flex:0 0 auto;transition:background .3s,border-color .3s,transform .45s cubic-bezier(.2,.7,.2,1);}
+.post-latest-go i::before{content:"";position:absolute;left:10px;top:17px;width:14px;height:1.5px;background:var(--navy);}
+.post-latest-go i::after{content:"";position:absolute;left:17px;top:13px;width:7px;height:7px;border-top:1.5px solid var(--navy);border-right:1.5px solid var(--navy);transform:rotate(45deg);}
+.post-latest:hover .post-latest-go i{background:var(--red);border-color:var(--red);transform:translateX(4px);}
+.post-latest:hover .post-latest-go i::before{background:#fff;}
+.post-latest:hover .post-latest-go i::after{border-color:#fff;}
+body.blog-index .post-header{padding-bottom:72px;}
+@media (max-width:900px){.post-header-grid{grid-template-columns:1fr;gap:28px;}}
+.s7-h1{font-size:clamp(40px,5vw,72px);font-weight:750;letter-spacing:-0.04em;line-height:.98;}
+@media (max-width:1024px){.s7-hero-side--photo .t-hero-rating,.s7-hero-side--photo .s7-google{margin-top:56px;}}
