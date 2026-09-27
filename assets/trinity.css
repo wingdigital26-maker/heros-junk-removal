@@ -1172,3 +1172,15 @@ body.t-menu-open{overflow:hidden;}
 /* site8 r1: phone tap targets. The 4.9 link in the 32px top bar reaches 44px through negative margins;
    breadcrumb links are never narrower than 44px */
 .t-topbar-rating{min-height:44px;margin:-4px 0;position:relative;z-index:1;}
+
+/* "Read on Google" under every review: one small link, 44px tall, white on navy */
+.rv-google{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;min-height:44px;margin-top:6px;font-size:13px;font-weight:600;letter-spacing:-0.005em;color:var(--navy);opacity:.82;transition:opacity .2s,color .2s;}
+.rv-google svg{width:14px;height:14px;flex:0 0 auto;}
+.rv-google:hover{opacity:1;color:var(--red);text-decoration:underline;text-underline-offset:3px;}
+.review-card.featured .rv-google,.s7-navy .rv-google,.t-rv-pull-band .rv-google,.s7-feature .rv-google{color:#fff;}
+.review-card.featured .rv-google:hover,.s7-navy .rv-google:hover,.t-rv-pull-band .rv-google:hover,.s7-feature .rv-google:hover{color:#fff;}
+.t-rv-foot + .rv-google{margin-top:2px;}
+.t-rv-pull figcaption .rv-google{margin:0;}
+.review-card .rv-google{margin-top:auto;padding-top:8px;}
+.review-card .tag-pills + .rv-google{margin-top:8px;}
+.review-card .rv-google,.mini-review .rv-google{order:5;margin-top:0;padding-top:0;}
