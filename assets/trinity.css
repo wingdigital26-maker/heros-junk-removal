@@ -1184,7 +1184,6 @@ body.t-menu-open{overflow:hidden;}
 .review-card .rv-google{margin-top:auto;padding-top:8px;}
 .review-card .tag-pills + .rv-google{margin-top:8px;}
 .review-card .rv-google,.mini-review .rv-google{order:5;margin-top:0;padding-top:0;}
-.t-hero-photo img{object-position:50% 62%;}
 /* inline phone links reach a 44px tap target without moving the text */
 p a[href^="tel:"],div.t-svc-lead a[href^="tel:"],.t-mm-meta a[href^="tel:"]{display:inline-block;padding:12px 0;margin:-12px 0;}
 
