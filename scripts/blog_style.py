@@ -35,12 +35,17 @@ def strip_tags(s: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", s)).strip()
 
 
+BLOG_CSS = '<link rel="stylesheet" href="../assets/blog.css?v=1">'
+
+
 def drop_duplicate_head_links(html: str) -> str:
-    """Remove stylesheet/font links that sit before the chrome-managed block."""
+    """Remove stylesheet/font links that sit before the chrome-managed block; link the blog stylesheet after it."""
     m = re.search(r"<!-- trinity:head -->", html)
     if not m:
         return html
     head, rest = html[:m.start()], html[m.start():]
+    rest = re.sub(r'\n<link rel="stylesheet" href="\.\./assets/blog\.css\?v=\d+">', "", rest)
+    rest = rest.replace("<!-- /trinity:head -->", "<!-- /trinity:head -->\n" + BLOG_CSS, 1)
     head = re.sub(r'\n<link href="https://fonts\.googleapis\.com/css2[^>]*>(?=\n)', "", head)
     head = re.sub(r'\n<link rel="stylesheet" href="\.\./assets/(trinity|trinity-pages|logo-piece/logo-piece)\.css\?v=\d+">(?=\n)', "", head)
     return head + rest
