@@ -891,3 +891,29 @@ body.blog-index .post-header{padding-bottom:72px;}
 .about-facts a{color:var(--navy);text-decoration-color:rgba(20,40,75,.35);}
 /* reviews hero: the copy hangs from the top of the grid, so the breadcrumb no longer floats 200px down */
 @media (min-width:1025px){.s7-hero-grid:has(.s7-hero-side--photo){align-items:start;}.s7-hero-grid:has(.s7-hero-side--photo) > div:first-child{padding-top:12px;}}
+
+/* ===== Site14 round 2 ===== */
+/* service and city pages: the reading column and the sticky card sit in one 1140px article frame (the 62ch column
+   left a 330px blank gutter before the card at 1440) */
+@media (min-width:1025px){
+  .svc-body-grid{max-width:1140px;margin:0 auto;grid-template-columns:minmax(0,1fr) 360px;gap:64px;}
+  .svc-content{max-width:none;}
+}
+/* services index: six tiles fill three full rows (wide + one, three, two half-width) instead of leaving the last
+   cell of the grid empty; the couch piece stands on the section rule like the homepage heads */
+@media (min-width:1025px){
+  .s7-svc-grid{grid-template-columns:repeat(6,1fr);}
+  .s7-svc-tile{grid-column:span 2;}
+  .s7-svc-tile--wide{grid-column:span 4;}
+  .s7-svc-grid > .s7-svc-tile:nth-last-child(-n+2):not(.s7-svc-tile--wide){grid-column:span 3;}
+  .s7-svc-grid > .s7-svc-tile:nth-last-child(-n+2):not(.s7-svc-tile--wide) img{aspect-ratio:16/9;}
+}
+.s7-svc-head .t-sec-head:has(> .dock){align-items:flex-end;max-width:none;}
+.s7-svc-head .t-sec-head:has(> .dock) .t-sec-rule{max-width:none;}
+.s7-svc-head .t-sec-head > .dock[data-form="couch"]{height:calc(var(--dock,136px) * .64);}
+/* areas and other text heroes: the piece and the rating sit together on the side column's baseline instead of
+   a piece at the top and a rating line stranded at the bottom */
+@media (min-width:1025px){
+  .s7-hero-side:not(.s7-hero-side--photo){flex-direction:row;align-items:center;justify-content:flex-end;gap:28px;align-self:end;}
+  .s7-hero-side:not(.s7-hero-side--photo) .t-hero-rating{margin:0;white-space:nowrap;}
+}
