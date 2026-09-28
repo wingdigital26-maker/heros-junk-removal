@@ -180,7 +180,8 @@ def main():
                 for c in row["clips"]:
                     print(f"      {c['type']} @y{c['y']}: {c['a']}  by {c['by']}")
             pg.close()
-        b.close()
+        try: b.close()
+        except Exception: pass
     if out_json:
         with open(out_json, "w", encoding="utf-8") as f: json.dump(report, f, indent=1)
     bad = [r for r in report if r.get("hits") or r.get("clips") or r.get("overflow") or r.get("error")]
