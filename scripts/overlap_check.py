@@ -16,6 +16,8 @@ from playwright.sync_api import sync_playwright
 
 TOL = 4
 VIEWPORTS = [(1440, 900), (1024, 768), (768, 1024), (390, 844)]
+if os.environ.get("VPS"):  # e.g. VPS=1440,390 for a quick pass
+    VIEWPORTS = [v for v in VIEWPORTS if str(v[0]) in os.environ["VPS"].split(",")]
 
 JS = r"""
 (tol) => {
@@ -32,7 +34,19 @@ JS = r"""
   };
   const hidden = (el) => el.closest('.t-menu,.t-mobile-menu,.t-mega,nav .t-drop,[hidden],template,marquee,.t-marquee,.t-ticker');
   const inDock = (el) => el.closest('.dock,.lp-dock') && !el.matches('.dock,.lp-dock');
-  const els = [...document.querySelectorAll(SEL)].filter(el => !hidden(el) && !inDock(el) && vis(el));
+  // fully hidden by a closed accordion or an overflow:hidden ancestor collapsed around it (FAQ bodies): not on screen
+  const folded = (el) => {
+    const d = el.closest('details:not([open])'); if (d && !el.matches('summary') && !el.closest('summary')) return true;
+    const r = el.getBoundingClientRect();
+    for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) {
+      const c = getComputedStyle(n);
+      if (!/hidden|clip/.test(c.overflowX) && !/hidden|clip/.test(c.overflowY)) continue;
+      const q = n.getBoundingClientRect();
+      if (r.bottom <= q.top + 1 || r.top >= q.bottom - 1 || r.right <= q.left + 1 || r.left >= q.right - 1) return true;
+    }
+    return false;
+  };
+  const els = [...document.querySelectorAll(SEL)].filter(el => !hidden(el) && !inDock(el) && vis(el) && !folded(el));
   const label = (el) => {
     let s = el.tagName.toLowerCase();
     if (el.id) s += '#' + el.id;

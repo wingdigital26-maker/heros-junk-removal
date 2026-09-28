@@ -1252,9 +1252,9 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
 .t-sec-head > .dock{margin-left:auto;}
 .t-sec-head:has(> .dock){align-items:center;margin-bottom:14px;}
 .t-sec-head:has(> .dock) .t-sec-rule{max-width:none;}
-.t-work-head-copy .t-sec-head:has(> .dock){max-width:520px;}
-.t-reviews .t-sec-head:has(> .dock){max-width:720px;}
-.t-close .t-sec-head:has(> .dock){max-width:520px;}
+/* the dock sits on the right edge of the section's copy block, so the rule spans exactly the text below it */
+.t-work-head-copy .t-sec-head:has(> .dock){max-width:760px;}
+.t-reviews .t-sec-head:has(> .dock){max-width:700px;}
 .t-crew-line{font-size:17px;line-height:1.5;color:var(--text);margin:0;}
 .t-crew-line a{color:var(--navy);font-weight:600;white-space:nowrap;border-bottom:1px solid var(--red);padding-bottom:1px;}
 .t-crew-line a:hover{color:var(--red);}
