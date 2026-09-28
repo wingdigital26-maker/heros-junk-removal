@@ -145,7 +145,7 @@ def main():
             return pg
 
         def audit(pg, page, vw):
-            pg.goto(f"http://localhost:4820/{page}.html", wait_until="domcontentloaded")
+            pg.goto(f"http://localhost:{os.environ.get('PORT', '4820')}/{page}.html", wait_until="domcontentloaded")
             pg.wait_for_timeout(900)
             h = pg.evaluate("document.body.scrollHeight")
             for y in range(0, h + 600, 500):
