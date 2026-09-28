@@ -1235,3 +1235,7 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
 .t-menu-all{min-height:48px;}
 .rv-google svg,.t-seeall svg,.t-google-line svg{width:var(--icon);height:var(--icon);}
 @media (max-width:760px){.t-svc-desc{font-size:var(--fs-small);}}
+
+/* real job photo in the homepage work grid: natural aspect, never cropped */
+.t-work-card img.t-main.t-natural{height:auto !important;}
+@media (max-width:1000px){.t-work-card img.t-main.t-natural{max-width:440px;}}
