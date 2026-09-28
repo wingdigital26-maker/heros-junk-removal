@@ -1238,3 +1238,9 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
 /* real job photo in the homepage work grid: natural aspect, never cropped */
 .t-work-card img.t-main.t-natural{height:auto !important;}
 @media (max-width:1000px){.t-work-card img.t-main.t-natural{max-width:440px;}}
+
+/* work.html gallery: the photo-in-photo inset stays inside its own figure's column (it hung 8% past the card
+   and collided with the neighbouring photo and caption at 1440 and 1024); it still hangs below the main photo
+   into the gutter the caption reserves */
+.s7-gal .s7-fig-card img.s7-inset{right:6%;left:auto;}
+@media (max-width:760px){.s7-gal .s7-fig-card img.s7-inset{right:12px;}}
