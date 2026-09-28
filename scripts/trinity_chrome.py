@@ -26,7 +26,7 @@ Dry by default: prints what it would change and writes nothing.
 import argparse, pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CSS_V = '34'
+CSS_V = '37'
 JS_V = '12'
 
 OLD_HEADER_RE = re.compile(r'<header class="site-header" id="site-header">.*?</header>\s*(<nav class="mobile-menu" aria-label="Mobile">.*?</nav>\s*)?', re.S)
@@ -173,6 +173,12 @@ def main():
                       '<link rel="stylesheet" href="%sassets/logo-piece/logo-piece.css?v=1">\n'
                       '<!-- /trinity:head -->\n') % (pre, CSS_V, pre, CSS_V, pre)
         s = s.replace('</head>', head_block + '</head>', 1)
+        # page stylesheets that must cascade after the chrome (blog.css) stay after the block
+        late = re.findall(r'<link rel="stylesheet" href="(?:\.\./)?assets/blog\.css[^"]*">\n?', s)
+        if late:
+            for l in late:
+                s = s.replace(l, '', 1)
+            s = s.replace('<!-- /trinity:head -->\n', '<!-- /trinity:head -->\n' + late[0].rstrip('\n') + '\n', 1)
 
         # favicons: the logo5 set (brand/logo5/build.py), same on every page
         fav = FAVICONS % (pre, pre, pre, pre)
