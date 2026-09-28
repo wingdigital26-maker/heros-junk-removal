@@ -1244,3 +1244,23 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
    into the gutter the caption reserves */
 .s7-gal .s7-fig-card img.s7-inset{right:6%;left:auto;}
 @media (max-width:760px){.s7-gal .s7-fig-card img.s7-inset{right:12px;}}
+
+/* Homepage simplification (2026-09-28): one action per section, no marquee, no Next rows, no scroll cue.
+   The cube piece docks on the section-head rule: number, rule leading into the piece, then the heading. The
+   piece assembles in place there (the script only ever draws inside a dock) and never sits in a pill row or
+   between a heading and its lede again. The hero keeps its own dock under the headline. */
+.t-sec-head > .dock{margin-left:auto;}
+.t-sec-head:has(> .dock){align-items:center;margin-bottom:14px;}
+.t-sec-head:has(> .dock) .t-sec-rule{max-width:none;}
+.t-work-head-copy .t-sec-head:has(> .dock){max-width:520px;}
+.t-reviews .t-sec-head:has(> .dock){max-width:720px;}
+.t-close .t-sec-head:has(> .dock){max-width:520px;}
+.t-crew-line{font-size:17px;line-height:1.5;color:var(--text);margin:0;}
+.t-crew-line a{color:var(--navy);font-weight:600;white-space:nowrap;border-bottom:1px solid var(--red);padding-bottom:1px;}
+.t-crew-line a:hover{color:var(--red);}
+.t-work-head-copy .t-seeall,.t-svc-intro .t-seeall,.t-coverage-copy .t-seeall{margin-top:4px;}
+.t-reviews-lede{gap:24px;}
+@media (max-width:760px){
+  .t-sec-head > .dock[data-phone]{--dock:72px;}
+  .t-sec-head:has(> .dock){margin-bottom:12px;}
+}
