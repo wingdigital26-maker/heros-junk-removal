@@ -1,0 +1,16 @@
+{
+  // Deploy recipe: copy this to <deploydir>/wrangler.jsonc, worker/index.js to <deploydir>/index.js,
+  // and a clean git-archive of the site (minus brand/, scripts/, worker/, *.md, *.py) to <deploydir>/public.
+  "name": "heros-junk-removal",
+  "main": "index.js",
+  "compatibility_date": "2026-09-23",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/*"]
+  },
+  "kv_namespaces": [{ "binding": "LEADS", "id": "9c9c1cb2d1bf4bd0b75165976769dbcb" }],
+  "observability": { "enabled": true }
+}
