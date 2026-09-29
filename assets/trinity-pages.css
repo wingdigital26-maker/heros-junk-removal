@@ -917,3 +917,12 @@ body.blog-index .post-header{padding-bottom:72px;}
   .s7-hero-side:not(.s7-hero-side--photo){flex-direction:row;align-items:center;justify-content:flex-end;gap:28px;align-self:end;}
   .s7-hero-side:not(.s7-hero-side--photo) .t-hero-rating{margin:0;white-space:nowrap;}
 }
+
+/* ===== Site14 round 3 ===== */
+/* portrait service heroes (estate, furniture in Dallas): a 480px window, so the copy no longer floats in the middle
+   of an 814px column with the breadcrumb 150px below the header */
+@media (min-width:1001px){.svc-hero--portrait .svc-hero-photo .video-window{max-width:480px;}.svc-hero--portrait .svc-hero-copy{align-self:start;padding-top:28px;}}
+/* 404: the house piece fills the right half of the hero instead of empty canvas */
+.nf-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center;}
+.nf-hero-grid > .dock{justify-self:end;margin-right:6%;}
+@media (max-width:760px){.nf-hero-grid{grid-template-columns:1fr;gap:8px;}.nf-hero-grid > .dock{justify-self:start;margin:0 0 8px;}}
