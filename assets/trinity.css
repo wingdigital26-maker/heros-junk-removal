@@ -616,6 +616,13 @@ h1.t-headline{margin:0;}
   .t-hero-photo img{height:360px;}
   .t-wordmark-band{margin-top:32px;}
 }
+/* Round 1 overflow fix: on phones under 480px the header phone link + "Get a free
+   quote" pill + burger no longer fit on one line (root cause of the 375px sideways
+   scroll). Drop the header pill here; the same CTA is already the first action in
+   the mobile menu (.t-mm-actions), so nothing is lost, tel: link stays visible. */
+@media (max-width:480px){
+  .t-header-actions .t-pill.t-primary{display:none;}
+}
 
 /* ===== Loop round 2: coverage composition + reviews rhythm ===== */
 :root{--grey:#5F6675;}
