@@ -1284,3 +1284,10 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
    instead of floating in the middle of a square dock with empty space under the wheels */
 .t-sec-head > .dock[data-form="truck"],.t-sec-head > .dock[data-form="couch"]{height:calc(var(--dock,136px) * .64);}
 #quote{scroll-margin-top:120px;}
+
+/* ===== logo6 (2026-10-06): Nash's supplied logo. Horizontal lockup in the header, stacked lockup in the footer (brand/logo6.py) ===== */
+.t-logo .t-logo-img{display:block;height:54px;width:auto;}
+.t-footer-brand .t-footer-logo{display:block;width:clamp(170px,22vw,240px);height:auto;}
+@media (max-width:760px){
+  .t-logo .t-logo-img{height:42px;}
+}

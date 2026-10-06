@@ -44,11 +44,11 @@ DROP_SCRIPTS = [
     re.compile(r'<script src="(?:\.\./)?assets/piece\.js[^"]*" defer></script>\s*'),
 ]
 TRINITY_HEAD_RE = re.compile(r'<!-- trinity:head -->.*?<!-- /trinity:head -->\s*', re.S)
-FAVICON_RE = re.compile(r'(?:<link rel="(?:icon|apple-touch-icon)" href="(?:\.\./)?assets/(?:logo-piece|logo5)/[^"]+"[^>]*>\s*)+')
-FAVICONS = ('<link rel="icon" href="%sassets/logo5/mark.svg" type="image/svg+xml">\n'
-            '<link rel="icon" href="%sassets/logo5/favicon-32.png" sizes="32x32" type="image/png">\n'
-            '<link rel="icon" href="%sassets/logo5/favicon-16.png" sizes="16x16" type="image/png">\n'
-            '<link rel="apple-touch-icon" href="%sassets/logo5/apple-touch-icon.png">\n')
+FAVICON_RE = re.compile(r'(?:<link rel="(?:icon|apple-touch-icon)" href="(?:\.\./)?assets/(?:logo-piece|logo5|logo6)/[^"]+"[^>]*>\s*)+')
+FAVICONS = ('<link rel="icon" href="%sassets/logo6/favicon-32.png" sizes="32x32" type="image/png">\n'
+            '<link rel="icon" href="%sassets/logo6/icon-192.png" sizes="192x192" type="image/png">\n'
+            '<link rel="icon" href="%sassets/logo6/favicon-16.png" sizes="16x16" type="image/png">\n'
+            '<link rel="apple-touch-icon" href="%sassets/logo6/apple-touch-icon.png">\n')
 TOP_PAGES = ('about.html', 'contact.html', 'areas.html', 'work.html', 'reviews.html', 'faq.html')
 TRINITY_JS_RE = re.compile(r'<script src="(?:\.\./)?assets/trinity\.js[^"]*" defer></script>\s*')
 
@@ -180,7 +180,7 @@ def main():
                 s = s.replace(l, '', 1)
             s = s.replace('<!-- /trinity:head -->\n', '<!-- /trinity:head -->\n' + late[0].rstrip('\n') + '\n', 1)
 
-        # favicons: the logo5 set (brand/logo5/build.py), same on every page
+        # favicons: the logo5 set (brand/logo6/build.py), same on every page
         fav = FAVICONS % (pre, pre, pre, pre)
         if FAVICON_RE.search(s):
             s = FAVICON_RE.sub(lambda m: fav, s, count=1)

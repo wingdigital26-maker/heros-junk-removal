@@ -33,7 +33,7 @@ TAG_KEY = {'same day': 'same-day', 'fair price': 'price', 'price': 'price', 'fre
            'fast': 'fast', 'on time': 'fast', 'Nash': 'nash'}
 
 
-def head(title, desc, path, og_image='assets/logo5/og.png', extra=''):
+def head(title, desc, path, og_image='assets/logo6/og.png', extra=''):
     url = 'https://herosjunkremovaltx.com/' + path
     return f'''<!DOCTYPE html>
 <html lang="en">
@@ -56,10 +56,10 @@ def head(title, desc, path, og_image='assets/logo5/og.png', extra=''):
 <meta name="twitter:title" content="{title}">
 <meta name="twitter:description" content="{desc}">
 <meta name="twitter:image" content="https://herosjunkremovaltx.com/{og_image}">
-<link rel="icon" href="assets/logo5/mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/logo5/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="icon" href="assets/logo5/favicon-16.png" sizes="16x16" type="image/png">
-<link rel="apple-touch-icon" href="assets/logo5/apple-touch-icon.png">
+<link rel="icon" href="assets/logo6/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/logo6/icon-192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="assets/logo6/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="assets/logo6/apple-touch-icon.png">
 {extra}</head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
