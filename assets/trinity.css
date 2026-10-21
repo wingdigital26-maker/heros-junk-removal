@@ -1291,3 +1291,6 @@ h2.t-headline,.t-coverage-line,.t-reviews-lede .t-headline,.t-sec-h,.t-faq-h{fon
 @media (max-width:760px){
   .t-logo .t-logo-img{height:42px;}
 }
+
+/* 2026-10-20: night truck+trailer photo replaced the crew photo; keep the truck front in frame */
+.t-hero-photo img[src*="truck-night"],.s7-fig img[src*="truck-night"],.about-hero img[src*="truck-night"]{object-position:22% 70%;}
