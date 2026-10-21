@@ -12,5 +12,6 @@
     "run_worker_first": ["/api/*"]
   },
   "kv_namespaces": [{ "binding": "LEADS", "id": "9c9c1cb2d1bf4bd0b75165976769dbcb" }],
+  "triggers": { "crons": ["*/15 * * * *"] },
   "observability": { "enabled": true }
 }
